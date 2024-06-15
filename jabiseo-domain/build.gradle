@@ -1,0 +1,13 @@
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    // domain은 Java 코드로 실행가능한 Jar 파일만 생성한다.
+    enabled = true
+}
+
+dependencies {
+
+}
