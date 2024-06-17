@@ -18,6 +18,5 @@ public class FindCertificateUseCase {
                 .stream()
                 .map(CertificateResponse::from)
                 .toList();
-
     }
 }
