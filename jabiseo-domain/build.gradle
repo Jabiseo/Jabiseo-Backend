@@ -10,4 +10,5 @@ jar {
 
 dependencies {
 
+    implementation project(":jabiseo-common")
 }

@@ -15,4 +15,5 @@ dependencies {
 
     implementation project(":jabiseo-domain")
     implementation project(":jabiseo-infrastructure")
+    implementation project(":jabiseo-common")
 }
