@@ -1,7 +1,7 @@
 package com.jabiseo.certificate.usecase;
 
 
-import com.jabiseo.certificate.Certificate;
+import com.jabiseo.certificate.domain.Certificate;
 
 public record CertificateResponse(String certificateId, String name) {
 

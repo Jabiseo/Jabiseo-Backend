@@ -1,4 +1,4 @@
-package com.jabiseo.certificate;
+package com.jabiseo.certificate.domain;
 
 
 import jakarta.persistence.Column;

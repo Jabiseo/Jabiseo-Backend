@@ -1,5 +1,7 @@
-package com.jabiseo.certificate;
+package com.jabiseo.certificate.repository;
 
+import com.jabiseo.certificate.domain.Certificate;
+import com.jabiseo.certificate.domain.CertificateRepository;
 import com.jabiseo.certificate.exception.CertificateErrorCode;
 import com.jabiseo.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +11,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class CertificateRepository {
+public class CertificateRepositoryImpl implements CertificateRepository {
 
     private final JpaCertificateRepository jpaCertificateRepository;
 
