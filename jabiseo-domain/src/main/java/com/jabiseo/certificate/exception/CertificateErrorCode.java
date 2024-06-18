@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public enum CertificateErrorCode implements ErrorCode {
 
-
+    CERTIFICATE_NOT_FOUND("자격증을 찾을 수 없습니다.", "CER_001", 404),
     ;
 
 

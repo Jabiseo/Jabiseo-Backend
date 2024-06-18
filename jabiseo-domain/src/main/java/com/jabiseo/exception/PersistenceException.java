@@ -1,4 +1,4 @@
-package com.jabiseo.database.exception;
+package com.jabiseo.exception;
 
 import com.jabiseo.exception.ErrorCode;
 import lombok.Getter;
@@ -7,8 +7,7 @@ import lombok.Getter;
 public class PersistenceException extends RuntimeException {
     private final ErrorCode errorCode;
 
-    public PersistenceException(String message, ErrorCode errorCode) {
-        super(message);
+    public PersistenceException(ErrorCode errorCode) {
         this.errorCode = errorCode;
     }
 }
