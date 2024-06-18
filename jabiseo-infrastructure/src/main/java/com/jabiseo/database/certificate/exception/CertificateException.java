@@ -5,8 +5,8 @@ import com.jabiseo.database.exception.PersistenceException;
 
 public class CertificateException extends PersistenceException {
 
-    public CertificateException(String message, ErrorCode errorCode) {
-        super(message, errorCode);
+    public CertificateException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
 }

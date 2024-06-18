@@ -1,6 +1,5 @@
 package com.jabiseo.exception;
 
-import com.jabiseo.database.exception.PersistenceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,7 +14,7 @@ public class GlobalExceptionHandler {
         ErrorCode code = e.getErrorCode();
         return ResponseEntity
                 .status(code.getStatusCode())
-                .body(new ErrorResponse(e.getMessage(), code.getErrorCode()));
+                .body(new ErrorResponse(code.getMessage(), code.getErrorCode()));
     }
 
     @ExceptionHandler(PersistenceException.class)
@@ -23,7 +22,7 @@ public class GlobalExceptionHandler {
         ErrorCode code = e.getErrorCode();
         return ResponseEntity
                 .status(code.getStatusCode())
-                .body(new ErrorResponse(e.getMessage(), code.getErrorCode()));
+                .body(new ErrorResponse(code.getMessage(), code.getErrorCode()));
     }
 
 }
