@@ -1,10 +1,25 @@
 package com.jabiseo.certificate;
 
+import com.jabiseo.certificate.exception.CertificateErrorCode;
+import com.jabiseo.exception.PersistenceException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
-public interface CertificateRepository {
+@Repository
+@RequiredArgsConstructor
+public class CertificateRepository {
 
-    Certificate findById(String id);
+    private final JpaCertificateRepository jpaCertificateRepository;
 
-    List<Certificate> findAll();
+    public Certificate findById(String id) {
+        return jpaCertificateRepository.findById(id)
+                .orElseThrow(() ->
+                        new PersistenceException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));
+    }
+
+    public List<Certificate> findAll() {
+        return jpaCertificateRepository.findAll();
+    }
 }
