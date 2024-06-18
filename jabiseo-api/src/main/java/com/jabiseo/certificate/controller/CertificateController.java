@@ -17,7 +17,7 @@ public class CertificateController {
 
     @GetMapping("/api/certificate")
     public ResponseEntity<?> findCertificate() {
-        List<CertificateResponse> result = findCertificateUseCase.findAll();
+        List<CertificateResponse> result = findCertificateUseCase.execute();
         return ResponseEntity.ok(result);
     }
 }

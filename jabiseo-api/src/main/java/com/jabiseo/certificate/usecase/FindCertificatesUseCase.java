@@ -12,7 +12,7 @@ public class FindCertificateUseCase {
 
     private final CertificateRepository certificateRepository;
 
-    public List<CertificateResponse> findAll() {
+    public List<CertificatesResponse> execute() {
         return certificateRepository
                 .findAll()
                 .stream()
