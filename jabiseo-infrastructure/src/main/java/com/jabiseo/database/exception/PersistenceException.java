@@ -1,4 +1,4 @@
-package com.jabiseo.exception;
+package com.jabiseo.database.exception;
 
 import com.jabiseo.exception.ErrorCode;
 import lombok.Getter;

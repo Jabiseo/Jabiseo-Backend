@@ -1,5 +1,6 @@
 package com.jabiseo.exception;
 
+import com.jabiseo.database.exception.PersistenceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
