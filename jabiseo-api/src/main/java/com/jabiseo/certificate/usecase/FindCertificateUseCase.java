@@ -1,6 +1,6 @@
 package com.jabiseo.certificate.usecase;
 
-import com.jabiseo.certificate.CertificateRepository;
+import com.jabiseo.certificate.domain.CertificateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
