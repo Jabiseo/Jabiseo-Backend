@@ -1,4 +1,4 @@
-package com.jabiseo.database;
+package com.jabiseo.certificate.domain;
 
 
 import jakarta.persistence.Column;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "certificate")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class JpaCertificateEntity {
+public class Certificate {
 
     @Id
     @Column(name = "certificate_id")
@@ -23,7 +23,7 @@ public class JpaCertificateEntity {
     private String name;
 
     @Builder
-    public JpaCertificateEntity(String id, String name) {
+    public Certificate(String id, String name) {
         this.id = id;
         this.name = name;
     }

@@ -15,7 +15,7 @@ public class GlobalExceptionHandler {
         ErrorCode code = e.getErrorCode();
         return ResponseEntity
                 .status(code.getStatusCode())
-                .body(new ErrorResponse(e.getMessage(), code.getErrorCode()));
+                .body(new ErrorResponse(code.getMessage(), code.getErrorCode()));
     }
 
     @ExceptionHandler(PersistenceException.class)
@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
         ErrorCode code = e.getErrorCode();
         return ResponseEntity
                 .status(code.getStatusCode())
-                .body(new ErrorResponse(e.getMessage(), code.getErrorCode()));
+                .body(new ErrorResponse(code.getMessage(), code.getErrorCode()));
     }
 
 }
