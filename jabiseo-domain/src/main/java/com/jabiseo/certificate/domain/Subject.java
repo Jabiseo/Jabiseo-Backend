@@ -23,4 +23,17 @@ public class Subject {
     @JoinColumn(name = "certificate_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Certificate certificate;
 
+    private Subject(String id, String name, int sequence, Certificate certificate) {
+        this.id = id;
+        this.name = name;
+        this.sequence = sequence;
+        this.certificate = certificate;
+    }
+
+    public static Subject of(String id, String name, int sequence, Certificate certificate) {
+        Subject subject = new Subject(id, name, sequence, certificate);
+        certificate.addSubject(subject);
+        return subject;
+    }
+
 }

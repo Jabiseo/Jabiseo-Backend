@@ -20,4 +20,16 @@ public class Exam {
     @JoinColumn(name = "certificate_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Certificate certificate;
 
+    private Exam(String id, String description, Certificate certificate) {
+        this.id = id;
+        this.description = description;
+        this.certificate = certificate;
+    }
+
+    public static Exam of(String id, String description, Certificate certificate) {
+        Exam exam = new Exam(id, description, certificate);
+        certificate.addExam(exam);
+        return exam;
+    }
+
 }
