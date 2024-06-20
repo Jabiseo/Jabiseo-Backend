@@ -1,9 +1,0 @@
-spring:
-  jpa:
-    open-in-view: false
-    hibernate:
-      ddl-auto: ${DDL_AUTO}
-    properties:
-      dialect: org.hibernate.dialect.MySQL8InnoDBDialect
-    defer-datasource-initialization: true
-  sql.init.mode: always

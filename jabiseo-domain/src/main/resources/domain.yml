@@ -1,0 +1,36 @@
+
+#-- 해당 부분은 override 하지 않으면 그대로 적용이 된다.
+spring:
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: domain-local
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+      format_sql: true
+    show-sql: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: domain-dev
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      format_sql: true
+    show-sql: true
+
+
