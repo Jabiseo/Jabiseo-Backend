@@ -1,30 +1,26 @@
 package com.jabiseo.certificate.domain;
 
-
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Getter
-@Table(name = "certificate")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Certificate {
+public class Subject {
 
     @Id
-    @Column(name = "certificate_id")
+    @Column(name = "subject_id")
     private String id;
 
     private String name;
 
-    @OneToMany(mappedBy = "certificate")
-    private List<Exam> exams;
+    private int sequence;
 
-    @OneToMany(mappedBy = "certificate")
-    private List<Subject> subjects;
+    @ManyToOne
+    @JoinColumn(name = "certificate_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    private Certificate certificate;
 
 }
