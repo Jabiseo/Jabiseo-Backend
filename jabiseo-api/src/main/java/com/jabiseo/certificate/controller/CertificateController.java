@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/certificate")
+@RequestMapping("/api/certificates")
 public class CertificateController {
 
     private final FindCertificatesUseCase findCertificatesUseCase;

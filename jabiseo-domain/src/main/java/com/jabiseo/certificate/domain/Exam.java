@@ -14,7 +14,7 @@ public class Exam {
     @Column(name = "exam_id")
     private String id;
 
-    private String name;
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "certificate_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))

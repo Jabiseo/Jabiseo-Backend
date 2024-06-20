@@ -1,5 +1,7 @@
 package com.jabiseo.certificate.dto;
 
+import com.jabiseo.certificate.domain.Certificate;
+
 import java.util.List;
 
 public record FindCertificateResponse(
@@ -8,18 +10,18 @@ public record FindCertificateResponse(
         List<ExamDto> exams,
         List<SubjectDto> subjects
 ) {
-//    public static FindCertificateResponse from(Certificate certificate) {
-//        return new FindCertificateResponse(
-//                certificate.getId(),
-//                certificate.getName(),
-//                certificate.getExams()
-//                        .stream()
-//                        .map(ExamDto::from)
-//                        .toList(),
-//                certificate.getSubjects()
-//                        .stream()
-//                        .map(SubjectDto::from)
-//                        .toList()
-//        );
-//    }
+    public static FindCertificateResponse from(Certificate certificate) {
+        return new FindCertificateResponse(
+                certificate.getId(),
+                certificate.getName(),
+                certificate.getExams()
+                        .stream()
+                        .map(ExamDto::from)
+                        .toList(),
+                certificate.getSubjects()
+                        .stream()
+                        .map(SubjectDto::from)
+                        .toList()
+        );
+    }
 }

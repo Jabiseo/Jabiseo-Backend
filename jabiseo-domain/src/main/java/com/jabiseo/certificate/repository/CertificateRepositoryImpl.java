@@ -17,8 +17,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 
     public Certificate findById(String id) {
         return jpaCertificateRepository.findById(id)
-                .orElseThrow(() ->
-                        new BusinessException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));
     }
 
     public List<Certificate> findAll() {
