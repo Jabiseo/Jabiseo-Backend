@@ -1,6 +1,5 @@
 package com.jabiseo.member.controller;
 
-import com.jabiseo.auth.usecase.LoginUseCase;
 import com.jabiseo.member.dto.FindMyCertificateStatusResponse;
 import com.jabiseo.member.dto.FindMyInfoResponse;
 import com.jabiseo.member.dto.UpdateMyCertificateStatusRequest;
@@ -17,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final FindMyInfoUseCase findMyInfoUseCase;
+
     private final FindMyCertificateStatusUseCase findMyCertificateStatusUseCase;
+
     private final UpdateMyCertificateStatusUseCase updateMyCertificateStatusUseCase;
 
     @GetMapping

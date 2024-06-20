@@ -17,8 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final LoginUseCase loginUseCase;
+
     private final ReissueUseCase reissueUseCase;
+
     private final LogoutUseCase logoutUseCase;
+
     private final WithdrawUseCase withdrawUseCase;
 
     @PostMapping("/login")

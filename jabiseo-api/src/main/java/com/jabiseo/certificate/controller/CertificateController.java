@@ -19,6 +19,7 @@ import java.util.List;
 public class CertificateController {
 
     private final FindCertificatesUseCase findCertificatesUseCase;
+
     private final FindCertificateUseCase findCertificateUseCase;
 
     @GetMapping

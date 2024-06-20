@@ -5,7 +5,7 @@ public record SubjectDto(
         int sequence,
         String name
 ) {
-    public static SubjectDto from(com.jabiseo.certificate.domain.Subject subject) {
-        return new SubjectDto(subject.getId(), subject.getSequence(), subject.getName());
-    }
+//    public static SubjectDto from(com.jabiseo.certificate.domain.Subject subject) {
+//        return new SubjectDto(subject.getId(), subject.getSequence(), subject.getName());
+//    }
 }

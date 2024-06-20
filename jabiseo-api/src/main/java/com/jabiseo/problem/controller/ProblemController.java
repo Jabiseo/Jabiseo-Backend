@@ -21,7 +21,9 @@ import java.util.List;
 public class ProblemController {
 
     private final FindProblemsUseCase findProblemsUseCase;
+
     private final CreateReportUseCase createReportUseCase;
+
     private final FindBookmarkedProblemsUseCase findBookmarkedProblemsUseCase;
 
     @GetMapping("/set")

@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service;
 public class WithdrawUseCase {
 
     public void execute() {
-        return;
     }
+
 }

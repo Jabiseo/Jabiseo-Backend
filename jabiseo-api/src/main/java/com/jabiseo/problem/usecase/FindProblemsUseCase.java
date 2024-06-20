@@ -12,6 +12,7 @@ import java.util.List;
 
 @Service
 public class FindProblemsUseCase {
+
     public List<FindProblemsResponse> execute(String certificateId, String subjectId, String examId, int count) {
         return new ArrayList<>(List.of(
                 new FindProblemsResponse(
