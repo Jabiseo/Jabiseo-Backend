@@ -2,8 +2,8 @@ package com.jabiseo.certificate.repository;
 
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.certificate.domain.CertificateRepository;
+import com.jabiseo.certificate.exception.CertificateBusinessException;
 import com.jabiseo.certificate.exception.CertificateErrorCode;
-import com.jabiseo.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +17,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 
     public Certificate findById(String id) {
         return jpaCertificateRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));
+                .orElseThrow(() -> new CertificateBusinessException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));
     }
 
     public List<Certificate> findAll() {
