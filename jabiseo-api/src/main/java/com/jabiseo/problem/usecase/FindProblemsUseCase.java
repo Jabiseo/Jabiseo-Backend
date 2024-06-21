@@ -1,8 +1,8 @@
 package com.jabiseo.problem.usecase;
 
-import com.jabiseo.certificate.dto.ExamDto;
-import com.jabiseo.certificate.dto.SubjectDto;
-import com.jabiseo.problem.dto.ChoiceDto;
+import com.jabiseo.certificate.dto.ExamResponse;
+import com.jabiseo.certificate.dto.SubjectResponse;
+import com.jabiseo.problem.dto.ChoiceResponse;
 import com.jabiseo.problem.dto.FindProblemsRequest;
 import com.jabiseo.problem.dto.FindProblemsResponse;
 import org.springframework.stereotype.Service;
@@ -17,11 +17,11 @@ public class FindProblemsUseCase {
         return new ArrayList<>(List.of(
                 new FindProblemsResponse(
                         "1",
-                        new ExamDto("examId", "examDescription"),
-                        new SubjectDto("subjectId", 3, "subjectName"),
+                        new ExamResponse("examId", "examDescription"),
+                        new SubjectResponse("subjectId", 3, "subjectName"),
                         true,
                         "description",
-                        List.of(new ChoiceDto("choice")),
+                        List.of(new ChoiceResponse("choice")),
                         1,
                         "theory",
                         "solution"
@@ -33,11 +33,11 @@ public class FindProblemsUseCase {
         return new ArrayList<>(List.of(
                 new FindProblemsResponse(
                         "1",
-                        new ExamDto("examId", "examDescription"),
-                        new SubjectDto("subjectId", 3, "subjectName"),
+                        new ExamResponse("examId", "examDescription"),
+                        new SubjectResponse("subjectId", 3, "subjectName"),
                         true,
                         "description",
-                        List.of(new ChoiceDto("choice")),
+                        List.of(new ChoiceResponse("choice")),
                         1,
                         "theory",
                         "solution"

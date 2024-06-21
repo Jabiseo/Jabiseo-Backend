@@ -1,6 +1,6 @@
 package com.jabiseo.problem.dto;
 
-public record ChoiceDto(
+public record ChoiceResponse(
         String choice
 ) {
 }

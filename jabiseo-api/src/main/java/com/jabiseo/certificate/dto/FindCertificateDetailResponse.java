@@ -7,8 +7,8 @@ import java.util.List;
 public record FindCertificateDetailResponse(
         String certificateId,
         String name,
-        List<ExamDto> exams,
-        List<SubjectDto> subjects
+        List<ExamResponse> exams,
+        List<SubjectResponse> subjects
 ) {
     public static FindCertificateDetailResponse from(Certificate certificate) {
         return new FindCertificateDetailResponse(
@@ -16,11 +16,11 @@ public record FindCertificateDetailResponse(
                 certificate.getName(),
                 certificate.getExams()
                         .stream()
-                        .map(ExamDto::from)
+                        .map(ExamResponse::from)
                         .toList(),
                 certificate.getSubjects()
                         .stream()
-                        .map(SubjectDto::from)
+                        .map(SubjectResponse::from)
                         .toList()
         );
     }
