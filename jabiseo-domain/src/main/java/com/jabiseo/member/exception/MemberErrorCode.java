@@ -7,6 +7,7 @@ import lombok.Getter;
 public enum MemberErrorCode implements ErrorCode {
 
     MEMBER_NOT_FOUND("회원을 찾을 수 없습니다.", "MEM_001", ErrorCode.NOT_FOUND),
+    CERTIFICATE_STATE_NOT_FOUND("자격증 상태가 존재하지 않습니다.", "MEM_002", ErrorCode.NOT_FOUND),
     ;
 
     private final String message;

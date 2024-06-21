@@ -48,7 +48,7 @@ public class Member {
     private LocalDateTime lastAccessAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "certificate_status_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "certificate_state_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Certificate certificateState;
 
 }
