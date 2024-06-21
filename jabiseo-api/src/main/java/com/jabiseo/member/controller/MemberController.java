@@ -29,7 +29,8 @@ public class MemberController {
 
     @GetMapping("/certificates")
     public ResponseEntity<FindMyCertificateStatusResponse> findMyCertificateStatus() {
-        FindMyCertificateStatusResponse result = findMyCertificateStatusUseCase.execute();
+        String memberId = "1"; // TODO: 로그인 기능 구현 후 JWT에서 memberId 가져오기
+        FindMyCertificateStatusResponse result = findMyCertificateStatusUseCase.execute(memberId);
         return ResponseEntity.ok(result);
     }
 
