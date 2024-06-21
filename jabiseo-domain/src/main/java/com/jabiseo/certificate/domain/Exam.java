@@ -16,18 +16,24 @@ public class Exam {
 
     private String description;
 
+    private int year;
+
+    private int round;
+
     @ManyToOne
     @JoinColumn(name = "certificate_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Certificate certificate;
 
-    private Exam(String id, String description, Certificate certificate) {
+    public Exam(String id, String description, int year, int round, Certificate certificate) {
         this.id = id;
         this.description = description;
+        this.year = year;
+        this.round = round;
         this.certificate = certificate;
     }
 
-    public static Exam of(String id, String description, Certificate certificate) {
-        Exam exam = new Exam(id, description, certificate);
+    public static Exam of(String id, String description, int year, int round, Certificate certificate) {
+        Exam exam = new Exam(id, description, year, round, certificate);
         certificate.addExam(exam);
         return exam;
     }

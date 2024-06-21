@@ -6,7 +6,7 @@ import com.jabiseo.certificate.domain.Exam;
 public class ExamFixture {
 
     public static Exam createExam(String examId, Certificate certificate) {
-        return Exam.of(examId, "exam description", certificate);
+        return Exam.of(examId, "exam description", 2000, 1, certificate);
     }
 
 }
