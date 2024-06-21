@@ -51,4 +51,23 @@ public class Member {
     @JoinColumn(name = "certificate_state_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Certificate certificateState;
 
+    private Member(String id, String email, String nickname, String oauthId, String oauthServer, String profileImage) {
+        this.id = id;
+        this.email = email;
+        this.nickname = nickname;
+        this.oauthId = oauthId;
+        this.oauthServer = oauthServer;
+        this.profileImage = profileImage;
+    }
+
+    public static Member of(String id, String email, String nickname,
+                            String oauthId, String oauthServer, String profileImage) {
+        return new Member(id, email, nickname, oauthId, oauthServer, profileImage);
+    }
+
+    public Member updateCertificateState(Certificate certificate) {
+        this.certificateState = certificate;
+        return this;
+    }
+
 }
