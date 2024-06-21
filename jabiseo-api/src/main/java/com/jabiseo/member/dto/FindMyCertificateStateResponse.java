@@ -1,15 +1,10 @@
 package com.jabiseo.member.dto;
 
-import com.jabiseo.member.domain.Member;
-
 public record FindMyCertificateStateResponse(
         String memberId,
         String certificateId
 ) {
-    public static FindMyCertificateStateResponse from(Member member) {
-        return new FindMyCertificateStateResponse(
-                member.getId(),
-                member.getCertificateState().getId()
-        );
+    public static FindMyCertificateStateResponse of(String memberId, String certificateId) {
+        return new FindMyCertificateStateResponse(memberId, certificateId);
     }
 }

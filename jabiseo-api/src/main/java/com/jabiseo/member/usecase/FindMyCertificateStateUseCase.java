@@ -1,6 +1,6 @@
 package com.jabiseo.member.usecase;
 
-import com.jabiseo.member.domain.Member;
+import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.member.domain.MemberRepository;
 import com.jabiseo.member.dto.FindMyCertificateStateResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ public class FindMyCertificateStateUseCase {
     private final MemberRepository memberRepository;
 
     public FindMyCertificateStateResponse execute(String memberId) {
-        Member member = memberRepository.findById(memberId);
-        return FindMyCertificateStateResponse.from(member);
+        Certificate certificate = memberRepository.findCertificateStateById(memberId);
+        return FindMyCertificateStateResponse.of(memberId, certificate.getId());
     }
 }
