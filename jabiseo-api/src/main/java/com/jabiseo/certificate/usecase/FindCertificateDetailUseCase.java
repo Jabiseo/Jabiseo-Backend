@@ -1,7 +1,7 @@
 package com.jabiseo.certificate.usecase;
 
 import com.jabiseo.certificate.domain.CertificateRepository;
-import com.jabiseo.certificate.dto.FindCertificateResponse;
+import com.jabiseo.certificate.dto.FindCertificateDetailResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,11 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class FindCertificateUseCase {
+public class FindCertificateDetailUseCase {
 
     private final CertificateRepository certificateRepository;
 
-    public FindCertificateResponse execute(String id) {
-        return FindCertificateResponse.from(certificateRepository.findById(id));
+    public FindCertificateDetailResponse execute(String id) {
+        return FindCertificateDetailResponse.from(certificateRepository.findById(id));
     }
 }

@@ -4,14 +4,14 @@ import com.jabiseo.certificate.domain.Certificate;
 
 import java.util.List;
 
-public record FindCertificateResponse(
+public record FindCertificateDetailResponse(
         String certificateId,
         String name,
         List<ExamDto> exams,
         List<SubjectDto> subjects
 ) {
-    public static FindCertificateResponse from(Certificate certificate) {
-        return new FindCertificateResponse(
+    public static FindCertificateDetailResponse from(Certificate certificate) {
+        return new FindCertificateDetailResponse(
                 certificate.getId(),
                 certificate.getName(),
                 certificate.getExams()

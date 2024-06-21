@@ -2,7 +2,7 @@ package com.jabiseo.certificate.usecase;
 
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.certificate.domain.CertificateRepository;
-import com.jabiseo.certificate.dto.FindCertificateResponse;
+import com.jabiseo.certificate.dto.FindCertificateDetailResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,10 +18,10 @@ import static org.mockito.BDDMockito.given;
 
 @DisplayName("자격증 정보 조회 테스트")
 @ExtendWith(MockitoExtension.class)
-class FindCertificateUseCaseTest {
+class FindCertificateDetailUseCaseTest {
 
     @InjectMocks
-    FindCertificateUseCase sut;
+    FindCertificateDetailUseCase sut;
 
     @Mock
     CertificateRepository certificateRepository;
@@ -40,12 +40,12 @@ class FindCertificateUseCaseTest {
 
 
         //when
-        FindCertificateResponse findCertificateResponse = sut.execute(certificateId);
+        FindCertificateDetailResponse findCertificateDetailResponse = sut.execute(certificateId);
 
         //then
-        assertThat(findCertificateResponse.certificateId()).isEqualTo(certificateId);
-        assertThat(findCertificateResponse.exams().get(0).examId()).isEqualTo(examId);
-        assertThat(findCertificateResponse.subjects().get(0).subjectId()).isEqualTo(subjectId);
+        assertThat(findCertificateDetailResponse.certificateId()).isEqualTo(certificateId);
+        assertThat(findCertificateDetailResponse.exams().get(0).examId()).isEqualTo(examId);
+        assertThat(findCertificateDetailResponse.subjects().get(0).subjectId()).isEqualTo(subjectId);
     }
 
 }
