@@ -12,7 +12,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "certificate")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Certificate {
 
