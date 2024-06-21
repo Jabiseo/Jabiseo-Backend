@@ -1,11 +1,10 @@
 package com.jabiseo.problem.usecase;
 
-import com.jabiseo.certificate.dto.ExamDto;
-import com.jabiseo.certificate.dto.SubjectDto;
+import com.jabiseo.certificate.dto.ExamResponse;
+import com.jabiseo.certificate.dto.SubjectResponse;
 import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
@@ -17,11 +16,11 @@ public class FindBookmarkedProblemsUseCase {
         return List.of(
                 new FindBookmarkedProblemsResponse(
                         "problemId",
-                        new ExamDto(
+                        new ExamResponse(
                                 "examId",
                                 "description"
                         ),
-                        new SubjectDto(
+                        new SubjectResponse(
                                 "subjectId",
                                 3,
                                 "name"
