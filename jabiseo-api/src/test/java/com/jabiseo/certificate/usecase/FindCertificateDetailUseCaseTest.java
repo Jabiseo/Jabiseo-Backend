@@ -40,12 +40,12 @@ class FindCertificateDetailUseCaseTest {
 
 
         //when
-        FindCertificateDetailResponse findCertificateDetailResponse = sut.execute(certificateId);
+        FindCertificateDetailResponse response = sut.execute(certificateId);
 
         //then
-        assertThat(findCertificateDetailResponse.certificateId()).isEqualTo(certificateId);
-        assertThat(findCertificateDetailResponse.exams().get(0).examId()).isEqualTo(examId);
-        assertThat(findCertificateDetailResponse.subjects().get(0).subjectId()).isEqualTo(subjectId);
+        assertThat(response.certificateId()).isEqualTo(certificateId);
+        assertThat(response.exams().get(0).examId()).isEqualTo(examId);
+        assertThat(response.subjects().get(0).subjectId()).isEqualTo(subjectId);
     }
 
 }
