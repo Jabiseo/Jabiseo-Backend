@@ -36,7 +36,7 @@ public class MemberController {
 
     @PatchMapping("/certificates")
     public ResponseEntity<Void> updateMyCertificateStatus(
-            @RequestParam UpdateMyCertificateStateRequest request
+            @RequestBody UpdateMyCertificateStateRequest request
     ) {
         updateMyCertificateStateUseCase.execute(request);
 
