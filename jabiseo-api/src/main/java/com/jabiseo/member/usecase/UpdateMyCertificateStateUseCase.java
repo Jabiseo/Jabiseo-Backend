@@ -1,11 +1,25 @@
 package com.jabiseo.member.usecase;
 
+import com.jabiseo.certificate.domain.Certificate;
+import com.jabiseo.certificate.domain.CertificateRepository;
+import com.jabiseo.member.domain.Member;
+import com.jabiseo.member.domain.MemberRepository;
 import com.jabiseo.member.dto.UpdateMyCertificateStateRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class UpdateMyCertificateStateUseCase {
 
-    public void execute(UpdateMyCertificateStateRequest request) {
+    private final MemberRepository memberRepository;
+    private final CertificateRepository certificateRepository;
+
+    public void execute(String memberId, UpdateMyCertificateStateRequest request) {
+        Member member = memberRepository.findById(memberId);
+        Certificate certificate = certificateRepository.findById(request.certificateId());
+        member.updateCertificateState(certificate);
     }
 }

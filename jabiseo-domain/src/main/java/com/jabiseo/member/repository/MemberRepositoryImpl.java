@@ -15,9 +15,14 @@ public class MemberRepositoryImpl implements MemberRepository {
     private final JpaMemberRepository jpaMemberRepository;
 
     @Override
-    public Certificate findCertificateStateById(String id) {
-        Member member = jpaMemberRepository.findById(id)
+    public Member findById(String id) {
+        return jpaMemberRepository.findById(id)
                 .orElseThrow(() -> new MemberBusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    @Override
+    public Certificate findCertificateStateById(String id) {
+        Member member = findById(id);
         if (member.getCertificateState() == null) {
             throw new MemberBusinessException(MemberErrorCode.CERTIFICATE_STATE_NOT_FOUND);
         }

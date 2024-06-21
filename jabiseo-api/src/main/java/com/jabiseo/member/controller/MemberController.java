@@ -38,8 +38,8 @@ public class MemberController {
     public ResponseEntity<Void> updateMyCertificateStatus(
             @RequestBody UpdateMyCertificateStateRequest request
     ) {
-        updateMyCertificateStateUseCase.execute(request);
-
+        String memberId = "1"; // TODO: 로그인 기능 구현 후 JWT에서 memberId 가져오기
+        updateMyCertificateStateUseCase.execute(memberId, request);
         return ResponseEntity.ok().build();
     }
 
