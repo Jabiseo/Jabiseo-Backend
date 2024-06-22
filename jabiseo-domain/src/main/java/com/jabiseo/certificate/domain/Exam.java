@@ -24,7 +24,7 @@ public class Exam {
     @JoinColumn(name = "certificate_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Certificate certificate;
 
-    public Exam(String id, String description, int year, int round, Certificate certificate) {
+    private Exam(String id, String description, int year, int round, Certificate certificate) {
         this.id = id;
         this.description = description;
         this.year = year;
