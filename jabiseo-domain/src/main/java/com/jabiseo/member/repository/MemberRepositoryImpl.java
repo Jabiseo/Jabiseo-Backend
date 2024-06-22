@@ -1,6 +1,5 @@
 package com.jabiseo.member.repository;
 
-import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
 import com.jabiseo.member.exception.MemberBusinessException;
@@ -18,14 +17,5 @@ public class MemberRepositoryImpl implements MemberRepository {
     public Member findById(String id) {
         return jpaMemberRepository.findById(id)
                 .orElseThrow(() -> new MemberBusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
-    }
-
-    @Override
-    public Certificate findCertificateStateById(String id) {
-        Member member = findById(id);
-        if (member.getCertificateState() == null) {
-            throw new MemberBusinessException(MemberErrorCode.CERTIFICATE_STATE_NOT_FOUND);
-        }
-        return member.getCertificateState();
     }
 }
