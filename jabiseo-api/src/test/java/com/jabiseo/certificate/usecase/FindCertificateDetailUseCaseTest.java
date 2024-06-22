@@ -10,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static com.jabiseo.fixture.CertificateFixture.createCertificate;
 import static com.jabiseo.fixture.ExamFixture.createExam;
 import static com.jabiseo.fixture.SubjectFixture.createSubject;
@@ -36,7 +38,7 @@ class FindCertificateDetailUseCaseTest {
         Certificate certificate = createCertificate(certificateId);
         createExam(examId, certificate);
         createSubject(subjectId, certificate);
-        given(certificateRepository.findById(certificateId)).willReturn(certificate);
+        given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
 
 
         //when

@@ -1,7 +1,6 @@
 package com.jabiseo.member.domain;
 
-public interface MemberRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
 
-    Member findById(String id);
-
+public interface MemberRepository extends JpaRepository<Member, String>{
 }

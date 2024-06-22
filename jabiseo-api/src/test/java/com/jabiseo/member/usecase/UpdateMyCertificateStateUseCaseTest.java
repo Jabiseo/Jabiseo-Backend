@@ -12,6 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static com.jabiseo.fixture.CertificateFixture.createCertificate;
 import static com.jabiseo.fixture.MemberFixture.createMember;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,8 +40,8 @@ class UpdateMyCertificateStateUseCaseTest {
         String certificateId = "2";
         Member member = createMember(memberId);
         Certificate certificate = createCertificate(certificateId);
-        given(memberRepository.findById(memberId)).willReturn(member);
-        given(certificateRepository.findById(certificateId)).willReturn(certificate);
+        given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+        given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
 
         //when
         UpdateMyCertificateStateRequest request = new UpdateMyCertificateStateRequest(certificateId);

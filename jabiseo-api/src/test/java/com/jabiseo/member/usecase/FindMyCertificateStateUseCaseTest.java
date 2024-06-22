@@ -11,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static com.jabiseo.fixture.CertificateFixture.createCertificate;
 import static com.jabiseo.fixture.MemberFixture.createMember;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,7 +37,7 @@ class FindMyCertificateStateUseCaseTest {
         Certificate certificate = createCertificate(certificateId);
         Member member = createMember(memberId);
         member.updateCertificateState(certificate);
-        given(memberRepository.findCertificateStateById(memberId)).willReturn(certificate);
+        given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
 
         //when
         FindMyCertificateStateResponse response = sut.execute(memberId);
