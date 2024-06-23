@@ -8,8 +8,7 @@ env:
   VERSION: ${{github.sha}}
   ECR_URI: 381491925979.dkr.ecr.ap-northeast-2.amazonaws.com/jabiseo-be # docker ecr 주소
   NAME: jabiseo-was # docker service name
-  COMMIT_MESSAGE: $(git log -1 --format='%s' ${{ github.sha }})
-  AUTHOR_NAME: $(git log -1 --format='%an' ${{ github.sha }})
+
 
 
 jobs:
@@ -21,11 +20,21 @@ jobs:
         with:
           java-version: "17"
           distribution: "oracle"
+      - name: set environtment
+        run: |
+          COMMIT_MESSAGE: $(git log -1 --format='%s' ${{ github.sha }})
+          AUTHOR_NAME: $(git log -1 --format='%an' ${{ github.sha }})
+          echo "COMMIT_MESSAGE=${COMMIT_MESSAGE}" >> $GITHUB_ENV
+          echo "AUTHOR_NAME=${AUTHOR_NAME}" >> $GITHUB_ENV
 
       - name: setup dockerImage name
         run: |
           git fetch --tags
           GIT_TAG=$(git tag --sort=committerdate | tail -1 )
+          if [ -z "$GIT_TAG" ]; then
+            GIT_TAG="v0.0.0"
+          fi
+  
           DATE=$(date +'%Y%m%d') 
           COMMIT_SHA=$(git rev-parse --short HEAD) 
           DOCKER_TAG="${GIT_TAG}-${DATE}-${COMMIT_SHA}"
