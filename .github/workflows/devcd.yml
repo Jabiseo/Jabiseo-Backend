@@ -1,0 +1,154 @@
+on:
+  push:
+    branches: [ "develop" ]
+
+  workflow_dispatch:
+
+env:
+  VERSION: ${{github.sha}}
+  ECR_URI: 381491925979.dkr.ecr.ap-northeast-2.amazonaws.com/jabiseo-be # docker ecr 주소
+  NAME: jabiseo-was # docker service name
+  COMMIT_MESSAGE: $(git log -1 --format='%s' ${{ github.sha }})
+  AUTHOR_NAME: $(git log -1 --format='%an' ${{ github.sha }})
+
+
+jobs:
+  gradle-build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "oracle"
+
+      - name: setup dockerImage name
+        run: |
+          git fetch --tags
+          GIT_TAG=$(git tag --sort=committerdate | tail -1 )
+          DATE=$(date +'%Y%m%d') 
+          COMMIT_SHA=$(git rev-parse --short HEAD) 
+          DOCKER_TAG="${GIT_TAG}-${DATE}-${COMMIT_SHA}"
+          DOCKER_IMAGE="${{env.ECR_URI}}:${DOCKER_TAG}"
+          echo "dockerTag=${DOCKER_TAG}" 
+          echo "dockerImage=${dockerImage}"
+          echo "dockerTag=${DOCKER_TAG}"  >> $GITHUB_ENV
+
+      - name: Deploy start send message
+        uses: jabiseo/slack-custom-bot@main
+        with:
+          mode: DEPLOY
+          channelId: "${{ secrets.NOTI_CHANNEL_ID }}"
+          text: "Deploy 시작"
+          statusColor: "#ebe834"
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SHA: ${{env.VERSION}}
+          COMMIT_MESSAGE: ${{env.COMMIT_MESSAGE}}
+          AUTHOR_NAME: ${{env.AUTHOR_NAME}}
+
+      - name: save into application.properties
+        env:
+          DEV_VARIABLES: ${{ toJson(secrets) }}
+        run: |
+          echo "$DEV_VARIABLES" | jq -r 'to_entries | 
+          map(select(.key | startswith("DEV_")))[] | "\(.key | sub("^DEV_"; ""))=\(.value)"' > ./jabiseo-api/src/main/resources/application.properties
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: gradle build
+        run: |
+          echo "GRADLE BUILD START==============" 
+          ./gradlew jabiseo-api:clean 
+          ./gradlew jabiseo-api:build
+
+  docker-build-push:
+      needs: gradle-build
+      runs-on: ubuntu-20.04
+      steps:
+        - name: Configure AWS credentials
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ECR_ACCESS_KEY }}
+            aws-secret-access-key: ${{ secrets.AWS_ECR_SECRET_KEY }}
+            aws-region: ap-northeast-2
+
+
+
+        - name: Set Up Docker Buildx
+          id: buildx
+          uses: docker/setup-buildx-action@v2
+        - name: Cache Docker Layer
+          uses: actions/cache@v3
+          with:
+            path: /tmp/.buildx-cache # cache의 대상을 정한다.
+            key: "${{runner.os}}-buildx-${{env.version}}"
+            restore-keys: |
+              ${{ runner.os }}-buildx-
+
+        - name: Login to Amazon ECR
+          id: login-ecr
+          uses: aws-actions/amazon-ecr-login@v2
+
+        - name: build and push
+          uses: docker/build-push-action@v4
+          with:
+            context: ./jabiseo-api/
+            builder: ${{steps.buildx.outputs.name}}
+            push: true
+            tags: "${{env.ECR_URI}}:${{env.DOCKER_TAG}}"
+
+  deploy:
+    needs: docker-build-push
+    name: Deploy
+    runs-on: [ self-hosted, dev-server ]
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ECR_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_ECR_SECRET_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Execute
+        id: execute
+        run: |
+          docker stop ${{env.NAME}} && docker rm ${{env.NAME}} && docker rmi "${{env.ECR_URI}}:${{env.DOCKER_TAG}}"
+            docker run -d -p 8080:8080 -e PROFILE=dev --name ${{env.NAME}} --network jabiseo-dev "${{env.ECR_URI}}:${{env.DOCKER_TAG}}"
+
+      - name: send result when success
+        if: ${{success() && steps.execute.conclusion=='success'}}
+        uses: jabiseo/slack-custom-bot@main
+        with:
+          mode: DEPLOY
+          channelId: "${{ secrets.NOTI_CHANNEL_ID }}"
+          text: "Deploy 배포 성공"
+          statusColor: "#6eeb34"
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SHA: ${{env.VERSION}}
+          COMMIT_MESSAGE: ${{env.COMMIT_MESSAGE}}
+          AUTHOR_NAME: ${{env.AUTHOR_NAME}}
+
+      - name: send result when failure
+        if: ${{ failure() && steps.execute.conclusion=='failure'}}
+        uses: jabiseo/slack-custom-bot@main
+        with:
+          mode: DEPLOY
+          channelId: "${{ secrets.NOTI_CHANNEL_ID }}"
+          text: "Deploy 배포 실패"
+          statusColor: "#eb3434"
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SHA: ${{env.VERSION}}
+          COMMIT_MESSAGE: ${{env.COMMIT_MESSAGE}}
+          AUTHOR_NAME: ${{env.AUTHOR_NAME}}
+
