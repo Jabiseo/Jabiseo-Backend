@@ -12,36 +12,23 @@ env:
 
 
 jobs:
-  gradle-build:
+  checkout:
     runs-on: ubuntu-20.04
+    outputs:
+      COMMIT_MESSAGE: ${{steps.valueSetting.outputs.COMMIT_MESSAGE}}
+      AUTHOR: ${{steps.valueSetting.outputs.AUTHOR}}
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
-        with:
-          java-version: "17"
-          distribution: "oracle"
       - name: set environtment
+        id: valueSetting
         run: |
           COMMIT_MESSAGE=$(git log -1 --format='%s' ${{ github.sha }})
           AUTHOR=$(git log -1 --format='%an' ${{ github.sha }})
+          
           echo "COMMIT_MESSAGE=${COMMIT_MESSAGE}" >> $GITHUB_ENV
           echo "AUTHOR=${AUTHOR}" >> $GITHUB_ENV
-
-      - name: setup dockerImage name
-        run: |
-          git fetch --tags
-          GIT_TAG=$(git tag --sort=committerdate | tail -1 )
-          if [ -z "$GIT_TAG" ]; then
-            GIT_TAG="v0.0.0"
-          fi
-  
-          DATE=$(date +'%Y%m%d') 
-          COMMIT_SHA=$(git rev-parse --short HEAD) 
-          DOCKER_TAG="${GIT_TAG}-${DATE}-${COMMIT_SHA}"
-          DOCKER_IMAGE="${{env.ECR_URI}}:${DOCKER_TAG}"
-          echo "dockerTag=${DOCKER_TAG}" 
-          echo "DOCKER_IMAGE=${DOCKER_IMAGE}"
-          echo "DOCKER_TAG=${DOCKER_TAG}"  >> $GITHUB_ENV
+          echo "COMMIT_MESSAGE=${COMMIT_MESSAGE}" >> $GITHUB_OUTPUT
+          echo "AUTHOR=${AUTHOR}" >> $GITHUB_OUTPUT
 
       - name: Deploy start send message
         uses: jabiseo/slack-custom-bot@main
@@ -55,7 +42,16 @@ jobs:
           SHA: ${{env.VERSION}}
           COMMIT_MESSAGE: ${{env.COMMIT_MESSAGE}}
           AUTHOR: ${{env.AUTHOR}}
+          DOCKER_IMAGE: "Before build"
 
+  gradle-build:
+    needs: checkout
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "oracle"
       - name: save into application.properties
         env:
           DEV_VARIABLES: ${{ toJson(secrets) }}
@@ -75,15 +71,33 @@ jobs:
   docker-build-push:
       needs: gradle-build
       runs-on: ubuntu-20.04
+      outputs:
+        DOCKER_TAG: ${{steps.setUpDockerTag.outputs.DOCKER_TAG}}
       steps:
+        - name: setup dockerImage name
+          id: setUpDockerTag
+          run: |
+            git fetch --tags
+            GIT_TAG=$(git tag --sort=committerdate | tail -1 )
+            if [ -z "$GIT_TAG" ]; then
+              GIT_TAG="v0.0.0"
+            fi
+
+            DATE=$(date +'%Y%m%d') 
+            COMMIT_SHA=$(git rev-parse --short HEAD) 
+            DOCKER_TAG="${GIT_TAG}-${DATE}-${COMMIT_SHA}"
+            DOCKER_IMAGE="${{env.ECR_URI}}:${DOCKER_TAG}"
+            echo "dockerTag=${DOCKER_TAG}" 
+            echo "DOCKER_IMAGE=${DOCKER_IMAGE}"
+            echo "DOCKER_TAG=${DOCKER_TAG}"  >> $GITHUB_ENV
+            echo "DOCKER_TAG=${DOCKER_TAG}"  >> $GITHUB_OUTPUT
+
         - name: Configure AWS credentials
           uses: aws-actions/configure-aws-credentials@v1
           with:
             aws-access-key-id: ${{ secrets.AWS_ECR_ACCESS_KEY }}
             aws-secret-access-key: ${{ secrets.AWS_ECR_SECRET_KEY }}
             aws-region: ap-northeast-2
-
-
 
         - name: Set Up Docker Buildx
           id: buildx
@@ -109,9 +123,12 @@ jobs:
             tags: "${{env.ECR_URI}}:${{env.DOCKER_TAG}}"
 
   deploy:
-    needs: docker-build-push
+    needs:
+      - docker-build-push
     name: Deploy
     runs-on: [ self-hosted, dev-server ]
+    env:
+      DOCKER_TAG: ${{needs.docker-build-push.outputs.DOCKER_TAG}}
     steps:
       - name: checkout
         uses: actions/checkout@v3
@@ -133,8 +150,20 @@ jobs:
           docker stop ${{env.NAME}} && docker rm ${{env.NAME}} && docker rmi "${{env.ECR_URI}}:${{env.DOCKER_TAG}}"
             docker run -d -p 8080:8080 -e PROFILE=dev --name ${{env.NAME}} --network jabiseo-dev "${{env.ECR_URI}}:${{env.DOCKER_TAG}}"
 
+  result-send-sucess:
+    needs:
+      - gradle-build
+      - docker-build-push
+      - deploy
+      - checkout
+    runs-on: ubuntu-20.04
+    env:
+      DOCKER_TAG: ${{needs.docker-build-push.outputs.DOCKER_TAG}}
+      AUTHOR: ${{needs.checkout.outputs.AUTHOR}}
+      COMMIT_MESSAGE: ${{needs.checkout.outputs.COMMIT_MESSAGE}}
+    if: success()
+    steps:
       - name: send result when success
-        if: success()
         uses: jabiseo/slack-custom-bot@main
         with:
           mode: DEPLOY
@@ -146,9 +175,21 @@ jobs:
           SHA: ${{env.VERSION}}
           COMMIT_MESSAGE: ${{env.COMMIT_MESSAGE}}
           AUTHOR: ${{env.AUTHOR}}
+          DOCKER_IMAGE: ${{env.DOCKER_TAG}}
 
-      - name: send result when failure
-        if: failure()
+  result-send-failure:
+      needs:
+        - gradle-build
+        - docker-build-push
+        - deploy
+        - checkout
+      runs-on: ubuntu-20.04
+      env:
+        DOCKER_TAG: ${{needs.docker-build-push.outputs.DOCKER_TAG}}
+        AUTHOR: ${{needs.checkout.outputs.AUTHOR}}
+        COMMIT_MESSAGE: ${{needs.checkout.outputs.COMMIT_MESSAGE}}
+      if: failure()
+        - name: send result when failure
         uses: jabiseo/slack-custom-bot@main
         with:
           mode: DEPLOY
@@ -160,4 +201,5 @@ jobs:
           SHA: ${{env.VERSION}}
           COMMIT_MESSAGE: ${{env.COMMIT_MESSAGE}}
           AUTHOR: ${{env.AUTHOR}}
+          DOCKER_IMAGE: ${{env.DOCKER_TAG}}
 
