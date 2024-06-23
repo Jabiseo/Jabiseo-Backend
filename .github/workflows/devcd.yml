@@ -23,9 +23,9 @@ jobs:
       - name: set environtment
         run: |
           COMMIT_MESSAGE=$(git log -1 --format='%s' ${{ github.sha }})
-          AUTHOR_NAME=$(git log -1 --format='%an' ${{ github.sha }})
+          AUTHOR=$(git log -1 --format='%an' ${{ github.sha }})
           echo "COMMIT_MESSAGE=${COMMIT_MESSAGE}" >> $GITHUB_ENV
-          echo "AUTHOR_NAME=${AUTHOR_NAME}" >> $GITHUB_ENV
+          echo "AUTHOR=${AUTHOR}" >> $GITHUB_ENV
 
       - name: setup dockerImage name
         run: |
@@ -40,8 +40,8 @@ jobs:
           DOCKER_TAG="${GIT_TAG}-${DATE}-${COMMIT_SHA}"
           DOCKER_IMAGE="${{env.ECR_URI}}:${DOCKER_TAG}"
           echo "dockerTag=${DOCKER_TAG}" 
-          echo "dockerImage=${dockerImage}"
-          echo "dockerTag=${DOCKER_TAG}"  >> $GITHUB_ENV
+          echo "DOCKER_IMAGE=${DOCKER_IMAGE}"
+          echo "DOCKER_TAG=${DOCKER_TAG}"  >> $GITHUB_ENV
 
       - name: Deploy start send message
         uses: jabiseo/slack-custom-bot@main
@@ -54,7 +54,7 @@ jobs:
           SLACK_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SHA: ${{env.VERSION}}
           COMMIT_MESSAGE: ${{env.COMMIT_MESSAGE}}
-          AUTHOR_NAME: ${{env.AUTHOR_NAME}}
+          AUTHOR: ${{env.AUTHOR}}
 
       - name: save into application.properties
         env:
@@ -134,7 +134,7 @@ jobs:
             docker run -d -p 8080:8080 -e PROFILE=dev --name ${{env.NAME}} --network jabiseo-dev "${{env.ECR_URI}}:${{env.DOCKER_TAG}}"
 
       - name: send result when success
-        if: ${{success() && steps.execute.conclusion=='success'}}
+        if: success()
         uses: jabiseo/slack-custom-bot@main
         with:
           mode: DEPLOY
@@ -145,10 +145,10 @@ jobs:
           SLACK_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SHA: ${{env.VERSION}}
           COMMIT_MESSAGE: ${{env.COMMIT_MESSAGE}}
-          AUTHOR_NAME: ${{env.AUTHOR_NAME}}
+          AUTHOR: ${{env.AUTHOR}}
 
       - name: send result when failure
-        if: ${{ failure() && steps.execute.conclusion=='failure'}}
+        if: failure()
         uses: jabiseo/slack-custom-bot@main
         with:
           mode: DEPLOY
@@ -159,5 +159,5 @@ jobs:
           SLACK_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SHA: ${{env.VERSION}}
           COMMIT_MESSAGE: ${{env.COMMIT_MESSAGE}}
-          AUTHOR_NAME: ${{env.AUTHOR_NAME}}
+          AUTHOR: ${{env.AUTHOR}}
 
