@@ -37,11 +37,11 @@ class FindCertificateListUseCaseTest {
         given(certificateRepository.findAll()).willReturn(List.of(certificate1, certificate2));
 
         //when
-        List<FindCertificateListResponse> findCertificateListRespons = sut.execute();
+        List<FindCertificateListResponse> response = sut.execute();
 
         //then
-        assertThat(findCertificateListRespons.get(0).certificateId()).isEqualTo(certificateId1);
-        assertThat(findCertificateListRespons.get(1).certificateId()).isEqualTo(certificateId2);
+        assertThat(response.get(0).certificateId()).isEqualTo(certificateId1);
+        assertThat(response.get(1).certificateId()).isEqualTo(certificateId2);
     }
 
 }

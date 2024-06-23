@@ -3,6 +3,8 @@ package com.jabiseo.certificate.usecase;
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.certificate.domain.CertificateRepository;
 import com.jabiseo.certificate.dto.FindCertificateDetailResponse;
+import com.jabiseo.certificate.exception.CertificateBusinessException;
+import com.jabiseo.certificate.exception.CertificateErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,10 +12,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static com.jabiseo.fixture.CertificateFixture.createCertificate;
 import static com.jabiseo.fixture.ExamFixture.createExam;
 import static com.jabiseo.fixture.SubjectFixture.createSubject;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
 @DisplayName("자격증 정보 조회 테스트")
@@ -36,16 +41,29 @@ class FindCertificateDetailUseCaseTest {
         Certificate certificate = createCertificate(certificateId);
         createExam(examId, certificate);
         createSubject(subjectId, certificate);
-        given(certificateRepository.findById(certificateId)).willReturn(certificate);
+        given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
 
 
         //when
-        FindCertificateDetailResponse findCertificateDetailResponse = sut.execute(certificateId);
+        FindCertificateDetailResponse response = sut.execute(certificateId);
 
         //then
-        assertThat(findCertificateDetailResponse.certificateId()).isEqualTo(certificateId);
-        assertThat(findCertificateDetailResponse.exams().get(0).examId()).isEqualTo(examId);
-        assertThat(findCertificateDetailResponse.subjects().get(0).subjectId()).isEqualTo(subjectId);
+        assertThat(response.certificateId()).isEqualTo(certificateId);
+        assertThat(response.exams().get(0).examId()).isEqualTo(examId);
+        assertThat(response.subjects().get(0).subjectId()).isEqualTo(subjectId);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 자격증 정보 조회")
+    void givenNonExistedCertificateId_whenFindingCertificate_thenReturnException() {
+        //given
+        String nonExistedCertificateId = "1";
+        given(certificateRepository.findById(nonExistedCertificateId)).willReturn(Optional.empty());
+
+        //when & then
+        assertThatThrownBy(() -> sut.execute(nonExistedCertificateId))
+                .isInstanceOf(CertificateBusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", CertificateErrorCode.CERTIFICATE_NOT_FOUND);
     }
 
 }

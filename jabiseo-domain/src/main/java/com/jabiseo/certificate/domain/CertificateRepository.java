@@ -1,8 +1,6 @@
 package com.jabiseo.certificate.domain;
 
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CertificateRepository {
-     Certificate findById(String id);
-     List<Certificate> findAll();
+public interface CertificateRepository extends JpaRepository<Certificate, String>{
 }
