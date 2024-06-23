@@ -138,7 +138,7 @@ jobs:
       - name: Execute
         id: execute
         run: |
-          docker stop ${{env.NAME}} && docker rm ${{env.NAME}}"
+          docker stop ${{env.NAME}} && docker rm ${{env.NAME}}
             docker run -d -p 8080:8080 -e PROFILE=dev --name ${{env.NAME}} --network jabiseo-dev "${{env.ECR_URI}}:${{env.DOCKER_TAG}}"
   result-send-sucess:
     needs:
