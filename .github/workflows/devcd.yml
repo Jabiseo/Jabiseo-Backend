@@ -22,8 +22,8 @@ jobs:
           distribution: "oracle"
       - name: set environtment
         run: |
-          COMMIT_MESSAGE: $(git log -1 --format='%s' ${{ github.sha }})
-          AUTHOR_NAME: $(git log -1 --format='%an' ${{ github.sha }})
+          COMMIT_MESSAGE=$(git log -1 --format='%s' ${{ github.sha }})
+          AUTHOR_NAME=$(git log -1 --format='%an' ${{ github.sha }})
           echo "COMMIT_MESSAGE=${COMMIT_MESSAGE}" >> $GITHUB_ENV
           echo "AUTHOR_NAME=${AUTHOR_NAME}" >> $GITHUB_ENV
 
