@@ -189,17 +189,18 @@ jobs:
         AUTHOR: ${{needs.checkout.outputs.AUTHOR}}
         COMMIT_MESSAGE: ${{needs.checkout.outputs.COMMIT_MESSAGE}}
       if: failure()
+      steps:
         - name: send result when failure
-        uses: jabiseo/slack-custom-bot@main
-        with:
-          mode: DEPLOY
-          channelId: "${{ secrets.NOTI_CHANNEL_ID }}"
-          text: "Deploy 배포 실패"
-          statusColor: "#eb3434"
-        env:
-          SLACK_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-          SHA: ${{env.VERSION}}
-          COMMIT_MESSAGE: ${{env.COMMIT_MESSAGE}}
-          AUTHOR: ${{env.AUTHOR}}
-          DOCKER_IMAGE: ${{env.DOCKER_TAG}}
+          uses: jabiseo/slack-custom-bot@main
+          with:
+            mode: DEPLOY
+            channelId: "${{ secrets.NOTI_CHANNEL_ID }}"
+            text: "Deploy 배포 실패"
+            statusColor: "#eb3434"
+          env:
+            SLACK_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+            SHA: ${{env.VERSION}}
+            COMMIT_MESSAGE: ${{env.COMMIT_MESSAGE}}
+            AUTHOR: ${{env.AUTHOR}}
+            DOCKER_IMAGE: ${{env.DOCKER_TAG}}
 
