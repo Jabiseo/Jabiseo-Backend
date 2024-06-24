@@ -1,0 +1,20 @@
+# -- 기본으로 셋팅되는 값
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "infra-local"
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "infra-dev"
+
