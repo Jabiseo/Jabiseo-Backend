@@ -1,6 +1,6 @@
 package com.jabiseo.problem.dto;
 
-import com.jabiseo.problem.ReportType;
+import com.jabiseo.problem.domain.ReportType;
 
 public record CreateReportRequest(
         String problemId,

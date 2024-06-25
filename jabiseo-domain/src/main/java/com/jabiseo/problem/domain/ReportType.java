@@ -1,4 +1,4 @@
-package com.jabiseo.problem;
+package com.jabiseo.problem.domain;
 
 public enum ReportType {
     PROBLEM,
