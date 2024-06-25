@@ -28,12 +28,13 @@ public class ProblemController {
 
     @GetMapping("/set")
     public ResponseEntity<List<FindProblemsResponse>> findProblems(
-            @RequestParam(name = "certificate-id", required = false) String certificateId,
-            @RequestParam(name = "subject-id", required = false) String subjectId,
+            @RequestParam(name = "certificate-id") String certificateId,
+            @RequestParam(name = "subject-id") List<String> subjectIds,
             @RequestParam(name = "exam-id", required = false) String examId,
             @RequestParam(required = false) int count
     ) {
-        List<FindProblemsResponse> result = findProblemsUseCase.execute(certificateId, subjectId, examId, count);
+        List<FindProblemsResponse> result =
+                findProblemsUseCase.execute(certificateId, subjectIds, examId, count);
         return ResponseEntity.ok(result);
     }
 
