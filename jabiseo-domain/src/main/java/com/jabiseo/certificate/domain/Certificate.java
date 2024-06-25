@@ -46,4 +46,15 @@ public class Certificate {
         subjects.add(subject);
     }
 
+    public boolean containsSubject(String subjectId) {
+        return subjects.stream()
+                .map(Subject::getId)
+                .anyMatch(id -> id.equals(subjectId));
+    }
+
+    public boolean containsExam(String examId) {
+        return exams.stream()
+                .map(Exam::getId)
+                .anyMatch(id -> id.equals(examId));
+    }
 }

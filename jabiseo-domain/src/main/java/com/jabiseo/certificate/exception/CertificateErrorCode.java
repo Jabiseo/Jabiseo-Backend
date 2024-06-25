@@ -7,6 +7,8 @@ import lombok.Getter;
 public enum CertificateErrorCode implements ErrorCode {
 
     CERTIFICATE_NOT_FOUND("자격증을 찾을 수 없습니다.", "CER_001", ErrorCode.NOT_FOUND),
+    SUBJECT_NOT_FOUND_IN_CERTIFICATE("자격증에서 해당 과목을 찾을 수 없습니다.", "CER_002", ErrorCode.NOT_FOUND),
+    EXAM_NOT_FOUND_IN_CERTIFICATE("자격증에서 해당 시험을 찾을 수 없습니다.", "CER_003", ErrorCode.NOT_FOUND),
     ;
 
 

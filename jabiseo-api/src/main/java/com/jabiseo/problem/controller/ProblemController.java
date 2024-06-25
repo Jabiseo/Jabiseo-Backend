@@ -14,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,12 +29,13 @@ public class ProblemController {
 
     @GetMapping("/set")
     public ResponseEntity<List<FindProblemsResponse>> findProblems(
-            @RequestParam(name = "certificate-id", required = false) String certificateId,
-            @RequestParam(name = "subject-id", required = false) String subjectId,
-            @RequestParam(name = "exam-id", required = false) String examId,
+            @RequestParam(name = "certificate-id") String certificateId,
+            @RequestParam(name = "subject-id") List<String> subjectIds,
+            @RequestParam(name = "exam-id", required = false) Optional<String> examId,
             @RequestParam(required = false) int count
     ) {
-        List<FindProblemsResponse> result = findProblemsUseCase.execute(certificateId, subjectId, examId, count);
+        List<FindProblemsResponse> result =
+                findProblemsUseCase.execute(certificateId, subjectIds, examId, count);
         return ResponseEntity.ok(result);
     }
 
