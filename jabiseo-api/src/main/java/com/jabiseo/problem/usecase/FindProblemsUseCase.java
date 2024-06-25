@@ -80,17 +80,17 @@ public class FindProblemsUseCase {
         });
     }
 
-    private static void validateProblemCount(int count) {
-        // 문제의 개수가 올바른지 검사
-        if (count < MIN_PROBLEM_PER_SUBJECT_COUNT || count > MAX_PROBLEM_PER_SUBJECT_COUNT) {
-            throw new ProblemBusinessException(ProblemErrorCode.INVALID_PROBLEM_COUNT);
-        }
-    }
-
     private static void validateExamId(Optional<String> examId, Certificate certificate) {
         // 자격증에 해당하는 시험이 있는지 검사j
         if (examId.isPresent() && !certificate.containsExam(examId.get())) {
             throw new CertificateBusinessException(CertificateErrorCode.EXAM_NOT_FOUND_IN_CERTIFICATE);
+        }
+    }
+
+    private static void validateProblemCount(int count) {
+        // 문제의 개수가 올바른지 검사
+        if (count < MIN_PROBLEM_PER_SUBJECT_COUNT || count > MAX_PROBLEM_PER_SUBJECT_COUNT) {
+            throw new ProblemBusinessException(ProblemErrorCode.INVALID_PROBLEM_COUNT);
         }
     }
 }
