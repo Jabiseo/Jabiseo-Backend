@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -32,7 +33,7 @@ public class FindProblemsUseCase {
 
     private final ProblemRepository problemRepository;
 
-    public List<FindProblemsResponse> execute(String certificateId, List<String> subjectIds, String examId, int count) {
+    public List<FindProblemsResponse> execute(String certificateId, List<String> subjectIds, Optional<String> examId, int count) {
         Certificate certificate = certificateRepository.findById(certificateId)
                 .orElseThrow(() -> new CertificateBusinessException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));
 
@@ -41,15 +42,14 @@ public class FindProblemsUseCase {
         validateExamId(examId, certificate);
         validateProblemCount(count);
 
-        if (examId != null) {
-            return subjectIds.stream()
-                    .map(subjectId -> problemRepository.findRandomByExamIdAndSubjectId(examId, subjectId, count))
-                    .flatMap(List::stream)
-                    .map(FindProblemsResponse::from)
-                    .toList();
-        }
+
         return subjectIds.stream()
-                .map(subjectId -> problemRepository.findRandomBySubjectId(subjectId, count))
+                .map(subjectId -> {
+                    if (examId.isPresent()) {
+                        return problemRepository.findRandomByExamIdAndSubjectId(examId.get(), subjectId, count);
+                    }
+                    return problemRepository.findRandomBySubjectId(subjectId, count);
+                })
                 .flatMap(List::stream)
                 .map(FindProblemsResponse::from)
                 .toList();
@@ -87,9 +87,9 @@ public class FindProblemsUseCase {
         }
     }
 
-    private static void validateExamId(String examId, Certificate certificate) {
-        // 자격증에 해당하는 시험이 있는지 검사
-        if (examId != null && !certificate.containsExam(examId)) {
+    private static void validateExamId(Optional<String> examId, Certificate certificate) {
+        // 자격증에 해당하는 시험이 있는지 검사j
+        if (examId.isPresent() && !certificate.containsExam(examId.get())) {
             throw new CertificateBusinessException(CertificateErrorCode.EXAM_NOT_FOUND_IN_CERTIFICATE);
         }
     }

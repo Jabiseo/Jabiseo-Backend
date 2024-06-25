@@ -54,4 +54,29 @@ public class Problem {
                 .filter((choice) -> choice != null && !choice.isBlank())
                 .toList();
     }
+
+    public Problem(String id, String description, String choice1, String choice2, String choice3,
+                   String choice4, String choice5, int answerNumber, String theory, String solution,
+                   Certificate certificate, Exam exam, Subject subject) {
+        this.id = id;
+        this.description = description;
+        this.choice1 = choice1;
+        this.choice2 = choice2;
+        this.choice3 = choice3;
+        this.choice4 = choice4;
+        this.choice5 = choice5;
+        this.answerNumber = answerNumber;
+        this.theory = theory;
+        this.solution = solution;
+        this.certificate = certificate;
+        this.exam = exam;
+        this.subject = subject;
+    }
+
+    public static Problem of(String id, String description, String choice1, String choice2, String choice3,
+                             String choice4, String choice5, int answerNumber, String theory, String solution,
+                             Certificate certificate, Exam exam, Subject subject) {
+        return new Problem(id, description, choice1, choice2, choice3, choice4, choice5,
+                answerNumber, theory, solution, certificate, exam, subject);
+    }
 }
