@@ -7,6 +7,8 @@ import com.jabiseo.problem.domain.BookmarkRepository;
 import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.CreateBookmarkRequest;
+import com.jabiseo.problem.exception.ProblemBusinessException;
+import com.jabiseo.problem.exception.ProblemErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +22,7 @@ import java.util.Optional;
 import static com.jabiseo.fixture.MemberFixture.createMember;
 import static com.jabiseo.fixture.ProblemFixture.createProblem;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -41,8 +44,8 @@ class CreateBookmarkUseCaseTest {
     BookmarkRepository bookmarkRepository;
 
     @Test
-    @DisplayName("북마크 생성 테스트 성공 케이스")        
-    void givenMemberIdAndProblemId_whenCreatingBookmark_thenCreateBookmark() throws Exception {
+    @DisplayName("북마크 생성 테스트 성공 케이스")
+    void givenMemberIdAndProblemId_whenCreatingBookmark_thenCreateBookmark() {
         //given
         String memberId = "1";
         String problemId = "2";
@@ -53,10 +56,10 @@ class CreateBookmarkUseCaseTest {
         given(bookmarkRepository.existsByMemberIdAndProblemId(memberId, problemId)).willReturn(false);
         given(bookmarkRepository.save(any())).willReturn(Bookmark.of(member, problem));
 
-        
+
         //when
         sut.execute(memberId, new CreateBookmarkRequest(problemId));
-        
+
         //then
         ArgumentCaptor<Bookmark> bookmarkCaptor = ArgumentCaptor.forClass(Bookmark.class);
         verify(bookmarkRepository).save(bookmarkCaptor.capture());
@@ -66,5 +69,38 @@ class CreateBookmarkUseCaseTest {
         assertThat(savedBookmark.getMember().getId()).isEqualTo(memberId);
         assertThat(savedBookmark.getProblem().getId()).isEqualTo(problemId);
     }
+
+    @Test
+    @DisplayName("이미 북마크한 문제를 북마크하는 경우 테스트")
+    void givenAlreadyExistedMemberIdAndProblemId_whenCreatingBookmark_thenReturnError() {
+        //given
+        String memberId = "1";
+        String problemId = "2";
+        given(bookmarkRepository.existsByMemberIdAndProblemId(memberId, problemId)).willReturn(true);
+
+
+        //when & then
+        assertThatThrownBy(() -> sut.execute(memberId, new CreateBookmarkRequest(problemId)))
+                .isInstanceOf(ProblemBusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ProblemErrorCode.BOOKMARK_ALREADY_EXISTS);
+
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 문제의 북마크 생성 테스트")
+    void givenMemberIdAndNonExistedProblemId_whenCreatingBookmark_thenReturnError() {
+        //given
+        String memberId = "1";
+        String problemId = "2";
+        given(bookmarkRepository.existsByMemberIdAndProblemId(memberId, problemId)).willReturn(false);
+        given(problemRepository.findById(problemId)).willReturn(Optional.empty());
+
+        //when & then
+        assertThatThrownBy(() -> sut.execute(memberId, new CreateBookmarkRequest(problemId)))
+                .isInstanceOf(ProblemBusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ProblemErrorCode.PROBLEM_NOT_FOUND);
+
+    }
+
 
 }
