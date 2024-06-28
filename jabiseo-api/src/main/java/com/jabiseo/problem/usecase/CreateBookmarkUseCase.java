@@ -25,15 +25,14 @@ public class CreateBookmarkUseCase {
     private final BookmarkRepository bookmarkRepository;
 
     public String execute(String memberId, CreateBookmarkRequest request) {
-
-        Member member = memberRepository.getReferenceById(memberId);
-        String problemId = request.problemId();
-        Problem problem = problemRepository.findById(problemId)
-                .orElseThrow(() -> new ProblemBusinessException(ProblemErrorCode.PROBLEM_NOT_FOUND));
-
-        if (bookmarkRepository.existsByMemberIdAndProblemId(memberId, problemId)) {
+        if (bookmarkRepository.existsByMemberIdAndProblemId(memberId, request.problemId())) {
             throw new ProblemBusinessException(ProblemErrorCode.BOOKMARK_ALREADY_EXISTS);
         }
+
+        Member member = memberRepository.getReferenceById(memberId);
+        Problem problem = problemRepository.findById(request.problemId())
+                .orElseThrow(() -> new ProblemBusinessException(ProblemErrorCode.PROBLEM_NOT_FOUND));
+
 
         Bookmark bookmark = Bookmark.of(member, problem);
 
