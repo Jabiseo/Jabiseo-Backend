@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -50,7 +51,7 @@ public class Problem {
     private Subject subject;
 
     @OneToMany(mappedBy = "problem")
-    private List<Bookmark> bookmarks;
+    private List<Bookmark> bookmarks = new ArrayList<>();
 
     public List<String> getChoices() {
         return Stream.of(choice1, choice2, choice3, choice4, choice5)

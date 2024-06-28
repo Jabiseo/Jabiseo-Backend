@@ -1,12 +1,42 @@
 package com.jabiseo.problem.usecase;
 
+import com.jabiseo.member.domain.Member;
+import com.jabiseo.member.domain.MemberRepository;
+import com.jabiseo.problem.domain.Bookmark;
+import com.jabiseo.problem.domain.BookmarkRepository;
+import com.jabiseo.problem.domain.Problem;
+import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.CreateBookmarkRequest;
+import com.jabiseo.problem.exception.ProblemBusinessException;
+import com.jabiseo.problem.exception.ProblemErrorCode;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class CreateBookmarkUseCase {
 
-    public String execute(CreateBookmarkRequest request) {
-        return "bookmarkId";
+    private final MemberRepository memberRepository;
+
+    private final ProblemRepository problemRepository;
+
+    private final BookmarkRepository bookmarkRepository;
+
+    public String execute(String memberId, CreateBookmarkRequest request) {
+
+        Member member = memberRepository.getReferenceById(memberId);
+        String problemId = request.problemId();
+        Problem problem = problemRepository.findById(problemId)
+                .orElseThrow(() -> new ProblemBusinessException(ProblemErrorCode.PROBLEM_NOT_FOUND));
+
+        if (bookmarkRepository.existsByMemberIdAndProblemId(memberId, problemId)) {
+            throw new ProblemBusinessException(ProblemErrorCode.BOOKMARK_ALREADY_EXISTS);
+        }
+
+        Bookmark bookmark = Bookmark.of(member, problem);
+
+        return bookmarkRepository.save(bookmark).getId();
     }
 }

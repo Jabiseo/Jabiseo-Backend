@@ -24,7 +24,8 @@ public class BookmarkController {
     public ResponseEntity<Void> createBookmark(
             @RequestBody CreateBookmarkRequest request
     ) {
-        String bookmarkId = createBookmarkUseCase.execute(request);
+        String memberId = "1";
+        String bookmarkId = createBookmarkUseCase.execute(memberId, request);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
