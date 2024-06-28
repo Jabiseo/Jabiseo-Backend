@@ -49,6 +49,9 @@ public class Problem {
     @JoinColumn(name = "subject_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Subject subject;
 
+    @OneToMany(mappedBy = "problem")
+    private List<Bookmark> bookmarks;
+
     public List<String> getChoices() {
         return Stream.of(choice1, choice2, choice3, choice4, choice5)
                 .filter((choice) -> choice != null && !choice.isBlank())
@@ -78,5 +81,9 @@ public class Problem {
                              Certificate certificate, Exam exam, Subject subject) {
         return new Problem(id, description, choice1, choice2, choice3, choice4, choice5,
                 answerNumber, theory, solution, certificate, exam, subject);
+    }
+
+    public void addBookmark(Bookmark bookmark) {
+        bookmarks.add(bookmark);
     }
 }
