@@ -1,6 +1,7 @@
 package com.jabiseo.member.domain;
 
 import com.jabiseo.certificate.domain.Certificate;
+import com.jabiseo.problem.domain.Bookmark;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,6 +13,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -51,6 +54,9 @@ public class Member {
     @JoinColumn(name = "certificate_state_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Certificate certificateState;
 
+    @OneToMany(mappedBy = "member")
+    private List<Bookmark> bookmarks = new ArrayList<>();
+
     private Member(String id, String email, String nickname, String oauthId, String oauthServer, String profileImage) {
         this.id = id;
         this.email = email;
@@ -70,4 +76,7 @@ public class Member {
         return this;
     }
 
+    public void addBookmark(Bookmark bookmark) {
+        bookmarks.add(bookmark);
+    }
 }

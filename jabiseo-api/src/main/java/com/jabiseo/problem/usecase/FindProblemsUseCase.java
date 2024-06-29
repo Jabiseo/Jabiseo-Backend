@@ -6,6 +6,7 @@ import com.jabiseo.certificate.dto.ExamResponse;
 import com.jabiseo.certificate.dto.SubjectResponse;
 import com.jabiseo.certificate.exception.CertificateBusinessException;
 import com.jabiseo.certificate.exception.CertificateErrorCode;
+import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.ChoiceResponse;
 import com.jabiseo.problem.dto.FindProblemsRequest;
@@ -43,7 +44,7 @@ public class FindProblemsUseCase {
         validateProblemCount(count);
 
 
-        return subjectIds.stream()
+        List<Problem> problems = subjectIds.stream()
                 .map(subjectId -> {
                     if (examId.isPresent()) {
                         return problemRepository.findRandomByExamIdAndSubjectId(examId.get(), subjectId, count);
@@ -51,6 +52,9 @@ public class FindProblemsUseCase {
                     return problemRepository.findRandomBySubjectId(subjectId, count);
                 })
                 .flatMap(List::stream)
+                .toList();
+
+        return problems.stream()
                 .map(FindProblemsResponse::from)
                 .toList();
     }
