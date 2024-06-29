@@ -41,7 +41,6 @@ public class Bookmark {
         String id = UUID.randomUUID().toString(); //TODO: PK 생성 전략 변경 필요
         Bookmark bookmark = new Bookmark(id, member, problem);
         member.addBookmark(bookmark);
-        problem.addBookmark(bookmark);
         return bookmark;
     }
 
