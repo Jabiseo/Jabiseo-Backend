@@ -64,7 +64,8 @@ public class ProblemController {
 
     @GetMapping("/bookmarked")
     public ResponseEntity<List<FindBookmarkedProblemsResponse>> findBookmarkedProblems() {
-        List<FindBookmarkedProblemsResponse> result = findBookmarkedProblemsUseCase.execute();
+        String memberId = "1"; // TODO: 로그인 기능 구현 후 로그인한 사용자의 ID로 변경
+        List<FindBookmarkedProblemsResponse> result = findBookmarkedProblemsUseCase.execute(memberId);
         return ResponseEntity.ok(result);
     }
 }
