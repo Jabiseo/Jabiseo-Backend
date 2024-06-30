@@ -2,7 +2,7 @@
 # --- -> 구분자 없는 default 영역
 spring:
   config:
-    import: "classpath:/domain.yml,classpath:/infra.yml"
+    import: "classpath:/domain.yml,classpath:/infra.yml,classpath:/api.yml"
 
   profiles:
     active: local # -- 기본 값은 local로 실행한다.
@@ -10,7 +10,9 @@ spring:
       local:
         - "domain-local"
         - "infra-local"
+        - "api-local"
       dev:
         - "domain-dev"
         - "infra-dev"
+        - "api-dev"
 

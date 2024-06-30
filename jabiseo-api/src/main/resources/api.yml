@@ -1,0 +1,23 @@
+#-- 해당 부분은 override 하지 않으면 그대로 적용이 된다.
+
+oidc:
+  kakao:
+    issuer: ${KAKAO_ISSUER}
+    admin-key: ${KAKAO_ADMIN_KEY}
+    client-id: ${KAKAO_CLEINT_ID}
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: api-local
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: api-dev
+
+
