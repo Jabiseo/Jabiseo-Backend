@@ -24,7 +24,8 @@ public class BookmarkController {
     public ResponseEntity<Void> createBookmark(
             @RequestBody CreateBookmarkRequest request
     ) {
-        String bookmarkId = createBookmarkUseCase.execute(request);
+        String memberId = "1"; // TODO : 로그인 기능 구현 후 로그인한 사용자의 ID로 변경
+        String bookmarkId = createBookmarkUseCase.execute(memberId, request);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -39,7 +40,8 @@ public class BookmarkController {
     public ResponseEntity<Void> deleteBookmark(
             @RequestBody DeleteBookmarkRequest request
     ) {
-        deleteBookmarkUseCase.execute(request);
+        String memberId = "1"; // TODO : 로그인 기능 구현 후 로그인한 사용자의 ID로 변경
+        deleteBookmarkUseCase.execute(memberId, request);
         return ResponseEntity.noContent().build();
     }
 }

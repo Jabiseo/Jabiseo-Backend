@@ -8,6 +8,7 @@ import com.jabiseo.certificate.exception.CertificateBusinessException;
 import com.jabiseo.certificate.exception.CertificateErrorCode;
 import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
+import com.jabiseo.problem.dto.FindProblemsRequest;
 import com.jabiseo.problem.dto.FindProblemsResponse;
 import com.jabiseo.problem.exception.ProblemBusinessException;
 import com.jabiseo.problem.exception.ProblemErrorCode;
@@ -114,7 +115,7 @@ class FindProblemsUseCaseTest {
 
     @Test
     @DisplayName("문제 세트 조회 시 자격증이 존재하지 않는 경우")
-    void givenInvalidCertificate_whenFindingProblems_thenReturnError() throws Exception {
+    void givenInvalidCertificate_whenFindingProblems_thenReturnError() {
         //given
         String certificateId = "1";
         String subjectId = "2";
@@ -130,7 +131,7 @@ class FindProblemsUseCaseTest {
 
     @Test
     @DisplayName("문제 세트 조회 시 자격증에 과목들이 하나라도 매칭되지 않는 경우")
-    void givenNotMatchingCertificateIdAndSubjectId_whenFindProblems_thenReturnError() throws Exception {
+    void givenNotMatchingCertificateIdAndSubjectId_whenFindingProblems_thenReturnError() {
         //given
         String[] certificateIds = {"1", "8"};
         String[] subjectIds = {"2", "3"};
@@ -151,7 +152,7 @@ class FindProblemsUseCaseTest {
 
     @Test
     @DisplayName("문제 세트 조회 시 자격증에 시험이 매칭되지 않는 경우")
-    void givenNotMatchingCertificateIdAndExamId_whenFindProblems_thenReturnError() throws Exception {
+    void givenNotMatchingCertificateIdAndExamId_whenFindingProblems_thenReturnError() {
         //given
         String[] certificateIds = {"1", "8"};
         String subjectId = "2";
@@ -173,7 +174,7 @@ class FindProblemsUseCaseTest {
 
     @Test
     @DisplayName("문제 세트 조회 시 과목당 문제 수가 0 이하이거나 20 초과인 경우")
-    void givenInvalidCount_whenFindProblems_thenReturnError() throws Exception {
+    void givenInvalidCount_whenFindingProblems_thenReturnError() {
         //given
         String certificateId = "1";
         String subjectId = "2";
@@ -192,6 +193,42 @@ class FindProblemsUseCaseTest {
         assertThatThrownBy(() -> sut.execute(certificateId, List.of(subjectId), Optional.of(examId), count2))
                 .isInstanceOf(ProblemBusinessException.class)
                 .hasFieldOrPropertyWithValue("errorCode", ProblemErrorCode.INVALID_PROBLEM_COUNT);
+    }
+
+    @Test
+    @DisplayName("북마크 문제 세트 조회 테스트 성공 케이스")
+    void givenProblemIds_whenFindingProblems_thenFindProblems() {
+        //given
+        String[] problemIds = {"1", "2", "3"};
+        Problem problem1 = createProblem(problemIds[0]);
+        Problem problem2 = createProblem(problemIds[1]);
+        Problem problem3 = createProblem(problemIds[2]);
+        FindProblemsRequest request = new FindProblemsRequest(List.of(problemIds));
+        given(problemRepository.findById(problemIds[0])).willReturn(Optional.of(problem1));
+        given(problemRepository.findById(problemIds[1])).willReturn(Optional.of(problem2));
+        given(problemRepository.findById(problemIds[2])).willReturn(Optional.of(problem3));
+
+        //when
+        List<FindProblemsResponse> result = sut.execute(request);
+
+        //then
+        assertThat(result.get(0).problemId()).isEqualTo(problemIds[0]);
+        assertThat(result.get(1).problemId()).isEqualTo(problemIds[1]);
+        assertThat(result.get(2).problemId()).isEqualTo(problemIds[2]);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 문제로 북마크 문제 세트 조회")
+    void givenNonExistedProblemIds_whenFindingProblems_thenReturnError() {
+        //given
+        String[] problemIds = {"1", "2", "3"};
+        FindProblemsRequest request = new FindProblemsRequest(List.of(problemIds));
+        given(problemRepository.findById(problemIds[0])).willReturn(Optional.empty());
+
+        //when & then
+        assertThatThrownBy(() -> sut.execute(request))
+                .isInstanceOf(ProblemBusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ProblemErrorCode.PROBLEM_NOT_FOUND);
     }
 
 }
