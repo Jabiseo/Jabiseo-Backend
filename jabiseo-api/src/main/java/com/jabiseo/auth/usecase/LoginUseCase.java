@@ -2,6 +2,7 @@ package com.jabiseo.auth.usecase;
 
 import com.jabiseo.auth.dto.LoginRequest;
 import com.jabiseo.auth.dto.LoginResponse;
+import com.jabiseo.auth.jwt.JwtHandler;
 import com.jabiseo.auth.oidc.OauthMemberInfo;
 import com.jabiseo.auth.oidc.TokenValidatorManager;
 import com.jabiseo.member.domain.Member;
@@ -17,7 +18,9 @@ public class LoginUseCase {
 
     private final TokenValidatorManager tokenValidatorManager;
     private final MemberFactory memberFactory;
+    private final JwtHandler jwtHandler;
     private final MemberRepository memberRepository;
+    private final TokenRepository tokenRepository;
 
     public LoginResponse execute(LoginRequest loginRequest) {
         OauthMemberInfo oauthMemberInfo = tokenValidatorManager.validate(loginRequest.idToken(), loginRequest.oauthServer());
@@ -34,8 +37,11 @@ public class LoginUseCase {
         }
 
 
+        String accessToken = jwtHandler.createAccessToken(member);
+        String refreshToken = jwtHandler.createRefreshToken();
+        tokenRepository.saveToken(member.getId(), refreshToken);
 
-        return new LoginResponse("access_token", "refresh_token");
+        return new LoginResponse(accessToken, refreshToken);
     }
 
 

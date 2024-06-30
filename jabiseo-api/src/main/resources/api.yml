@@ -6,6 +6,11 @@ oidc:
     admin-key: ${KAKAO_ADMIN_KEY}
     client-id: ${KAKAO_CLEINT_ID}
 
+jwt:
+  access-expired-min: 60
+  refresh-expired-day: 30
+  refresh-key: ${REFRESH_KEY}
+  access-key: ${ACCESS_KEY}
 
 ---
 spring:
@@ -13,6 +18,8 @@ spring:
     activate:
       on-profile: api-local
 
+jwt:
+  access-expired-min: 6000
 
 ---
 spring:

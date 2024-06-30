@@ -6,7 +6,9 @@ public enum AuthenticationErrorCode implements ErrorCode {
 
     INVALID_ID_TOKEN("잘못된 idToken 입니다.", "AUTH_001", ErrorCode.AUTHENTICATION_ERROR),
     EXPIRED_ID_TOKEN("만료된 idToken 입니다.", "AUTH_002", ErrorCode.AUTHENTICATION_ERROR),
-    NOT_SUPPORT_OAUTH("지원하지 않는 oauth 인증 수단입니다", "AUTH_003", ErrorCode.AUTHENTICATION_ERROR);
+    NOT_SUPPORT_OAUTH("지원하지 않는 oauth 인증 수단입니다", "AUTH_003", ErrorCode.AUTHENTICATION_ERROR),
+    EXPIRED_APP_JWT("만료된 jwt 토큰 입니다", "AUTH_004", ErrorCode.AUTHENTICATION_ERROR),
+    INVALID_APP_JWT("잘못된 jwt 토큰입니다", "AUTH_005", ErrorCode.AUTHENTICATION_ERROR);
 
     private final String message;
     private final String errorCode;

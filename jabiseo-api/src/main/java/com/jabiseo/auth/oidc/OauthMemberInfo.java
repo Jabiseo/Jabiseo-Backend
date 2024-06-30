@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 public class OauthMemberInfo {
 
-    private  String oauthId;
-    private String oauthServer;
+    private final String oauthId;
+    private final String oauthServer;
 
 
     @Builder

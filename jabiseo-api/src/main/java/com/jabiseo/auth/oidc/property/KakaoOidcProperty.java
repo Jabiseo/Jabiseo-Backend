@@ -18,7 +18,7 @@ public class KakaoOidcProperty {
         this.issuer = issuer;
     }
 
-    public OidcIdTokenProperty toIdTokenPropety() {
+    public OidcIdTokenProperty toIdTokenProperty() {
         return new OidcIdTokenProperty(issuer, clientId);
     }
 }

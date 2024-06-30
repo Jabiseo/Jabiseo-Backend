@@ -17,7 +17,7 @@ public class KakaoIdTokenValidator extends AbstractIdTokenValidator {
     private final KakaoKauthClient kakaoKauthClient;
 
     public KakaoIdTokenValidator(KakaoOidcProperty kakaoOidcProperty, IdTokenJwtHandler idTokenJwtHandler, KakaoKauthClient kakaoKauthClient) {
-        super(kakaoOidcProperty.toIdTokenPropety(), idTokenJwtHandler);
+        super(kakaoOidcProperty.toIdTokenProperty(), idTokenJwtHandler);
         this.kakaoKauthClient = kakaoKauthClient;
     }
 
