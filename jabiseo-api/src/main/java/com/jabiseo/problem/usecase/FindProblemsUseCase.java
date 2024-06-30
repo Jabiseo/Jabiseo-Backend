@@ -2,13 +2,10 @@ package com.jabiseo.problem.usecase;
 
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.certificate.domain.CertificateRepository;
-import com.jabiseo.certificate.dto.ExamResponse;
-import com.jabiseo.certificate.dto.SubjectResponse;
 import com.jabiseo.certificate.exception.CertificateBusinessException;
 import com.jabiseo.certificate.exception.CertificateErrorCode;
 import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
-import com.jabiseo.problem.dto.ChoiceResponse;
 import com.jabiseo.problem.dto.FindProblemsRequest;
 import com.jabiseo.problem.dto.FindProblemsResponse;
 import com.jabiseo.problem.exception.ProblemBusinessException;
@@ -17,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,19 +56,11 @@ public class FindProblemsUseCase {
     }
 
     public List<FindProblemsResponse> execute(FindProblemsRequest request) {
-        return new ArrayList<>(List.of(
-                new FindProblemsResponse(
-                        "1",
-                        new ExamResponse("examId", "examDescription"),
-                        new SubjectResponse("subjectId", 3, "subjectName"),
-                        true,
-                        "description",
-                        List.of(new ChoiceResponse("choice")),
-                        1,
-                        "theory",
-                        "solution"
-                )
-        ));
+        return request.problemIds().stream()
+                .map(problemId -> problemRepository.findById(problemId)
+                        .orElseThrow(() -> new ProblemBusinessException(ProblemErrorCode.PROBLEM_NOT_FOUND)))
+                .map(FindProblemsResponse::from)
+                .toList();
     }
 
     private static void validateSubjectIds(List<String> subjectIds, Certificate certificate) {
