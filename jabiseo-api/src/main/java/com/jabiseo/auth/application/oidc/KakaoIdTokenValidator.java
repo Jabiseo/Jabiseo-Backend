@@ -18,6 +18,7 @@ import java.util.Map;
 public class KakaoIdTokenValidator extends AbstractIdTokenValidator {
 
     private final String KAKAO_ID_KEY = "sub";
+    private final String KAKAO_EMAIL_KEY = "email";
     private final KakaoKauthClient kakaoKauthClient;
     private final RedisCacheRepository redisCacheRepository;
     private final String CACHE_KEY = "KAKAO_OIDC_PUBLIC_KEY";
@@ -46,15 +47,15 @@ public class KakaoIdTokenValidator extends AbstractIdTokenValidator {
     @Override
     protected OauthMemberInfo extractMemberInfoFromPayload(Map<String, Object> payload) {
         String oauthId = (String) payload.get(KAKAO_ID_KEY);
-
-        if (requireValueIsNull(oauthId)) {
+        String email = (String) payload.get(KAKAO_EMAIL_KEY);
+        if (requireValueIsNull(oauthId, email)) {
             throw new AuthenticationBusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR);
         }
 
         return OauthMemberInfo.builder()
                 .oauthId(oauthId)
                 .oauthServer(OauthServer.KAKAO)
-                .email("email@email.com")
+                .email(email)
                 .build();
     }
 
@@ -66,7 +67,7 @@ public class KakaoIdTokenValidator extends AbstractIdTokenValidator {
     /*
      *  해당 예외가 발생하는건 카카오에서 프로퍼티 key 값을 바꾸지 않는 이상은 발생하지 않는다.
      */
-    private boolean requireValueIsNull(String oauthId) {
-        return oauthId == null;
+    private boolean requireValueIsNull(String oauthId, String email) {
+        return oauthId == null || email == null;
     }
 }
