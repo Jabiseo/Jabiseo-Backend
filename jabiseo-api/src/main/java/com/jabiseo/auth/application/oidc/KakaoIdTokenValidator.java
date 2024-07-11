@@ -1,5 +1,6 @@
 package com.jabiseo.auth.application.oidc;
 
+import com.jabiseo.cache.RedisCacheRepository;
 import com.jabiseo.client.KakaoKauthClient;
 import com.jabiseo.client.OidcPublicKey;
 import com.jabiseo.client.OidcPublicKeyResponse;
@@ -18,19 +19,24 @@ public class KakaoIdTokenValidator extends AbstractIdTokenValidator {
 
     private final String KAKAO_ID_KEY = "sub";
     private final KakaoKauthClient kakaoKauthClient;
+    private final RedisCacheRepository redisCacheRepository;
+    private final String CACHE_KEY = "KAKAO_OIDC_PUBLIC_KEY";
 
-    public KakaoIdTokenValidator(KakaoOidcProperty kakaoOidcProperty, IdTokenJwtHandler idTokenJwtHandler, KakaoKauthClient kakaoKauthClient) {
+    public KakaoIdTokenValidator(KakaoOidcProperty kakaoOidcProperty, IdTokenJwtHandler idTokenJwtHandler, KakaoKauthClient kakaoKauthClient, RedisCacheRepository redisCacheRepository) {
         super(kakaoOidcProperty.toIdTokenProperty(), idTokenJwtHandler);
         this.kakaoKauthClient = kakaoKauthClient;
+        this.redisCacheRepository = redisCacheRepository;
     }
 
     @Override
     protected OidcPublicKey getOidcPublicKey(String kid) {
 
-        // TODO: 캐싱 적용 & 체크 필요
-
-        OidcPublicKeyResponse publicKeys = kakaoKauthClient.getPublicKeys().getBody();
-        List<OidcPublicKey> keys = publicKeys.getKeys();
+        List<OidcPublicKey> keys = redisCacheRepository.getPublicKeys(CACHE_KEY);
+        if (keys == null) {
+            OidcPublicKeyResponse publicKeys = kakaoKauthClient.getPublicKeys().getBody();
+            keys = publicKeys.getKeys();
+            redisCacheRepository.savePublicKey(CACHE_KEY, keys);
+        }
 
         return keys.stream().filter((key) -> key.getKid().equals(kid))
                 .findAny()

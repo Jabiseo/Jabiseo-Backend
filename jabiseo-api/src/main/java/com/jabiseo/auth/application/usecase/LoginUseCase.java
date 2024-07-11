@@ -1,15 +1,14 @@
 package com.jabiseo.auth.application.usecase;
 
 import com.jabiseo.auth.application.MemberFactory;
-import com.jabiseo.auth.domain.TokenRepository;
 import com.jabiseo.auth.dto.LoginRequest;
 import com.jabiseo.auth.dto.LoginResponse;
 import com.jabiseo.auth.application.JwtHandler;
 import com.jabiseo.auth.application.oidc.OauthMemberInfo;
 import com.jabiseo.auth.application.oidc.TokenValidatorManager;
+import com.jabiseo.cache.RedisCacheRepository;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
-import com.jabiseo.member.domain.OauthServer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +21,7 @@ public class LoginUseCase {
     private final MemberFactory memberFactory;
     private final JwtHandler jwtHandler;
     private final MemberRepository memberRepository;
-    private final TokenRepository tokenRepository;
+    private final RedisCacheRepository cacheRepository;
 
     public LoginResponse execute(LoginRequest loginRequest) {
         OauthMemberInfo oauthMemberInfo = tokenValidatorManager.validate(loginRequest.idToken(), loginRequest.oauthServer());
@@ -38,7 +37,7 @@ public class LoginUseCase {
 
         String accessToken = jwtHandler.createAccessToken(member);
         String refreshToken = jwtHandler.createRefreshToken();
-        tokenRepository.saveToken(member.getId(), refreshToken);
+        cacheRepository.saveToken(member.getId(), refreshToken);
 
         return new LoginResponse(accessToken, refreshToken);
     }
