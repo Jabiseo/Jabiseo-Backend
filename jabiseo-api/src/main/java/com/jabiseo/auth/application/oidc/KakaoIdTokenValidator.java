@@ -1,10 +1,12 @@
-package com.jabiseo.auth.oidc;
+package com.jabiseo.auth.application.oidc;
 
+import com.jabiseo.client.KakaoKauthClient;
+import com.jabiseo.client.OidcPublicKey;
+import com.jabiseo.client.OidcPublicKeyResponse;
 import com.jabiseo.auth.exception.AuthenticationBusinessException;
 import com.jabiseo.auth.exception.AuthenticationErrorCode;
-import com.jabiseo.auth.oidc.property.KakaoOidcProperty;
+import com.jabiseo.auth.application.oidc.property.KakaoOidcProperty;
 import com.jabiseo.exception.CommonErrorCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -26,12 +28,12 @@ public class KakaoIdTokenValidator extends AbstractIdTokenValidator {
 
         // TODO: 캐싱 적용 & 체크 필요
 
-        ResponseEntity<OidcPublicKeyResponse> publicKeys = kakaoKauthClient.getPublicKeys();
-        List<OidcPublicKey> keys = publicKeys.getBody().getKeys();
+        OidcPublicKeyResponse publicKeys = kakaoKauthClient.getPublicKeys().getBody();
+        List<OidcPublicKey> keys = publicKeys.getKeys();
 
         return keys.stream().filter((key) -> key.getKid().equals(kid))
                 .findAny()
-                .orElseThrow(()-> new AuthenticationBusinessException(AuthenticationErrorCode.INVALID_ID_TOKEN));
+                .orElseThrow(() -> new AuthenticationBusinessException(AuthenticationErrorCode.INVALID_ID_TOKEN));
     }
 
     @Override

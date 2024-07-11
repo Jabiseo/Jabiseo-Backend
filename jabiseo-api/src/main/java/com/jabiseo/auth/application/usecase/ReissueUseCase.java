@@ -1,4 +1,4 @@
-package com.jabiseo.auth.usecase;
+package com.jabiseo.auth.application.usecase;
 
 import com.jabiseo.auth.dto.LoginResponse;
 import org.springframework.stereotype.Service;

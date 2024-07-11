@@ -1,4 +1,4 @@
-package com.jabiseo.auth.oidc;
+package com.jabiseo.client;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-class OidcPublicKeyResponse {
+public class OidcPublicKeyResponse {
 
     private List<OidcPublicKey> keys;
 }

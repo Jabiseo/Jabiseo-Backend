@@ -1,6 +1,8 @@
-package com.jabiseo.member.domain;
+package com.jabiseo.auth.application;
 
 
+import com.jabiseo.member.domain.Member;
+import com.jabiseo.member.domain.RandomNicknameGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

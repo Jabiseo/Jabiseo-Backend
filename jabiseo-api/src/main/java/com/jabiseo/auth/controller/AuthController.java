@@ -2,10 +2,10 @@ package com.jabiseo.auth.controller;
 
 import com.jabiseo.auth.dto.LoginRequest;
 import com.jabiseo.auth.dto.LoginResponse;
-import com.jabiseo.auth.usecase.LoginUseCase;
-import com.jabiseo.auth.usecase.LogoutUseCase;
-import com.jabiseo.auth.usecase.ReissueUseCase;
-import com.jabiseo.auth.usecase.WithdrawUseCase;
+import com.jabiseo.auth.application.usecase.LoginUseCase;
+import com.jabiseo.auth.application.usecase.LogoutUseCase;
+import com.jabiseo.auth.application.usecase.ReissueUseCase;
+import com.jabiseo.auth.application.usecase.WithdrawUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -1,5 +1,6 @@
-package com.jabiseo.auth.oidc;
+package com.jabiseo.auth.application.oidc;
 
+import com.jabiseo.client.OidcPublicKey;
 import com.jabiseo.auth.exception.AuthenticationBusinessException;
 import com.jabiseo.auth.exception.AuthenticationErrorCode;
 import io.jsonwebtoken.*;

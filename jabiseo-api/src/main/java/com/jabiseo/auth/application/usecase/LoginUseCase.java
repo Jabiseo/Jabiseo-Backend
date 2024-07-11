@@ -1,12 +1,13 @@
-package com.jabiseo.auth.usecase;
+package com.jabiseo.auth.application.usecase;
 
+import com.jabiseo.auth.application.MemberFactory;
+import com.jabiseo.auth.domain.TokenRepository;
 import com.jabiseo.auth.dto.LoginRequest;
 import com.jabiseo.auth.dto.LoginResponse;
-import com.jabiseo.auth.jwt.JwtHandler;
-import com.jabiseo.auth.oidc.OauthMemberInfo;
-import com.jabiseo.auth.oidc.TokenValidatorManager;
+import com.jabiseo.auth.application.JwtHandler;
+import com.jabiseo.auth.application.oidc.OauthMemberInfo;
+import com.jabiseo.auth.application.oidc.TokenValidatorManager;
 import com.jabiseo.member.domain.Member;
-import com.jabiseo.member.domain.MemberFactory;
 import com.jabiseo.member.domain.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

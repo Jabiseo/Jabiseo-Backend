@@ -1,4 +1,4 @@
-package com.jabiseo.auth.oidc;
+package com.jabiseo.auth.application.oidc;
 
 
 import com.jabiseo.auth.exception.AuthenticationBusinessException;

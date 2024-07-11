@@ -1,7 +1,8 @@
-package com.jabiseo.auth.oidc;
+package com.jabiseo.auth.application.oidc;
 
 
-import com.jabiseo.auth.oidc.property.OidcIdTokenProperty;
+import com.jabiseo.client.OidcPublicKey;
+import com.jabiseo.auth.application.oidc.property.OidcIdTokenProperty;
 
 import java.util.Map;
 

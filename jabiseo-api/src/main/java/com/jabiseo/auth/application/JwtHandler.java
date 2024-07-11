@@ -1,4 +1,4 @@
-package com.jabiseo.auth.jwt;
+package com.jabiseo.auth.application;
 
 import com.jabiseo.auth.exception.AuthenticationBusinessException;
 import com.jabiseo.auth.exception.AuthenticationErrorCode;
@@ -24,7 +24,6 @@ public class JwtHandler {
     private final String APP_ISSUER = "jabiseo";
 
     public JwtHandler(JwtProperty jwtProperty) {
-
         byte[] accessEncodeByte = Base64.getEncoder().encode((jwtProperty.getAccessKey().getBytes()));
         byte[] refreshEncodeByte = Base64.getEncoder().encode(jwtProperty.getRefreshKey().getBytes());
         this.accessExpiredMin = jwtProperty.getAccessExpiredMin();

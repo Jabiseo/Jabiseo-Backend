@@ -1,4 +1,4 @@
-package com.jabiseo.auth.jwt;
+package com.jabiseo.auth.application;
 
 
 import lombok.Getter;

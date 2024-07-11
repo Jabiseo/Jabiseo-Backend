@@ -1,4 +1,4 @@
-package com.jabiseo.auth.usecase;
+package com.jabiseo.auth.domain;
 
 import org.springframework.stereotype.Component;
 

@@ -1,11 +1,11 @@
-package com.jabiseo.auth.oidc;
+package com.jabiseo.client;
 
 import lombok.Getter;
 import lombok.ToString;
 
 @ToString
 @Getter
-class OidcPublicKey {
+public class OidcPublicKey {
 
     private String kid;
     private String alg;

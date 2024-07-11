@@ -1,4 +1,4 @@
-package com.jabiseo.auth.oidc;
+package com.jabiseo.auth.application.oidc;
 
 import lombok.Builder;
 import lombok.Getter;
