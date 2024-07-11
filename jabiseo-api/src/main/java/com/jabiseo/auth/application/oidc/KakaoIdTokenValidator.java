@@ -7,6 +7,7 @@ import com.jabiseo.auth.exception.AuthenticationBusinessException;
 import com.jabiseo.auth.exception.AuthenticationErrorCode;
 import com.jabiseo.auth.application.oidc.property.KakaoOidcProperty;
 import com.jabiseo.exception.CommonErrorCode;
+import com.jabiseo.member.domain.OauthServer;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -46,8 +47,14 @@ public class KakaoIdTokenValidator extends AbstractIdTokenValidator {
 
         return OauthMemberInfo.builder()
                 .oauthId(oauthId)
-                .oauthServer("KAKAO")
+                .oauthServer(OauthServer.KAKAO)
+                .email("email@email.com")
                 .build();
+    }
+
+    @Override
+    OauthServer getOauthServer() {
+        return OauthServer.KAKAO;
     }
 
     /*

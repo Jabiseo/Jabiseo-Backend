@@ -9,6 +9,7 @@ import com.jabiseo.auth.application.oidc.OauthMemberInfo;
 import com.jabiseo.auth.application.oidc.TokenValidatorManager;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
+import com.jabiseo.member.domain.OauthServer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,7 @@ public class LoginUseCase {
         OauthMemberInfo oauthMemberInfo = tokenValidatorManager.validate(loginRequest.idToken(), loginRequest.oauthServer());
 
         String oauthId = oauthMemberInfo.getOauthId();
-        String oauthServer = oauthMemberInfo.getOauthServer();
+        OauthServer oauthServer = oauthMemberInfo.getOauthServer();
 
         Member member = memberRepository.findByOauthIdAndOauthServer(oauthId, oauthServer)
                 .orElse(null);

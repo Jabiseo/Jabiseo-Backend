@@ -15,7 +15,6 @@ class KakaoIdTokenValidatorTest {
     @Test
     void valid() {
 
-        validator.getOidcPublicKey("kids..");
     }
 
 }

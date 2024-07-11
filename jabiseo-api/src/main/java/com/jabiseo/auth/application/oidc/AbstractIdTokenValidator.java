@@ -3,6 +3,7 @@ package com.jabiseo.auth.application.oidc;
 
 import com.jabiseo.client.OidcPublicKey;
 import com.jabiseo.auth.application.oidc.property.OidcIdTokenProperty;
+import com.jabiseo.member.domain.OauthServer;
 
 import java.util.Map;
 
@@ -34,4 +35,6 @@ public abstract class AbstractIdTokenValidator {
     abstract protected OidcPublicKey getOidcPublicKey(String kid);
 
     abstract protected OauthMemberInfo extractMemberInfoFromPayload(Map<String, Object> payload);
+
+    abstract OauthServer getOauthServer();
 }
