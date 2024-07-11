@@ -3,6 +3,8 @@ package com.jabiseo.client;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.Objects;
+
 @ToString
 @Getter
 public class OidcPublicKey {
@@ -20,4 +22,13 @@ public class OidcPublicKey {
         this.n = n;
         this.e = e;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OidcPublicKey that = (OidcPublicKey) o;
+        return Objects.equals(kid, that.kid);
+    }
+
 }

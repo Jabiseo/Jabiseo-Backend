@@ -12,4 +12,8 @@ import java.util.List;
 public class OidcPublicKeyResponse {
 
     private List<OidcPublicKey> keys;
+
+    public OidcPublicKeyResponse(List<OidcPublicKey> keys) {
+        this.keys = keys;
+    }
 }
