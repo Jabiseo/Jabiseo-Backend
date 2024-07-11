@@ -4,7 +4,7 @@ oidc:
   kakao:
     issuer: ${KAKAO_ISSUER}
     admin-key: ${KAKAO_ADMIN_KEY}
-    client-id: ${KAKAO_CLEINT_ID}
+    client-id: ${KAKAO_CLIENT_ID}
 
 jwt:
   access-expired-min: 60
