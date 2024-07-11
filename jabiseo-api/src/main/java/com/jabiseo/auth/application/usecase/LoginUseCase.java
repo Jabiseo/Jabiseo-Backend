@@ -27,14 +27,11 @@ public class LoginUseCase {
     public LoginResponse execute(LoginRequest loginRequest) {
         OauthMemberInfo oauthMemberInfo = tokenValidatorManager.validate(loginRequest.idToken(), loginRequest.oauthServer());
 
-        String oauthId = oauthMemberInfo.getOauthId();
-        OauthServer oauthServer = oauthMemberInfo.getOauthServer();
-
-        Member member = memberRepository.findByOauthIdAndOauthServer(oauthId, oauthServer)
+        Member member = memberRepository.findByOauthIdAndOauthServer(oauthMemberInfo.getOauthId(), oauthMemberInfo.getOauthServer())
                 .orElse(null);
 
         if (isRequireSignup(member)) {
-            Member newMember = memberFactory.createNew(oauthId, oauthServer);
+            Member newMember = memberFactory.createNew(oauthMemberInfo);
             member = memberRepository.save(newMember);
         }
 
