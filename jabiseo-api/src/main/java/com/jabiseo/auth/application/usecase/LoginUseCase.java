@@ -9,11 +9,13 @@ import com.jabiseo.auth.application.oidc.TokenValidatorManager;
 import com.jabiseo.cache.RedisCacheRepository;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class LoginUseCase {
 
