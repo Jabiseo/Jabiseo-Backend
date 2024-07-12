@@ -13,14 +13,14 @@ import java.util.Set;
 @Component
 public class TokenValidatorManager {
 
-    private final Map<OauthServer, AbstractIdTokenValidator> validator = new HashMap<>();
+    private final Map<OauthServer, AbstractIdTokenValidator> validatorMap = new HashMap<>();
 
     public TokenValidatorManager(Set<AbstractIdTokenValidator> idTokenValidators) {
-        idTokenValidators.forEach((v) -> validator.put(v.getOauthServer(), v));
+        idTokenValidators.forEach((v) -> validatorMap.put(v.getOauthServer(), v));
     }
 
     public OauthMemberInfo validate(String idToken, OauthServer oauthServer) {
-        AbstractIdTokenValidator idTokenValidator = validator.get(oauthServer);
+        AbstractIdTokenValidator idTokenValidator = validatorMap.get(oauthServer);
 
         if (idTokenValidator == null) {
             throw new AuthenticationBusinessException(AuthenticationErrorCode.NOT_SUPPORT_OAUTH);
