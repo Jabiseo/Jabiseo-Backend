@@ -2,6 +2,7 @@ package com.jabiseo.auth.application.oidc;
 
 import com.jabiseo.cache.RedisCacheRepository;
 import com.jabiseo.client.KakaoKauthClient;
+import com.jabiseo.client.NetworkApiException;
 import com.jabiseo.client.OidcPublicKey;
 import com.jabiseo.client.OidcPublicKeyResponse;
 import com.jabiseo.auth.exception.AuthenticationBusinessException;
@@ -9,11 +10,14 @@ import com.jabiseo.auth.exception.AuthenticationErrorCode;
 import com.jabiseo.auth.application.oidc.property.KakaoOidcProperty;
 import com.jabiseo.exception.CommonErrorCode;
 import com.jabiseo.member.domain.OauthServer;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class KakaoIdTokenValidator extends AbstractIdTokenValidator {
 
@@ -34,14 +38,23 @@ public class KakaoIdTokenValidator extends AbstractIdTokenValidator {
 
         List<OidcPublicKey> keys = redisCacheRepository.getPublicKeys(CACHE_KEY);
         if (keys == null) {
-            OidcPublicKeyResponse publicKeys = kakaoKauthClient.getPublicKeys().getBody();
-            keys = publicKeys.getKeys();
+            keys = getOidcPublicKeyByKakaoClient();
             redisCacheRepository.savePublicKey(CACHE_KEY, keys);
         }
 
         return keys.stream().filter((key) -> key.getKid().equals(kid))
                 .findAny()
                 .orElseThrow(() -> new AuthenticationBusinessException(AuthenticationErrorCode.INVALID_ID_TOKEN));
+    }
+
+    private List<OidcPublicKey> getOidcPublicKeyByKakaoClient() {
+        try {
+            ResponseEntity<OidcPublicKeyResponse> publicKeys = kakaoKauthClient.getPublicKeys();
+            return publicKeys.getBody().getKeys();
+        } catch (NetworkApiException e) {
+            log.error(e.getMessage());
+            throw new AuthenticationBusinessException(AuthenticationErrorCode.GET_JWK_FAIL);
+        }
     }
 
     @Override

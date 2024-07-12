@@ -5,6 +5,7 @@ import com.jabiseo.auth.exception.AuthenticationBusinessException;
 import com.jabiseo.auth.exception.AuthenticationErrorCode;
 import com.jabiseo.cache.RedisCacheRepository;
 import com.jabiseo.client.KakaoKauthClient;
+import com.jabiseo.client.NetworkApiException;
 import com.jabiseo.client.OidcPublicKey;
 import com.jabiseo.client.OidcPublicKeyResponse;
 import org.assertj.core.api.Assertions;
@@ -107,6 +108,20 @@ class KakaoIdTokenValidatorTest {
 
         //then
         Assertions.assertThat(oidcPublicKey).isEqualTo(matchPublicKey);
+    }
+
+    @Test
+    @DisplayName("카카오 jwk 획득 api 호출 실패시 에러를 반환한다")
+    void getJwkKakaoApiCallingFailThrownExcetpion(){
+        //given
+        given(redisCacheRepository.getPublicKeys(any())).willReturn(null);
+        given(kakaoKauthClient.getPublicKeys()).willThrow(NetworkApiException.class);
+
+        //when then
+        assertThatThrownBy(() -> validator.getOidcPublicKey("key"))
+                .isInstanceOf(AuthenticationBusinessException.class)
+                .hasMessage(AuthenticationErrorCode.GET_JWK_FAIL.getMessage());
+
     }
 
     private OidcPublicKey mockPublicKey(String kid) {
