@@ -34,6 +34,8 @@ public class RedisCacheRepository {
     public void savePublicKey(String key, List<OidcPublicKey> publicKeys) {
         try {
             String publicKeyString = mapper.writeValueAsString(publicKeys);
+
+            // TODO: timeout 값 논의 필요
             operation.set(key, publicKeyString, 1, TimeUnit.DAYS);
         } catch (JsonProcessingException e) {
             throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR);
