@@ -29,12 +29,10 @@ public class LoginUseCase {
         OauthMemberInfo oauthMemberInfo = tokenValidatorManager.validate(loginRequest.idToken(), loginRequest.oauthServer());
 
         Member member = memberRepository.findByOauthIdAndOauthServer(oauthMemberInfo.getOauthId(), oauthMemberInfo.getOauthServer())
-                .orElse(null);
-
-        if (isRequireSignup(member)) {
-            Member newMember = memberFactory.createNew(oauthMemberInfo);
-            member = memberRepository.save(newMember);
-        }
+                .orElseGet(() -> {
+                    Member newMember = memberFactory.createNew(oauthMemberInfo);
+                    return memberRepository.save(newMember);
+                });
 
 
         String accessToken = jwtHandler.createAccessToken(member);
@@ -44,8 +42,4 @@ public class LoginUseCase {
         return new LoginResponse(accessToken, refreshToken);
     }
 
-
-    private boolean isRequireSignup(Member member) {
-        return member == null;
-    }
 }
