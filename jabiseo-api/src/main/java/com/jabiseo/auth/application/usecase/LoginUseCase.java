@@ -45,7 +45,7 @@ public class LoginUseCase {
     }
 
 
-    private static boolean isRequireSignup(Member member) {
+    private boolean isRequireSignup(Member member) {
         return member == null;
     }
 }
