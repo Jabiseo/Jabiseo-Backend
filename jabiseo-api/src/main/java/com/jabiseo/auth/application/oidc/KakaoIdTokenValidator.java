@@ -17,11 +17,11 @@ import java.util.Map;
 @Component
 public class KakaoIdTokenValidator extends AbstractIdTokenValidator {
 
-    private final String KAKAO_ID_KEY = "sub";
-    private final String KAKAO_EMAIL_KEY = "email";
+    private static final String KAKAO_ID_KEY = "sub";
+    private static final String KAKAO_EMAIL_KEY = "email";
     private final KakaoKauthClient kakaoKauthClient;
     private final RedisCacheRepository redisCacheRepository;
-    private final String CACHE_KEY = "KAKAO_OIDC_PUBLIC_KEY";
+    private static final String CACHE_KEY = "KAKAO_OIDC_PUBLIC_KEY";
 
     public KakaoIdTokenValidator(KakaoOidcProperty kakaoOidcProperty, IdTokenJwtHandler idTokenJwtHandler, KakaoKauthClient kakaoKauthClient, RedisCacheRepository redisCacheRepository) {
         super(kakaoOidcProperty.toIdTokenProperty(), idTokenJwtHandler);
