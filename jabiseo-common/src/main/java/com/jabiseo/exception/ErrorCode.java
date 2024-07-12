@@ -6,7 +6,7 @@ public interface ErrorCode {
 
         int BAD_REQUEST = 400;
 
-        int AUTHENTICATION_ERROR = 401;
+        int UNAUTHORIZED = 401;
 
         int INTERNAL_SERVER_ERROR = 500;
 
