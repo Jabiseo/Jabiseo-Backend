@@ -9,6 +9,7 @@ import com.jabiseo.auth.application.oidc.TokenValidatorManager;
 import com.jabiseo.cache.RedisCacheRepository;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
+import com.jabiseo.member.domain.OauthServer;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class LoginUseCase {
     private final RedisCacheRepository cacheRepository;
 
     public LoginResponse execute(LoginRequest loginRequest) {
-        OauthMemberInfo oauthMemberInfo = tokenValidatorManager.validate(loginRequest.idToken(), loginRequest.oauthServer());
+        OauthMemberInfo oauthMemberInfo = tokenValidatorManager.validate(loginRequest.idToken(), OauthServer.valueOf(loginRequest.oauthServer()));
 
         Member member = memberRepository.findByOauthIdAndOauthServer(oauthMemberInfo.getOauthId(), oauthMemberInfo.getOauthServer())
                 .orElseGet(() -> {

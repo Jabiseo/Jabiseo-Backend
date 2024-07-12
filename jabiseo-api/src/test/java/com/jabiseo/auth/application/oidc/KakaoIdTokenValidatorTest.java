@@ -28,6 +28,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 
+@DisplayName("카카오IdToken검증 테스트")
 @ExtendWith(MockitoExtension.class)
 class KakaoIdTokenValidatorTest {
 

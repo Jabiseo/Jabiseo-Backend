@@ -6,6 +6,7 @@ import com.jabiseo.auth.application.usecase.LoginUseCase;
 import com.jabiseo.auth.application.usecase.LogoutUseCase;
 import com.jabiseo.auth.application.usecase.ReissueUseCase;
 import com.jabiseo.auth.application.usecase.WithdrawUseCase;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +28,7 @@ public class AuthController {
     private final WithdrawUseCase withdrawUseCase;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         LoginResponse result = loginUseCase.execute(loginRequest);
         return ResponseEntity.ok(result);
     }
