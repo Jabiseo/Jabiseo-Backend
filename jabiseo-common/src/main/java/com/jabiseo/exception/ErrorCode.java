@@ -6,6 +6,10 @@ public interface ErrorCode {
 
         int BAD_REQUEST = 400;
 
+        int UNAUTHORIZED = 401;
+
+        int INTERNAL_SERVER_ERROR = 500;
+
         String getMessage();
 
         String getErrorCode();

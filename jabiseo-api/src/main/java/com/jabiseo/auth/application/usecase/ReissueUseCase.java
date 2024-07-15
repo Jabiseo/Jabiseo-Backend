@@ -1,12 +1,12 @@
-package com.jabiseo.auth.usecase;
+package com.jabiseo.auth.application.usecase;
 
 import com.jabiseo.auth.dto.LoginResponse;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LoginUseCase {
+public class ReissueUseCase {
 
-    public LoginResponse execute(String idToken) {
+    public LoginResponse reissue(String refreshToken) {
         return new LoginResponse("access_token", "refresh_token");
     }
 

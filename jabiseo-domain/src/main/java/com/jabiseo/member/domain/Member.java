@@ -36,7 +36,8 @@ public class Member {
 
     private String oauthId;
 
-    private String oauthServer;
+    @Enumerated(EnumType.STRING)
+    private OauthServer oauthServer;
 
     private boolean deleted = false;
 
@@ -57,7 +58,7 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Bookmark> bookmarks = new ArrayList<>();
 
-    private Member(String id, String email, String nickname, String oauthId, String oauthServer, String profileImage) {
+    private Member(String id, String email, String nickname, String oauthId, OauthServer oauthServer, String profileImage) {
         this.id = id;
         this.email = email;
         this.nickname = nickname;
@@ -67,7 +68,7 @@ public class Member {
     }
 
     public static Member of(String id, String email, String nickname,
-                            String oauthId, String oauthServer, String profileImage) {
+                            String oauthId, OauthServer oauthServer, String profileImage) {
         return new Member(id, email, nickname, oauthId, oauthServer, profileImage);
     }
 

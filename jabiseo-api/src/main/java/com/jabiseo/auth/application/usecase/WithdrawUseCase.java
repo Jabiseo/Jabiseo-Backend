@@ -1,9 +1,10 @@
-package com.jabiseo.auth.usecase;
+package com.jabiseo.auth.application.usecase;
 
 import org.springframework.stereotype.Service;
 
 @Service
-public class LogoutUseCase {
+public class WithdrawUseCase {
+
     public void execute() {
     }
 

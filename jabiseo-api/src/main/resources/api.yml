@@ -1,0 +1,30 @@
+#-- 해당 부분은 override 하지 않으면 그대로 적용이 된다.
+
+oidc:
+  kakao:
+    issuer: ${KAKAO_ISSUER}
+    admin-key: ${KAKAO_ADMIN_KEY}
+    client-id: ${KAKAO_CLIENT_ID}
+
+jwt:
+  access-expired-min: 60
+  refresh-expired-day: 30
+  refresh-key: ${REFRESH_KEY}
+  access-key: ${ACCESS_KEY}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: api-local
+
+jwt:
+  access-expired-min: 6000
+
+---
+spring:
+  config:
+    activate:
+      on-profile: api-dev
+
+
