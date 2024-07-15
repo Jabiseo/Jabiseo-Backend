@@ -42,7 +42,7 @@ class LoginRequestTest {
         assertThat(violations).isNotEmpty();
     }
 
-    @DisplayName("login 요청시 idToken에 숫자가 오면 예외를 반환한다,")
+    @DisplayName("login 요청시 oauthServer에 정확한 값이 오지 않으면 예외를 반환한다,")
     @ParameterizedTest
     @ValueSource(strings = {"kakao", "kakakkao", "", "value", "ggogo", "KAKAOOO"})
     void oauthServerNotAllowInputsThrowException(String oauthServer) {
