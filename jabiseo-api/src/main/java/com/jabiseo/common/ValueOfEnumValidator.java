@@ -9,22 +9,20 @@ public class ValueOfEnumValidator implements ConstraintValidator<EnumValid, Stri
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        boolean result = false;
         if(value == null){
             return false;
         }
-
         Enum<?>[] enumValues = this.enumValid.enumClass().getEnumConstants();
-        if (enumValues != null) {
-            for (Object enumValue : enumValues) {
-                if (value.equals(enumValue.toString())
-                        || this.enumValid.ignoreCase() && value.equalsIgnoreCase(enumValue.toString())) {
-                    result = true;
-                    break;
-                }
+        if (enumValues == null) {
+            return false;
+        }
+        for (Object enumValue : enumValues) {
+            if (value.equals(enumValue.toString())
+                    || this.enumValid.ignoreCase() && value.equalsIgnoreCase(enumValue.toString())) {
+                return true;
             }
         }
-        return result;
+        return false;
     }
 
     @Override
