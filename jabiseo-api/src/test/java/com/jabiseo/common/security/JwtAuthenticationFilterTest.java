@@ -1,4 +1,4 @@
-package com.jabiseo.auth.security;
+package com.jabiseo.common.security;
 
 import com.jabiseo.auth.application.JwtClaim;
 import com.jabiseo.auth.application.JwtHandler;
