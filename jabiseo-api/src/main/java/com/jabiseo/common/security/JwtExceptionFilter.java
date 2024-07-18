@@ -1,4 +1,4 @@
-package com.jabiseo.auth.security;
+package com.jabiseo.common.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jabiseo.common.ResponseFactory;

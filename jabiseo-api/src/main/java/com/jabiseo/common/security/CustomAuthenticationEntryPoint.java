@@ -1,4 +1,4 @@
-package com.jabiseo.auth.security;
+package com.jabiseo.common.security;
 
 import com.jabiseo.auth.exception.AuthenticationErrorCode;
 import com.jabiseo.common.ResponseFactory;

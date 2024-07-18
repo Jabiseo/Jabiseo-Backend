@@ -2,6 +2,7 @@ package com.jabiseo.auth.security;
 
 import com.jabiseo.auth.application.JwtClaim;
 import com.jabiseo.auth.application.JwtHandler;
+import com.jabiseo.common.security.JwtAuthenticationFilter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.AfterEach;

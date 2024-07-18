@@ -1,4 +1,4 @@
-package com.jabiseo.auth.security;
+package com.jabiseo.common.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
