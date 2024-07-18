@@ -25,7 +25,7 @@ public class MemberController {
 
     @GetMapping
     public ResponseEntity<FindMyInfoResponse> findMyInfo(@AuthenticatedMember AuthMember member) {
-        FindMyInfoResponse result = findMyInfoUseCase.execute();
+        FindMyInfoResponse result = findMyInfoUseCase.execute(member.getMemberId());
         return ResponseEntity.ok(result);
     }
 
