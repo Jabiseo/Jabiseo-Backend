@@ -1,6 +1,7 @@
 package com.jabiseo.auth.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jabiseo.common.ResponseFactory;
 import com.jabiseo.exception.BusinessException;
 import com.jabiseo.exception.CommonErrorCode;
 import com.jabiseo.exception.ErrorCode;
@@ -24,20 +25,10 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (BusinessException e) {
-            send(response, e.getErrorCode());
+            ResponseFactory.fail(response, e.getErrorCode());
         } catch (Exception e) {
-            send(response, CommonErrorCode.INTERNAL_SERVER_ERROR);
+            ResponseFactory.fail(response, CommonErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
-
-    private void send(HttpServletResponse response, ErrorCode errorCode) throws IOException {
-        ErrorResponse errorResponse = new ErrorResponse(errorCode.getMessage(), errorCode.getErrorCode());
-        response.setStatus(errorCode.getStatusCode());
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter()
-                .write(objectMapper.writeValueAsString(errorResponse));
-    }
-
 
 }
