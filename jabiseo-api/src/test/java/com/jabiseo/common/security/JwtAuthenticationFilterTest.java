@@ -2,7 +2,6 @@ package com.jabiseo.common.security;
 
 import com.jabiseo.auth.application.JwtClaim;
 import com.jabiseo.auth.application.JwtHandler;
-import com.jabiseo.common.security.JwtAuthenticationFilter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.AfterEach;
@@ -26,6 +25,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
+@DisplayName("Jwt 필터 테스트")
 @ExtendWith(MockitoExtension.class)
 class JwtAuthenticationFilterTest {
 
