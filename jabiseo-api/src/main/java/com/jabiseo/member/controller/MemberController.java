@@ -1,5 +1,7 @@
 package com.jabiseo.member.controller;
 
+import com.jabiseo.config.auth.AuthMember;
+import com.jabiseo.config.auth.AuthenticatedMember;
 import com.jabiseo.member.dto.FindMyCertificateStateResponse;
 import com.jabiseo.member.dto.FindMyInfoResponse;
 import com.jabiseo.member.dto.UpdateMyCertificateStateRequest;
@@ -22,8 +24,8 @@ public class MemberController {
     private final UpdateMyCertificateStateUseCase updateMyCertificateStateUseCase;
 
     @GetMapping
-    public ResponseEntity<FindMyInfoResponse> findMyInfo() {
-        FindMyInfoResponse result = findMyInfoUseCase.execute();
+    public ResponseEntity<FindMyInfoResponse> findMyInfo(@AuthenticatedMember AuthMember member) {
+        FindMyInfoResponse result = findMyInfoUseCase.execute(member.getMemberId());
         return ResponseEntity.ok(result);
     }
 

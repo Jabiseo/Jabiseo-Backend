@@ -1,12 +1,14 @@
 package com.jabiseo.client;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.Objects;
 
 @ToString
 @Getter
+@NoArgsConstructor
 public class OidcPublicKey {
 
     private String kid;

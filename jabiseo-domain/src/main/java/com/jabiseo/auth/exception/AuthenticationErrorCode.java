@@ -9,7 +9,8 @@ public enum AuthenticationErrorCode implements ErrorCode {
     NOT_SUPPORT_OAUTH("지원하지 않는 oauth 인증 수단입니다", "AUTH_003", ErrorCode.UNAUTHORIZED),
     EXPIRED_APP_JWT("만료된 jwt 토큰 입니다", "AUTH_004", ErrorCode.UNAUTHORIZED),
     INVALID_APP_JWT("잘못된 jwt 토큰입니다", "AUTH_005", ErrorCode.UNAUTHORIZED),
-    GET_JWK_FAIL("jwk 획득 실패", "AUTH_006", ErrorCode.INTERNAL_SERVER_ERROR);
+    GET_JWK_FAIL("jwk 획득 실패", "AUTH_006", ErrorCode.INTERNAL_SERVER_ERROR),
+    REQUIRE_LOGIN("로그인이 필요합니다","AUTH007", ErrorCode.UNAUTHORIZED);
 
     private final String message;
     private final String errorCode;
