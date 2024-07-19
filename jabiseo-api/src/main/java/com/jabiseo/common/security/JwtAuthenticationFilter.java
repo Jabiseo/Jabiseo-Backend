@@ -22,8 +22,8 @@ import java.util.Set;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtHandler jwtHandler;
-    private final String AUTHORIZATION_HEADER = "Authorization";
-    private final String HEADER_PREFIX = "Bearer ";
+    private static final  String AUTHORIZATION_HEADER = "Authorization";
+    private static final String HEADER_PREFIX = "Bearer ";
 
     public JwtAuthenticationFilter(JwtHandler jwtHandler) {
         this.jwtHandler = jwtHandler;
