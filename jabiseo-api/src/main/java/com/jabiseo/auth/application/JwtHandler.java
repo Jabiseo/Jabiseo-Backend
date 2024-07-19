@@ -86,28 +86,26 @@ public class JwtHandler {
     }
 
 
-    public JwtClaim getClaimFromExpiredAccessToken(String accessToken) {
+    public Claims getClaimFromExpiredAccessToken(String accessToken) {
         try {
-            Claims claims = Jwts.parserBuilder()
+            return Jwts.parserBuilder()
                     .setSigningKey(accessKey)
                     .build()
                     .parseClaimsJws(accessToken)
                     .getBody();
-            return new JwtClaim(claims.getSubject());
         } catch (ExpiredJwtException e) {
-            return new JwtClaim(e.getClaims().getSubject());
+            return e.getClaims();
         } catch (Exception e) {
             throw new AuthenticationBusinessException(AuthenticationErrorCode.INVALID_APP_JWT);
         }
     }
 
-    public JwtClaim getClaimsFromAccessToken(String token) {
-        Claims claims = Jwts
+    public Claims getClaimsFromAccessToken(String token) {
+        return Jwts
                 .parserBuilder()
                 .setSigningKey(accessKey)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        return new JwtClaim(claims.getSubject());
     }
 }

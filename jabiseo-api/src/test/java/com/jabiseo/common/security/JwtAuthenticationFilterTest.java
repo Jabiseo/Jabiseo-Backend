@@ -1,7 +1,7 @@
 package com.jabiseo.common.security;
 
-import com.jabiseo.auth.application.JwtClaim;
 import com.jabiseo.auth.application.JwtHandler;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.AfterEach;
@@ -33,6 +33,9 @@ class JwtAuthenticationFilterTest {
     JwtAuthenticationFilter jwtAuthenticationFilter;
     @Mock
     JwtHandler jwtHandler;
+
+    @Mock
+    Claims claims;
 
     MockHttpServletRequest request;
     MockHttpServletResponse response;
@@ -74,7 +77,7 @@ class JwtAuthenticationFilterTest {
         request.addHeader("Authorization", headerValue);
 
         given(jwtHandler.validateAccessToken(token)).willReturn(true);
-        given(jwtHandler.getClaimsFromAccessToken(token)).willReturn(new JwtClaim("memberId"));
+        given(jwtHandler.getClaimsFromAccessToken(token)).willReturn(claims);
 
         // when
         jwtAuthenticationFilter.doFilterInternal(request, response, chain);
@@ -94,7 +97,8 @@ class JwtAuthenticationFilterTest {
 
 
         given(jwtHandler.validateAccessToken(token)).willReturn(true);
-        given(jwtHandler.getClaimsFromAccessToken(token)).willReturn(new JwtClaim(memberId));
+        given(claims.getSubject()).willReturn(memberId);
+        given(jwtHandler.getClaimsFromAccessToken(token)).willReturn(claims);
 
         //when
         jwtAuthenticationFilter.doFilterInternal(request, response, chain);

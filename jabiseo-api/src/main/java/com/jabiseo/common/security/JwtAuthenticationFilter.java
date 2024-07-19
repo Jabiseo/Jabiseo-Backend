@@ -1,7 +1,7 @@
 package com.jabiseo.common.security;
 
-import com.jabiseo.auth.application.JwtClaim;
 import com.jabiseo.auth.application.JwtHandler;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,14 +33,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = extractTokenFromRequest(request);
 
         if (StringUtils.hasText(token) && jwtHandler.validateAccessToken(token)) {
-            JwtClaim jwtClaim = jwtHandler.getClaimsFromAccessToken(token);
-            setAuthenticationToContext(jwtClaim);
+            Claims claims = jwtHandler.getClaimsFromAccessToken(token);
+            setAuthenticationToContext(claims);
         }
 
         filterChain.doFilter(request, response);
     }
 
-    private void setAuthenticationToContext(JwtClaim jwtClaim) {
+    private void setAuthenticationToContext(Claims jwtClaim) {
         String memberId = jwtClaim.getSubject();
         Set<GrantedAuthority> authorities = new HashSet<>();
         Authentication authentication = new UsernamePasswordAuthenticationToken(memberId, "",
