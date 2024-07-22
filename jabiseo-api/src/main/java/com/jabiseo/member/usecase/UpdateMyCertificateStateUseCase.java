@@ -25,7 +25,7 @@ public class UpdateMyCertificateStateUseCase {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberBusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
         Certificate certificate = certificateRepository.findById(request.certificateId())
-                .orElseThrow(() -> new CertificateBusinessException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));
+                .orElseThrow(() -> new MemberBusinessException(MemberErrorCode.CURRENT_CERTIFICATE_NOT_EXIST));
         member.updateCertificateState(certificate);
     }
 }
