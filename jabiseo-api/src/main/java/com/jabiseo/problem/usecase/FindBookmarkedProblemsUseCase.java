@@ -28,7 +28,7 @@ public class FindBookmarkedProblemsUseCase {
 
     public List<FindBookmarkedProblemsResponse> execute(String memberId, Optional<String> examId, List<String> subjectIds, Pageable pageable) {
 
-        Member member = memberRepository.findById(memberId).orElseThrow();
+        Member member = memberRepository.getReferenceById(memberId);
 
         if (!member.containsCertificate()) {
             throw new MemberBusinessException(MemberErrorCode.CURRENT_CERTIFICATE_NOT_EXIST);
