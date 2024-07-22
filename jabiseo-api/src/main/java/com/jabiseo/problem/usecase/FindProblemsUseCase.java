@@ -39,7 +39,7 @@ public class FindProblemsUseCase {
         certificate.validateExamId(examId);
         validateProblemCount(count);
 
-
+        // TODO: 과목별로 문제를 가져와서 쿼리를 5번 날리는 로직에서 1번의 쿼리로 변경해야 함. 하지만 최종적으로 과목 순서가 유지되어야 함
         List<Problem> problems = subjectIds.stream()
                 .map(subjectId -> {
                     if (examId.isPresent()) {

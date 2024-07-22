@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedDate;
@@ -56,6 +57,7 @@ public class Member {
     private Certificate certificateState;
 
     @OneToMany(mappedBy = "member")
+    @BatchSize(size = 100)
     private List<Bookmark> bookmarks = new ArrayList<>();
 
     private Member(String id, String email, String nickname, String oauthId, OauthServer oauthServer, String profileImage) {
@@ -79,5 +81,9 @@ public class Member {
 
     public void addBookmark(Bookmark bookmark) {
         bookmarks.add(bookmark);
+    }
+
+    public boolean containsCertificate() {
+        return certificateState != null;
     }
 }

@@ -1,13 +1,11 @@
 package com.jabiseo.problem.controller;
 
-import com.jabiseo.problem.dto.CreateReportRequest;
-import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
-import com.jabiseo.problem.dto.FindProblemsRequest;
-import com.jabiseo.problem.dto.FindProblemsResponse;
+import com.jabiseo.problem.dto.*;
 import com.jabiseo.problem.usecase.CreateReportUseCase;
 import com.jabiseo.problem.usecase.FindBookmarkedProblemsUseCase;
 import com.jabiseo.problem.usecase.FindProblemsUseCase;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -29,6 +27,7 @@ public class ProblemController {
 
     @GetMapping("/set")
     public ResponseEntity<List<FindProblemsResponse>> findProblems(
+            // TODO: DTO 기반으로 변경
             @RequestParam(name = "certificate-id") String certificateId,
             @RequestParam(name = "subject-id") List<String> subjectIds,
             @RequestParam(name = "exam-id", required = false) Optional<String> examId,
@@ -63,9 +62,14 @@ public class ProblemController {
     }
 
     @GetMapping("/bookmarked")
-    public ResponseEntity<List<FindBookmarkedProblemsResponse>> findBookmarkedProblems() {
+    public ResponseEntity<List<FindBookmarkedProblemsResponse>> findBookmarkedProblems(
+            // TODO: DTO 기반으로 변경
+            @RequestParam(name = "exam-id") Optional<String> examId,
+            @RequestParam(name = "subject-id") List<String> subjectIds,
+            Pageable pageable
+    ) {
         String memberId = "1"; // TODO: 로그인 기능 구현 후 로그인한 사용자의 ID로 변경
-        List<FindBookmarkedProblemsResponse> result = findBookmarkedProblemsUseCase.execute(memberId);
+        List<FindBookmarkedProblemsResponse> result = findBookmarkedProblemsUseCase.execute(memberId, examId, subjectIds, pageable);
         return ResponseEntity.ok(result);
     }
 }
