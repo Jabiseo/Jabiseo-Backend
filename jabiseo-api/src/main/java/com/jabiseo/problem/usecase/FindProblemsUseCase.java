@@ -35,8 +35,8 @@ public class FindProblemsUseCase {
                 .orElseThrow(() -> new CertificateBusinessException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));
 
         // TODO: 검증을 어디서 어떻게 할 것인지 논의 필요
-        validateSubjectIds(subjectIds, certificate);
-        validateExamId(examId, certificate);
+        certificate.validateSubjectIds(subjectIds);
+        certificate.validateExamId(examId);
         validateProblemCount(count);
 
 
@@ -63,23 +63,7 @@ public class FindProblemsUseCase {
                 .toList();
     }
 
-    private static void validateSubjectIds(List<String> subjectIds, Certificate certificate) {
-        // 자격증에 해당하는 과목들이 모두 있는지 검사
-        subjectIds.forEach(subjectId -> {
-            if (!certificate.containsSubject(subjectId)) {
-                throw new CertificateBusinessException(CertificateErrorCode.SUBJECT_NOT_FOUND_IN_CERTIFICATE);
-            }
-        });
-    }
-
-    private static void validateExamId(Optional<String> examId, Certificate certificate) {
-        // 자격증에 해당하는 시험이 있는지 검사j
-        if (examId.isPresent() && !certificate.containsExam(examId.get())) {
-            throw new CertificateBusinessException(CertificateErrorCode.EXAM_NOT_FOUND_IN_CERTIFICATE);
-        }
-    }
-
-    private static void validateProblemCount(int count) {
+    private void validateProblemCount(int count) {
         // 문제의 개수가 올바른지 검사
         if (count < MIN_PROBLEM_PER_SUBJECT_COUNT || count > MAX_PROBLEM_PER_SUBJECT_COUNT) {
             throw new ProblemBusinessException(ProblemErrorCode.INVALID_PROBLEM_COUNT);
