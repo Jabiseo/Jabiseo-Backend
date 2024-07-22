@@ -12,11 +12,26 @@ jwt:
   refresh-key: ${REFRESH_KEY}
   access-key: ${ACCESS_KEY}
 
+
+management:
+  endpoints:
+    web:
+      base-path: "/manage"
+
 ---
 spring:
   config:
     activate:
       on-profile: api-local
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-components: always
 
 jwt:
   access-expired-min: 6000
