@@ -17,6 +17,11 @@ management:
   endpoints:
     web:
       base-path: "/manage"
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-components: always
 
 ---
 spring:
@@ -28,10 +33,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health
-  endpoint:
-    health:
-      show-components: always
+        include: "*"
 
 jwt:
   access-expired-min: 6000
