@@ -22,7 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FindProblemsUseCase {
 
-    private static final int MIN_PROBLEM_PER_SUBJECT_COUNT = 0;
+    private static final int MIN_PROBLEM_PER_SUBJECT_COUNT = 1;
     private static final int MAX_PROBLEM_PER_SUBJECT_COUNT = 20;
 
 
