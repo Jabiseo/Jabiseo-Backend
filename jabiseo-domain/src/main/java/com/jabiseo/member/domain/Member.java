@@ -83,7 +83,7 @@ public class Member {
         bookmarks.add(bookmark);
     }
 
-    public boolean containsCertificate() {
+    public boolean hasCertificate() {
         return certificateState != null;
     }
 }

@@ -30,7 +30,7 @@ public class FindBookmarkedProblemsUseCase {
 
         Member member = memberRepository.getReferenceById(memberId);
 
-        if (!member.containsCertificate()) {
+        if (!member.hasCertificate()) {
             throw new MemberBusinessException(MemberErrorCode.CURRENT_CERTIFICATE_NOT_EXIST);
         }
         Certificate certificate = member.getCertificateState();
