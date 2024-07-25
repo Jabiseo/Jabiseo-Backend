@@ -8,6 +8,8 @@ public interface ErrorCode {
 
         int UNAUTHORIZED = 401;
 
+        int FORBIDDEN = 403;
+
         int INTERNAL_SERVER_ERROR = 500;
 
         String getMessage();
