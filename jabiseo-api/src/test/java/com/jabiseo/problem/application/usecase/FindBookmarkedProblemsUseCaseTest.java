@@ -62,7 +62,7 @@ class FindBookmarkedProblemsUseCaseTest {
         Problem problem2 = createProblem(problemId2);
         Pageable pageable = PageRequest.of(0, 10);
         given(memberRepository.getReferenceById(memberId)).willReturn(member);
-        given(problemRepository.findBookmarkedByExamIdAndSubjectIdIn(memberId, Optional.of(examId), List.of(subjectId), pageable))
+        given(problemRepository.findBookmarkedByExamIdAndSubjectIdIn(memberId, examId, List.of(subjectId), pageable))
                 .willReturn(List.of(problem1, problem2));
 
         //when
