@@ -22,18 +22,20 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FindBookmarkedProblemsUseCase {
 
+    private static final int DEFAULT_PAGE_SIZE = 10;
+
     private final MemberRepository memberRepository;
     private final BookmarkedProblemService bookmarkedProblemService;
 
 
-    public List<FindBookmarkedProblemsResponse> execute(String memberId, Optional<String> examId, List<String> subjectIds, Pageable pageable) {
+    public List<FindBookmarkedProblemsResponse> execute(String memberId, Optional<String> examId, List<String> subjectIds, int page) {
+
+        Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
 
         Member member = memberRepository.getReferenceById(memberId);
 
         Certificate certificate = member.getCertificateState();
-
-        certificate.validateSubjectIds(subjectIds);
-        certificate.validateExamId(examId);
+        certificate.validateAndSubjectIds(examId, subjectIds);
 
         List<Bookmark> bookmarks = member.getBookmarks();
         List<String> problemIds = bookmarks.stream()
