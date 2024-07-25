@@ -1,13 +1,12 @@
-package com.jabiseo.fixture;
+package fixture;
 
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.certificate.domain.Exam;
 import com.jabiseo.certificate.domain.Subject;
 import com.jabiseo.problem.domain.Problem;
 
-import static com.jabiseo.fixture.CertificateFixture.createCertificate;
-import static com.jabiseo.fixture.ExamFixture.createExam;
-import static com.jabiseo.fixture.SubjectFixture.createSubject;
+import static fixture.CertificateFixture.createCertificate;
+import static fixture.SubjectFixture.createSubject;
 
 public class ProblemFixture {
     public static Problem createProblem(String id, Certificate certificate, Exam exam, Subject subject) {
@@ -42,7 +41,7 @@ public class ProblemFixture {
                 "problem theory",
                 "problem solution",
                 certificate,
-                createExam("5432", certificate),
+                ExamFixture.createExam("5432", certificate),
                 createSubject("9876", certificate)
         );
     }

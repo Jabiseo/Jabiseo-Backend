@@ -15,8 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static com.jabiseo.fixture.CertificateFixture.createCertificate;
-import static com.jabiseo.fixture.MemberFixture.createMember;
+import static fixture.CertificateFixture.createCertificate;
+import static fixture.MemberFixture.createMember;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;

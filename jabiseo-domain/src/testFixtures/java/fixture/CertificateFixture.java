@@ -1,4 +1,4 @@
-package com.jabiseo.fixture;
+package fixture;
 
 import com.jabiseo.certificate.domain.Certificate;
 

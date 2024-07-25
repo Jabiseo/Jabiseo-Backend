@@ -7,7 +7,6 @@ import com.jabiseo.auth.application.oidc.TokenValidatorManager;
 import com.jabiseo.auth.dto.LoginRequest;
 import com.jabiseo.auth.dto.LoginResponse;
 import com.jabiseo.cache.RedisCacheRepository;
-import com.jabiseo.fixture.MemberFixture;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
 import com.jabiseo.member.domain.OauthServer;
@@ -20,8 +19,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static fixture.MemberFixture.createMember;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -56,7 +55,7 @@ class LoginUseCaseTest {
         //given
         LoginRequest request = new LoginRequest("idToken", "KAKAO");
         OauthMemberInfo memberInfo = new OauthMemberInfo("id", OauthServer.KAKAO, "email@emil.com");
-        Member member = MemberFixture.createMember("memberId");
+        Member member = createMember("memberId");
         given(memberRepository.findByOauthIdAndOauthServer(memberInfo.getOauthId(), memberInfo.getOauthServer())).willReturn(Optional.empty());
         given(tokenValidatorManager.validate(request.idToken(), OauthServer.valueOf(request.oauthServer()))).willReturn(memberInfo);
         given(memberFactory.createNew(memberInfo)).willReturn(member);
@@ -76,7 +75,7 @@ class LoginUseCaseTest {
         //given
         LoginRequest request = new LoginRequest("idToken", "KAKAO");
         OauthMemberInfo memberInfo = new OauthMemberInfo("id", OauthServer.KAKAO, "email@emil.com");
-        Member member = MemberFixture.createMember("memberId");
+        Member member = createMember("memberId");
         String access = "access";
         String refresh = "refresh";
         given(memberRepository.findByOauthIdAndOauthServer(memberInfo.getOauthId(), memberInfo.getOauthServer())).willReturn(Optional.of(member));

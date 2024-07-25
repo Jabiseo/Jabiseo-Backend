@@ -19,11 +19,11 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
-import static com.jabiseo.fixture.CertificateFixture.createCertificate;
-import static com.jabiseo.fixture.ExamFixture.createExam;
-import static com.jabiseo.fixture.MemberFixture.createMember;
-import static com.jabiseo.fixture.ProblemFixture.createProblem;
-import static com.jabiseo.fixture.SubjectFixture.createSubject;
+import static fixture.CertificateFixture.createCertificate;
+import static fixture.ExamFixture.createExam;
+import static fixture.MemberFixture.createMember;
+import static fixture.ProblemFixture.createProblem;
+import static fixture.SubjectFixture.createSubject;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 

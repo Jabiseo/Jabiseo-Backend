@@ -1,4 +1,4 @@
-package com.jabiseo.fixture;
+package fixture;
 
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.OauthServer;
