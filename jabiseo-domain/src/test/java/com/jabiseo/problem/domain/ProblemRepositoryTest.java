@@ -37,7 +37,7 @@ class ProblemRepositoryTest {
     private EntityManager entityManager;
 
     @Test
-    @DisplayName("북마크 목록 조회 JPA 테스트")
+    @DisplayName("시험, 과목에 따라 북마크된 문제를 조회하는 쿼리가 정상적으로 동작한다.")
     void givenProblemConditions_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
         //given
         String memberId = "memberId";
