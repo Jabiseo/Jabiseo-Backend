@@ -76,4 +76,9 @@ public class Certificate {
             throw new CertificateBusinessException(CertificateErrorCode.EXAM_NOT_FOUND_IN_CERTIFICATE);
         }
     }
+
+    public void validateAndSubjectIds(Optional<String> examId, List<String> subjectIds) {
+        validateExamId(examId);
+        validateSubjectIds(subjectIds);
+    }
 }

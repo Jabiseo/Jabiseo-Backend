@@ -1,6 +1,8 @@
 package com.jabiseo.member.domain;
 
 import com.jabiseo.certificate.domain.Certificate;
+import com.jabiseo.member.exception.MemberBusinessException;
+import com.jabiseo.member.exception.MemberErrorCode;
 import com.jabiseo.problem.domain.Bookmark;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -83,7 +85,10 @@ public class Member {
         bookmarks.add(bookmark);
     }
 
-    public boolean hasCertificate() {
-        return certificateState != null;
+    public Certificate getCertificateState() {
+        if (this.certificateState == null) {
+            throw new MemberBusinessException(MemberErrorCode.CURRENT_CERTIFICATE_NOT_EXIST);
+        }
+        return certificateState;
     }
 }
