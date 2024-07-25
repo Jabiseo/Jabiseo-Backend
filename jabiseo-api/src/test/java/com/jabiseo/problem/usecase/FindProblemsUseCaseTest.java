@@ -141,6 +141,7 @@ class FindProblemsUseCaseTest {
         int count = 4;
         Certificate certificate1 = createCertificate(certificateIds[0]);
         Certificate certificate2 = createCertificate(certificateIds[1]);
+        createExam(examId, certificate1);
         createSubject(subjectIds[0], certificate1);
         createSubject(subjectIds[1], certificate2);
         given(certificateRepository.findById(certificateIds[0])).willReturn(Optional.of(certificate1));

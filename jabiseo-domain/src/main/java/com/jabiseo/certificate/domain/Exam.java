@@ -16,6 +16,7 @@ public class Exam {
 
     private String description;
 
+    @Column(name = "exam_year")
     private int year;
 
     private int round;

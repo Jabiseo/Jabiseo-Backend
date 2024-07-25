@@ -33,7 +33,7 @@ class FindMyCertificateStateUseCaseTest {
 
     @Test
     @DisplayName("자격증 상태 조회를 성공하면 자격증 상태를 반환한다.")
-    void givenMemberId_whenFindingCertificateState_thenFindCertificateStatus() throws Exception {
+    void givenMemberId_whenFindingCertificateState_thenFindCertificateStatus() {
         //given
         String memberId = "1";
         String certificateId = "2";
@@ -52,7 +52,7 @@ class FindMyCertificateStateUseCaseTest {
 
     @Test
     @DisplayName("존재하지 않는 회원의 자격증 상태 조회를 시도하면 예외처리한다.")
-    void givenNonExistedMemberId_whenFindingCertificateState_thenReturnError() throws Exception {
+    void givenNonExistedMemberId_whenFindingCertificateState_thenReturnError() {
         //given
         String nonExistedMemberId = "1";
         given(memberRepository.findById(nonExistedMemberId)).willReturn(Optional.empty());
