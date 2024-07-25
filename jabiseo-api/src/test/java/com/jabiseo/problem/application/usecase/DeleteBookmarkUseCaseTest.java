@@ -1,4 +1,4 @@
-package com.jabiseo.problem.usecase;
+package com.jabiseo.problem.application.usecase;
 
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.problem.domain.Bookmark;

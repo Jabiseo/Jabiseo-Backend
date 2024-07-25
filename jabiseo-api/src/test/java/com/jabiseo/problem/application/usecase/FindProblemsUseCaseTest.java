@@ -1,4 +1,4 @@
-package com.jabiseo.problem.usecase;
+package com.jabiseo.problem.application.usecase;
 
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.certificate.domain.CertificateRepository;

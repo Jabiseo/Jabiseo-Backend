@@ -1,4 +1,4 @@
-package com.jabiseo.member.usecase;
+package com.jabiseo.member.application.usecase;
 
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.member.domain.Member;

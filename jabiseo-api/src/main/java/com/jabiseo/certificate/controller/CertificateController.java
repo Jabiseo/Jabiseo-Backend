@@ -2,8 +2,8 @@ package com.jabiseo.certificate.controller;
 
 import com.jabiseo.certificate.dto.FindCertificateListResponse;
 import com.jabiseo.certificate.dto.FindCertificateDetailResponse;
-import com.jabiseo.certificate.usecase.FindCertificateDetailUseCase;
-import com.jabiseo.certificate.usecase.FindCertificateListUseCase;
+import com.jabiseo.certificate.application.usecase.FindCertificateDetailUseCase;
+import com.jabiseo.certificate.application.usecase.FindCertificateListUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

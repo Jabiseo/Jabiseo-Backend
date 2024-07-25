@@ -1,4 +1,4 @@
-package com.jabiseo.certificate.usecase;
+package com.jabiseo.certificate.application.usecase;
 
 import com.jabiseo.certificate.domain.CertificateRepository;
 import com.jabiseo.certificate.dto.FindCertificateListResponse;
