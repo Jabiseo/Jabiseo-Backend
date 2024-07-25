@@ -32,7 +32,7 @@ class FindMyCertificateStateUseCaseTest {
     MemberRepository memberRepository;
 
     @Test
-    @DisplayName("자격증 상태 조회")
+    @DisplayName("자격증 상태 조회를 성공하면 자격증 상태를 반환한다.")
     void givenMemberId_whenFindingCertificateState_thenFindCertificateStatus() throws Exception {
         //given
         String memberId = "1";
@@ -51,7 +51,7 @@ class FindMyCertificateStateUseCaseTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 회원의 자격증 상태 조회 ")
+    @DisplayName("존재하지 않는 회원의 자격증 상태 조회를 시도하면 예외처리한다.")
     void givenNonExistedMemberId_whenFindingCertificateState_thenReturnError() throws Exception {
         //given
         String nonExistedMemberId = "1";

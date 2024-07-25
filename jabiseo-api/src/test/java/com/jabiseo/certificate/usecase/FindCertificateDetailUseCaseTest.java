@@ -32,7 +32,7 @@ class FindCertificateDetailUseCaseTest {
     CertificateRepository certificateRepository;
 
     @Test
-    @DisplayName("자격증 정보 조회")
+    @DisplayName("자격증 정보 조회를 성공한다.")
     void givenCertificateId_whenFindingCertificate_thenFindCertificate() {
         //given
         String certificateId = "1";
@@ -54,7 +54,7 @@ class FindCertificateDetailUseCaseTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 자격증 정보 조회")
+    @DisplayName("존재하지 않는 자격증 정보를 조회하면 예외처리한다.")
     void givenNonExistedCertificateId_whenFindingCertificate_thenReturnException() {
         //given
         String nonExistedCertificateId = "1";

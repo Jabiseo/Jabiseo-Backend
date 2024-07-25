@@ -27,7 +27,7 @@ class FindCertificateListUseCaseTest {
     CertificateRepository certificateRepository;
 
     @Test
-    @DisplayName("자격증 목록 조회")
+    @DisplayName("자격증 목록 조회를 성공한다.")
     void givenCertificates_whenFindingCertificates_thenFindCertificates() {
         //given
         String certificateId1 = "1";

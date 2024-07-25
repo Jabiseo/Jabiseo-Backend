@@ -44,7 +44,7 @@ class CreateBookmarkUseCaseTest {
     BookmarkRepository bookmarkRepository;
 
     @Test
-    @DisplayName("북마크 생성 테스트 성공 케이스")
+    @DisplayName("북마크 생성을 성공한다.")
     void givenMemberIdAndProblemId_whenCreatingBookmark_thenCreateBookmark() {
         //given
         String memberId = "1";
@@ -55,7 +55,6 @@ class CreateBookmarkUseCaseTest {
         given(problemRepository.findById(problemId)).willReturn(Optional.of(problem));
         given(bookmarkRepository.existsByMemberIdAndProblemId(memberId, problemId)).willReturn(false);
         given(bookmarkRepository.save(any())).willReturn(Bookmark.of(member, problem));
-
 
         //when
         sut.execute(memberId, new CreateBookmarkRequest(problemId));
@@ -71,7 +70,7 @@ class CreateBookmarkUseCaseTest {
     }
 
     @Test
-    @DisplayName("이미 북마크한 문제를 북마크하는 경우 테스트")
+    @DisplayName("이미 북마크한 문제를 북마크하는 경우 예외처리한다.")
     void givenAlreadyExistedMemberIdAndProblemId_whenCreatingBookmark_thenReturnError() {
         //given
         String memberId = "1";
@@ -87,7 +86,7 @@ class CreateBookmarkUseCaseTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 문제의 북마크 생성 테스트")
+    @DisplayName("존재하지 않는 문제를 북마크하는 경우 예외처리한다.")
     void givenMemberIdAndNonExistedProblemId_whenCreatingBookmark_thenReturnError() {
         //given
         String memberId = "1";
@@ -101,6 +100,5 @@ class CreateBookmarkUseCaseTest {
                 .hasFieldOrPropertyWithValue("errorCode", ProblemErrorCode.PROBLEM_NOT_FOUND);
 
     }
-
 
 }

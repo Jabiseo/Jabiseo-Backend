@@ -35,7 +35,7 @@ class DeleteBookmarkUseCaseTest {
     BookmarkRepository bookmarkRepository;
 
     @Test
-    @DisplayName("북마크 삭제 테스트 성공 케이스")
+    @DisplayName("북마크 삭제를 성공한다.")
     void givenMemberIdAndProblemId_whenDeletingBookmark_thenDeleteBookmark() {
         //given
         String memberId = "1";
@@ -56,7 +56,7 @@ class DeleteBookmarkUseCaseTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 북마크를 삭제하는 경우 테스트")
+    @DisplayName("존재하지 않는 북마크를 삭제하는 경우 예외처리한다.")
     void givenNonExistBookmarkWithMemberIdAndProblemId_whenDeletingBookmark_thenReturnError() {
         //given
         String memberId = "1";

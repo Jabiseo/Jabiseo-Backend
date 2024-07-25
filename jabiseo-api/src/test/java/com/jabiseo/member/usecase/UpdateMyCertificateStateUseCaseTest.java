@@ -36,7 +36,7 @@ class UpdateMyCertificateStateUseCaseTest {
     CertificateRepository certificateRepository;
 
     @Test
-    @DisplayName("자격증 상태 변경")
+    @DisplayName("현재 자격증 변경을 성공한다.")
     void givenMemberIdAndCertificateId_whenUpdatingCertificateState_thenUpdateCertificateState() {
         //given
         String memberId = "1";
@@ -55,7 +55,7 @@ class UpdateMyCertificateStateUseCaseTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 회원의 자격증 상태 변경")
+    @DisplayName("존재하지 않는 회원의 현재 자격증 변경을 시도하면 예외처리한다.")
     void givenCertificateIdAndNonExistedMemberId_whenUpdatingCertificateState_thenReturnError() {
         //given
         String nonExistedMemberId = "1";
@@ -71,7 +71,7 @@ class UpdateMyCertificateStateUseCaseTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 자격증 상태 변경")
+    @DisplayName("존재하지 않는 현재 자격증 변경을 시도하면 예외처리한다.")
     void givenMemberIdAndNonExistedCertificateId_whenUpdatingCertificateState_thenReturnError() {
         //given
         String memberId = "1";

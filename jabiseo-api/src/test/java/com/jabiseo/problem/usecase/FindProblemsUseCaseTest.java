@@ -15,6 +15,8 @@ import com.jabiseo.problem.exception.ProblemErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -45,7 +47,7 @@ class FindProblemsUseCaseTest {
     ProblemRepository problemRepository;
 
     @Test
-    @DisplayName("시험 조건이 있는 문제 세트 조회 테스트 성공 케이스")
+    @DisplayName("시험 조건이 있는 문제 세트 조회를 성공한다.")
     void givenIdsIncludeExamIdAndCount_whenFindingProblems_then() {
         //given
         String certificateId = "1";
@@ -79,7 +81,7 @@ class FindProblemsUseCaseTest {
     }
 
     @Test
-    @DisplayName("시험 조건이 없는 문제 세트 조회 테스트 성공 케이스")
+    @DisplayName("시험 조건이 없는 문제 세트 조회를 성공한다.")
     void givenIdsExcludeExamIdAndCount_whenFindingProblems_then() {
         //given
         String certificateId = "1";
@@ -114,7 +116,7 @@ class FindProblemsUseCaseTest {
     }
 
     @Test
-    @DisplayName("문제 세트 조회 시 자격증이 존재하지 않는 경우")
+    @DisplayName("문제 세트 조회 시 자격증이 존재하지 않는 경우 예외처리한다.")
     void givenInvalidCertificate_whenFindingProblems_thenReturnError() {
         //given
         String certificateId = "1";
@@ -130,7 +132,7 @@ class FindProblemsUseCaseTest {
     }
 
     @Test
-    @DisplayName("문제 세트 조회 시 자격증에 과목들이 하나라도 매칭되지 않는 경우")
+    @DisplayName("문제 세트 조회 시 자격증에 과목들이 하나라도 매칭되지 않는 경우 예외처리한다.")
     void givenNotMatchingCertificateIdAndSubjectId_whenFindingProblems_thenReturnError() {
         //given
         String[] certificateIds = {"1", "8"};
@@ -151,7 +153,7 @@ class FindProblemsUseCaseTest {
     }
 
     @Test
-    @DisplayName("문제 세트 조회 시 자격증에 시험이 매칭되지 않는 경우")
+    @DisplayName("문제 세트 조회 시 자격증에 시험이 매칭되지 않는 경우 예외처리한다.")
     void givenNotMatchingCertificateIdAndExamId_whenFindingProblems_thenReturnError() {
         //given
         String[] certificateIds = {"1", "8"};
@@ -172,31 +174,27 @@ class FindProblemsUseCaseTest {
                 .hasFieldOrPropertyWithValue("errorCode", CertificateErrorCode.EXAM_NOT_FOUND_IN_CERTIFICATE);
     }
 
-    @Test
-    @DisplayName("문제 세트 조회 시 과목당 문제 수가 0 이하이거나 20 초과인 경우")
-    void givenInvalidCount_whenFindingProblems_thenReturnError() {
+    @ParameterizedTest
+    @ValueSource(ints = {-2, 21})
+    @DisplayName("문제 세트 조회 시 과목당 문제 수가 0 이하이거나 20 초과인 경우 예외처리한다.")
+    void givenInvalidCount_whenFindingProblems_thenReturnError(int count) {
         //given
         String certificateId = "1";
         String subjectId = "2";
         String examId = "3";
-        int count1 = -2;
-        int count2 = 21;
         Certificate certificate = createCertificate(certificateId);
         createSubject(subjectId, certificate);
         createExam(examId, certificate);
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
 
         //when & then
-        assertThatThrownBy(() -> sut.execute(certificateId, List.of(subjectId), Optional.of(examId), count1))
-                .isInstanceOf(ProblemBusinessException.class)
-                .hasFieldOrPropertyWithValue("errorCode", ProblemErrorCode.INVALID_PROBLEM_COUNT);
-        assertThatThrownBy(() -> sut.execute(certificateId, List.of(subjectId), Optional.of(examId), count2))
+        assertThatThrownBy(() -> sut.execute(certificateId, List.of(subjectId), Optional.of(examId), count))
                 .isInstanceOf(ProblemBusinessException.class)
                 .hasFieldOrPropertyWithValue("errorCode", ProblemErrorCode.INVALID_PROBLEM_COUNT);
     }
 
     @Test
-    @DisplayName("북마크 문제 세트 조회 테스트 성공 케이스")
+    @DisplayName("북마크를 통한 문제 세트 조회 테스트를 성공한다.")
     void givenProblemIds_whenFindingProblems_thenFindProblems() {
         //given
         String[] problemIds = {"1", "2", "3"};
@@ -218,7 +216,7 @@ class FindProblemsUseCaseTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 문제로 북마크 문제 세트 조회")
+    @DisplayName("존재하지 않는 문제로 북마크를 통한 문제 세트 조회를 하면 예외처리한다.")
     void givenNonExistedProblemIds_whenFindingProblems_thenReturnError() {
         //given
         String[] problemIds = {"1", "2", "3"};
