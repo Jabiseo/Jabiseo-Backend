@@ -6,6 +6,7 @@ import com.jabiseo.certificate.domain.Subject;
 import com.jabiseo.member.domain.Member;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
-import java.util.Optional;
 
 import static fixture.CertificateFixture.createCertificate;
 import static fixture.ExamFixture.createExam;
@@ -36,15 +36,19 @@ class ProblemRepositoryTest {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Test
-    @DisplayName("시험, 과목에 따라 북마크된 문제를 조회하는 쿼리가 정상적으로 동작한다.")
-    void givenProblemConditions_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
+    private String memberId;
+    private List<String> examId;
+    private List<String> subjectId;
+    private Pageable pageable;
+
+    @BeforeEach
+    void setUp() {
         //given
-        String memberId = "memberId";
+        memberId = "memberId";
         String certificateId = "certificateId";
-        List<String> examId = List.of("examId1", "examId2");
-        List<String> subjectId =  List.of("subjectId1", "subjectId2", "subjectId3");
-        List<String> problemId =  List.of("problemId1", "problemId2", "problemId3", "problemId4");
+        examId = List.of("examId1", "examId2");
+        subjectId = List.of("subjectId1", "subjectId2", "subjectId3");
+        List<String> problemId = List.of("problemId1", "problemId2", "problemId3", "problemId4");
 
         Member member = createMember(memberId);
         Certificate certificate = createCertificate(certificateId);
@@ -72,15 +76,31 @@ class ProblemRepositoryTest {
         requestProblems.forEach(entityManager::persist);
         bookmarks.forEach(entityManager::persist);
 
-        Pageable pageable = PageRequest.of(0, 10);
+        pageable = PageRequest.of(0, 10);
+    }
 
+    @Test
+    @DisplayName("시험, 과목에 따라 북마크된 문제를 조회하는 쿼리가 정상적으로 동작한다.")
+    void givenExamAndSubjectConditions_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
         //when
         List<Problem> problems = problemRepository.findBookmarkedByExamIdAndSubjectIdIn(
-                memberId, Optional.of(examId.get(0)), List.of(subjectId.get(0), subjectId.get(1)), pageable
+                memberId, examId.get(0), List.of(subjectId.get(0), subjectId.get(1)), pageable
         );
 
         //then
         assertThat(problems).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("시험 조건은 없고 과목에 따라 북마크된 문제를 조회하는 쿼리가 정상적으로 동작한다.")
+    void givenSubjectConditions_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
+        //when
+        List<Problem> problems = problemRepository.findBookmarkedBySubjectIdIn(
+                memberId, List.of(subjectId.get(0), subjectId.get(1)), pageable
+        );
+
+        //then
+        assertThat(problems).hasSize(3);
     }
 
 }
