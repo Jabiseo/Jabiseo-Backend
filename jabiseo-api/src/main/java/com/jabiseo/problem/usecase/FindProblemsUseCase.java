@@ -34,9 +34,8 @@ public class FindProblemsUseCase {
         Certificate certificate = certificateRepository.findById(certificateId)
                 .orElseThrow(() -> new CertificateBusinessException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));
 
-        // TODO: 검증을 어디서 어떻게 할 것인지 논의 필요
-        certificate.validateSubjectIds(subjectIds);
-        certificate.validateExamId(examId);
+        certificate.validateAndSubjectIds(examId, subjectIds);
+        // TODO: controller에서 검증한다 해도 여기에 검증 로직이 안 들어가도 되는지 확인
         validateProblemCount(count);
 
         // TODO: 과목별로 문제를 가져와서 쿼리를 5번 날리는 로직에서 1번의 쿼리로 변경해야 함. 하지만 최종적으로 과목 순서가 유지되어야 함

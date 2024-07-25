@@ -7,9 +7,7 @@ import com.jabiseo.problem.dto.FindProblemsResponse;
 import com.jabiseo.problem.usecase.CreateReportUseCase;
 import com.jabiseo.problem.usecase.FindBookmarkedProblemsUseCase;
 import com.jabiseo.problem.usecase.FindProblemsUseCase;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +34,10 @@ public class ProblemController {
             @RequestParam(name = "certificate-id") String certificateId,
             @RequestParam(name = "subject-id") List<String> subjectIds,
             @RequestParam(name = "exam-id", required = false) Optional<String> examId,
-            @RequestParam(required = false) int count
+            @RequestParam
+//            @Min(value = 1, message = "과목 당 문제 수는 0보다 커야 합니다.")
+            @Max(value = 20, message = "과목 당 문제 수는 20보다 작거나 같아야 합니다.")
+            int count
     ) {
         List<FindProblemsResponse> result =
                 findProblemsUseCase.execute(certificateId, subjectIds, examId, count);

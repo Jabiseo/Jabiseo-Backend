@@ -5,8 +5,9 @@ import lombok.Getter;
 @Getter
 public enum CommonErrorCode implements ErrorCode {
 
-    INVALID_REQUEST_BODY("Invalid request body", "COM_001", ErrorCode.BAD_REQUEST),
-    INTERNAL_SERVER_ERROR(" 서버 에러", "COM_002", ErrorCode.INTERNAL_SERVER_ERROR);
+    INVALID_REQUEST("Invalid request", "COM_001", ErrorCode.BAD_REQUEST),
+    INTERNAL_SERVER_ERROR("server error", "COM_002", ErrorCode.INTERNAL_SERVER_ERROR),
+    ;
 
     private final String message;
     private final String errorCode;
