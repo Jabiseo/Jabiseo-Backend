@@ -1,11 +1,16 @@
 package com.jabiseo.problem.controller;
 
-import com.jabiseo.problem.dto.*;
+import com.jabiseo.problem.dto.CreateReportRequest;
+import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
+import com.jabiseo.problem.dto.FindProblemsRequest;
+import com.jabiseo.problem.dto.FindProblemsResponse;
 import com.jabiseo.problem.usecase.CreateReportUseCase;
 import com.jabiseo.problem.usecase.FindBookmarkedProblemsUseCase;
 import com.jabiseo.problem.usecase.FindProblemsUseCase;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -66,10 +71,10 @@ public class ProblemController {
             // TODO: DTO 기반으로 변경
             @RequestParam(name = "exam-id") Optional<String> examId,
             @RequestParam(name = "subject-id") List<String> subjectIds,
-            Pageable pageable
+            int page
     ) {
         String memberId = "1"; // TODO: 로그인 기능 구현 후 로그인한 사용자의 ID로 변경
-        List<FindBookmarkedProblemsResponse> result = findBookmarkedProblemsUseCase.execute(memberId, examId, subjectIds, pageable);
+        List<FindBookmarkedProblemsResponse> result = findBookmarkedProblemsUseCase.execute(memberId, examId, subjectIds, page);
         return ResponseEntity.ok(result);
     }
 }

@@ -3,13 +3,11 @@ package com.jabiseo.problem.usecase;
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
-import com.jabiseo.member.exception.MemberBusinessException;
-import com.jabiseo.member.exception.MemberErrorCode;
-import com.jabiseo.problem.domain.Bookmark;
 import com.jabiseo.problem.domain.Problem;
+import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
-import com.jabiseo.problem.service.BookmarkedProblemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,8 +23,8 @@ public class FindBookmarkedProblemsUseCase {
     private static final int DEFAULT_PAGE_SIZE = 10;
 
     private final MemberRepository memberRepository;
-    private final BookmarkedProblemService bookmarkedProblemService;
 
+    private final ProblemRepository problemRepository;
 
     public List<FindBookmarkedProblemsResponse> execute(String memberId, Optional<String> examId, List<String> subjectIds, int page) {
 
@@ -37,17 +35,10 @@ public class FindBookmarkedProblemsUseCase {
         Certificate certificate = member.getCertificateState();
         certificate.validateAndSubjectIds(examId, subjectIds);
 
-        List<Bookmark> bookmarks = member.getBookmarks();
-        List<String> problemIds = bookmarks.stream()
-                .map(Bookmark::getProblem)
-                .map(Problem::getId)
-                .toList();
-
-        List<Problem> problems = bookmarkedProblemService.findBookmarkedProblems(problemIds, examId, subjectIds, pageable);
+        List<Problem> problems = problemRepository.findBookmarkedByExamIdAndSubjectIdIn(memberId, examId, subjectIds, pageable);
 
         return problems.stream()
                 .map(FindBookmarkedProblemsResponse::from)
                 .toList();
     }
-
 }
