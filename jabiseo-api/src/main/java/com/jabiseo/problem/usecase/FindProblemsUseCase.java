@@ -34,7 +34,7 @@ public class FindProblemsUseCase {
         Certificate certificate = certificateRepository.findById(certificateId)
                 .orElseThrow(() -> new CertificateBusinessException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));
 
-        certificate.validateAndSubjectIds(examId, subjectIds);
+        certificate.validateExamIdAndSubjectIds(examId, subjectIds);
         // TODO: controller에서 검증한다 해도 여기에 검증 로직이 안 들어가도 되는지 확인
         validateProblemCount(count);
 

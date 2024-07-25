@@ -61,7 +61,7 @@ public class Certificate {
                 .anyMatch(id -> id.equals(examId));
     }
 
-    public void validateSubjectIds(List<String> subjectIds) {
+    private void validateSubjectIds(List<String> subjectIds) {
         // 자격증에 해당하는 과목들이 모두 있는지 검사
         subjectIds.forEach(subjectId -> {
             if (!this.containsSubject(subjectId)) {
@@ -70,14 +70,14 @@ public class Certificate {
         });
     }
 
-    public void validateExamId(Optional<String> examId) {
+    private void validateExamId(Optional<String> examId) {
         // 자격증에 해당하는 시험이 있는지 검사
         if (examId.isPresent() && !this.containsExam(examId.get())) {
             throw new CertificateBusinessException(CertificateErrorCode.EXAM_NOT_FOUND_IN_CERTIFICATE);
         }
     }
 
-    public void validateAndSubjectIds(Optional<String> examId, List<String> subjectIds) {
+    public void validateExamIdAndSubjectIds(Optional<String> examId, List<String> subjectIds) {
         validateExamId(examId);
         validateSubjectIds(subjectIds);
     }
