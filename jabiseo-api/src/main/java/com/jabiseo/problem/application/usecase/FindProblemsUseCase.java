@@ -11,7 +11,7 @@ import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.CertificateResponse;
 import com.jabiseo.problem.dto.FindProblemsRequest;
 import com.jabiseo.problem.dto.FindProblemsResponse;
-import com.jabiseo.problem.dto.ProblemsResponse;
+import com.jabiseo.problem.dto.ProblemsDetailResponse;
 import com.jabiseo.problem.exception.ProblemBusinessException;
 import com.jabiseo.problem.exception.ProblemErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -55,11 +55,11 @@ public class FindProblemsUseCase {
                 .toList();
 
         CertificateResponse certificateResponse = CertificateResponse.from(certificate);
-        List<ProblemsResponse> problemsResponses = problems.stream()
-                .map(ProblemsResponse::from)
+        List<ProblemsDetailResponse> problemsDetailRespons = problems.stream()
+                .map(ProblemsDetailResponse::from)
                 .toList();
 
-        return FindProblemsResponse.of(certificateResponse, problemsResponses);
+        return FindProblemsResponse.of(certificateResponse, problemsDetailRespons);
     }
 
     // TODO: 문제에 북마크 되어 있는지 표시해야 함
@@ -69,15 +69,15 @@ public class FindProblemsUseCase {
         Certificate certificate = member.getCurrentCertificate();
 
         CertificateResponse certificateResponse = CertificateResponse.from(certificate);
-        List<ProblemsResponse> problemsResponses = request.problemIds().stream()
+        List<ProblemsDetailResponse> problemsDetailRespons = request.problemIds().stream()
                 .map(problemId -> problemRepository.findById(problemId)
                         .orElseThrow(() -> new ProblemBusinessException(ProblemErrorCode.PROBLEM_NOT_FOUND)))
                 .peek(problem -> {
                     problem.validateProblemInCertificate(certificate);
                 })
-                .map(ProblemsResponse::from)
+                .map(ProblemsDetailResponse::from)
                 .toList();
-        return FindProblemsResponse.of(certificateResponse, problemsResponses);
+        return FindProblemsResponse.of(certificateResponse, problemsDetailRespons);
     }
 
     private void validateProblemCount(int count) {

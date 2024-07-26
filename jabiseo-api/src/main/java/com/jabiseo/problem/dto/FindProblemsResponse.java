@@ -4,9 +4,9 @@ import java.util.List;
 
 public record FindProblemsResponse(
         CertificateResponse certificateInfo,
-        List<ProblemsResponse> problems
+        List<ProblemsDetailResponse> problems
 ) {
-    public static FindProblemsResponse of(CertificateResponse certificateInfo, List<ProblemsResponse> problems) {
+    public static FindProblemsResponse of(CertificateResponse certificateInfo, List<ProblemsDetailResponse> problems) {
         return new FindProblemsResponse(certificateInfo, problems);
     }
 }

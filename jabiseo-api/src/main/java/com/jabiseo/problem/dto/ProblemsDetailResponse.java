@@ -6,18 +6,18 @@ import com.jabiseo.problem.domain.Problem;
 
 import java.util.List;
 
-public record ProblemsResponse(
+public record ProblemsDetailResponse(
         String problemId,
         ExamResponse examInfo,
-        SubjectResponse subject,
+        SubjectResponse subjectInfo,
         boolean isBookmark,
         String description,
         List<ChoiceResponse> choices,
         int answerNumber,
         String solution
 ) {
-    public static ProblemsResponse from(Problem problem) {
-        return new ProblemsResponse(
+    public static ProblemsDetailResponse from(Problem problem) {
+        return new ProblemsDetailResponse(
                 problem.getId(),
                 ExamResponse.from(problem.getExam()),
                 SubjectResponse.from(problem.getSubject()),
