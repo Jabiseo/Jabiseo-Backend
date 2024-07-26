@@ -31,7 +31,6 @@ public class FindProblemsUseCase {
 
 
     private final CertificateRepository certificateRepository;
-
     private final ProblemRepository problemRepository;
     private final MemberRepository memberRepository;
 
@@ -75,7 +74,6 @@ public class FindProblemsUseCase {
                         .orElseThrow(() -> new ProblemBusinessException(ProblemErrorCode.PROBLEM_NOT_FOUND)))
                 .peek(problem -> {
                     problem.validateProblemInCertificate(certificate);
-
                 })
                 .map(ProblemsResponse::from)
                 .toList();

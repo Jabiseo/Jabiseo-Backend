@@ -6,10 +6,12 @@ import com.jabiseo.certificate.domain.Exam;
 import com.jabiseo.certificate.domain.Subject;
 import com.jabiseo.certificate.exception.CertificateBusinessException;
 import com.jabiseo.certificate.exception.CertificateErrorCode;
+import com.jabiseo.member.domain.Member;
+import com.jabiseo.member.domain.MemberRepository;
 import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindProblemsRequest;
-import com.jabiseo.problem.dto.ProblemsResponse;
+import com.jabiseo.problem.dto.FindProblemsResponse;
 import com.jabiseo.problem.exception.ProblemBusinessException;
 import com.jabiseo.problem.exception.ProblemErrorCode;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +28,7 @@ import java.util.Optional;
 
 import static fixture.CertificateFixture.createCertificate;
 import static fixture.ExamFixture.createExam;
+import static fixture.MemberFixture.createMember;
 import static fixture.ProblemFixture.createProblem;
 import static fixture.SubjectFixture.createSubject;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,6 +48,9 @@ class FindProblemsUseCaseTest {
 
     @Mock
     ProblemRepository problemRepository;
+
+    @Mock
+    MemberRepository memberRepository;
 
     @Test
     @DisplayName("시험 조건이 있는 문제 세트 조회를 성공한다.")
@@ -71,13 +77,13 @@ class FindProblemsUseCaseTest {
                 .willReturn(List.of(problems.get(1)));
 
         //when
-        List<ProblemsResponse> result = sut.execute(certificateId, List.of(subjectIds), Optional.of(examId), count);
+        FindProblemsResponse result = sut.execute(certificateId, List.of(subjectIds), Optional.of(examId), count);
 
         //then
-        assertThat(result).hasSize(3);
-        assertThat(result.get(0).problemId()).isEqualTo(problemIds[0]);
-        assertThat(result.get(1).problemId()).isEqualTo(problemIds[2]);
-        assertThat(result.get(2).problemId()).isEqualTo(problemIds[1]);
+        assertThat(result.certificateInfo().certificateId()).isEqualTo(certificateId);
+        assertThat(result.problems().get(0).problemId()).isEqualTo(problemIds[0]);
+        assertThat(result.problems().get(1).problemId()).isEqualTo(problemIds[2]);
+        assertThat(result.problems().get(2).problemId()).isEqualTo(problemIds[1]);
     }
 
     @Test
@@ -106,13 +112,13 @@ class FindProblemsUseCaseTest {
                 .willReturn(List.of(problems.get(1)));
 
         //when
-        List<ProblemsResponse> result = sut.execute(certificateId, List.of(subjectIds), Optional.empty(), count);
+        FindProblemsResponse result = sut.execute(certificateId, List.of(subjectIds), Optional.empty(), count);
 
         //then
-        assertThat(result).hasSize(3);
-        assertThat(result.get(0).problemId()).isEqualTo(problemIds[0]);
-        assertThat(result.get(1).problemId()).isEqualTo(problemIds[2]);
-        assertThat(result.get(2).problemId()).isEqualTo(problemIds[1]);
+        assertThat(result.certificateInfo().certificateId()).isEqualTo(certificateId);
+        assertThat(result.problems().get(0).problemId()).isEqualTo(problemIds[0]);
+        assertThat(result.problems().get(1).problemId()).isEqualTo(problemIds[2]);
+        assertThat(result.problems().get(2).problemId()).isEqualTo(problemIds[1]);
     }
 
     @Test
@@ -198,34 +204,50 @@ class FindProblemsUseCaseTest {
     @DisplayName("북마크를 통한 문제 세트 조회 테스트를 성공한다.")
     void givenProblemIds_whenFindingProblems_thenFindProblems() {
         //given
-        String[] problemIds = {"1", "2", "3"};
-        Problem problem1 = createProblem(problemIds[0]);
-        Problem problem2 = createProblem(problemIds[1]);
-        Problem problem3 = createProblem(problemIds[2]);
+        String memberId = "1";
+        String certificateId = "2";
+        String[] problemIds = {"3", "4", "5"};
+        Member member = createMember(memberId);
+        Certificate certificate = createCertificate(certificateId);
+        member.updateCurrentCertificate(certificate);
+        Problem problem1 = createProblem(problemIds[0], certificate);
+        Problem problem2 = createProblem(problemIds[1], certificate);
+        Problem problem3 = createProblem(problemIds[2], certificate);
         FindProblemsRequest request = new FindProblemsRequest(List.of(problemIds));
+        given(memberRepository.getReferenceById(memberId)).willReturn(member);
         given(problemRepository.findById(problemIds[0])).willReturn(Optional.of(problem1));
         given(problemRepository.findById(problemIds[1])).willReturn(Optional.of(problem2));
         given(problemRepository.findById(problemIds[2])).willReturn(Optional.of(problem3));
 
         //when
-        List<ProblemsResponse> result = sut.execute(member.getMemberId(), request);
+        FindProblemsResponse result = sut.execute(member.getId(), request);
 
         //then
-        assertThat(result.get(0).problemId()).isEqualTo(problemIds[0]);
-        assertThat(result.get(1).problemId()).isEqualTo(problemIds[1]);
-        assertThat(result.get(2).problemId()).isEqualTo(problemIds[2]);
+        assertThat(result.certificateInfo().certificateId()).isEqualTo(certificateId);
+        assertThat(result.problems().get(0).problemId()).isEqualTo(problemIds[0]);
+        assertThat(result.problems().get(1).problemId()).isEqualTo(problemIds[1]);
+        assertThat(result.problems().get(2).problemId()).isEqualTo(problemIds[2]);
     }
 
     @Test
     @DisplayName("존재하지 않는 문제로 북마크를 통한 문제 세트 조회를 하면 예외처리한다.")
     void givenNonExistedProblemIds_whenFindingProblems_thenReturnError() {
         //given
-        String[] problemIds = {"1", "2", "3"};
+        String memberId = "1";
+        String certificateId = "2";
+        String[] problemIds = {"3", "4", "5"};
+        Member member = createMember(memberId);
+        Certificate certificate = createCertificate(certificateId);
+        member.updateCurrentCertificate(certificate);
+        createProblem(problemIds[0], certificate);
+        createProblem(problemIds[1], certificate);
+        createProblem(problemIds[2], certificate);
         FindProblemsRequest request = new FindProblemsRequest(List.of(problemIds));
+        given(memberRepository.getReferenceById(memberId)).willReturn(member);
         given(problemRepository.findById(problemIds[0])).willReturn(Optional.empty());
 
         //when & then
-        assertThatThrownBy(() -> sut.execute(member.getMemberId(), request))
+        assertThatThrownBy(() -> sut.execute(member.getId(), request))
                 .isInstanceOf(ProblemBusinessException.class)
                 .hasFieldOrPropertyWithValue("errorCode", ProblemErrorCode.PROBLEM_NOT_FOUND);
     }
