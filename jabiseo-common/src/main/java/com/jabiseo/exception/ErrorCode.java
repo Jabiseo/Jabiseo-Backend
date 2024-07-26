@@ -10,6 +10,8 @@ public interface ErrorCode {
 
     int INTERNAL_SERVER_ERROR = 500;
 
+    int FORBIDDEN = 403;
+
     String getMessage();
 
     String getErrorCode();
