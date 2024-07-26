@@ -2,8 +2,8 @@ package com.jabiseo.problem.controller;
 
 import com.jabiseo.problem.dto.CreateBookmarkRequest;
 import com.jabiseo.problem.dto.DeleteBookmarkRequest;
-import com.jabiseo.problem.usecase.CreateBookmarkUseCase;
-import com.jabiseo.problem.usecase.DeleteBookmarkUseCase;
+import com.jabiseo.problem.application.usecase.CreateBookmarkUseCase;
+import com.jabiseo.problem.application.usecase.DeleteBookmarkUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

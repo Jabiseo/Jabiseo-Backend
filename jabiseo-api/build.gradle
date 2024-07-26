@@ -19,6 +19,7 @@ dependencies {
     implementation project(":jabiseo-domain")
     implementation project(":jabiseo-infrastructure")
     implementation project(":jabiseo-common")
+    testImplementation(testFixtures(project(":jabiseo-domain")))
 
 
     implementation 'io.jsonwebtoken:jjwt-api:0.11.2'

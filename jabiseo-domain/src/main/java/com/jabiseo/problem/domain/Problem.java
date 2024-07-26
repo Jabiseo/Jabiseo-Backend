@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -50,9 +49,6 @@ public class Problem {
     @JoinColumn(name = "subject_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Subject subject;
 
-    @OneToMany(mappedBy = "problem")
-    private List<Bookmark> bookmarks = new ArrayList<>();
-
     public List<String> getChoices() {
         return Stream.of(choice1, choice2, choice3, choice4, choice5)
                 .filter((choice) -> choice != null && !choice.isBlank())
@@ -84,7 +80,4 @@ public class Problem {
                 answerNumber, theory, solution, certificate, exam, subject);
     }
 
-    public void addBookmark(Bookmark bookmark) {
-        bookmarks.add(bookmark);
-    }
 }
