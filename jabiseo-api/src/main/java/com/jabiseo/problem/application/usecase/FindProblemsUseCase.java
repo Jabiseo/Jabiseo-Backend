@@ -4,10 +4,14 @@ import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.certificate.domain.CertificateRepository;
 import com.jabiseo.certificate.exception.CertificateBusinessException;
 import com.jabiseo.certificate.exception.CertificateErrorCode;
+import com.jabiseo.member.domain.Member;
+import com.jabiseo.member.domain.MemberRepository;
 import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
+import com.jabiseo.problem.dto.CertificateResponse;
 import com.jabiseo.problem.dto.FindProblemsRequest;
 import com.jabiseo.problem.dto.FindProblemsResponse;
+import com.jabiseo.problem.dto.ProblemsResponse;
 import com.jabiseo.problem.exception.ProblemBusinessException;
 import com.jabiseo.problem.exception.ProblemErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +33,10 @@ public class FindProblemsUseCase {
     private final CertificateRepository certificateRepository;
 
     private final ProblemRepository problemRepository;
+    private final MemberRepository memberRepository;
 
     // TODO: 문제에 북마크 되어 있는지 표시해야 함
-    public List<FindProblemsResponse> execute(String certificateId, List<String> subjectIds, Optional<String> examId, int count) {
+    public FindProblemsResponse execute(String certificateId, List<String> subjectIds, Optional<String> examId, int count) {
         Certificate certificate = certificateRepository.findById(certificateId)
                 .orElseThrow(() -> new CertificateBusinessException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));
 
@@ -50,18 +55,31 @@ public class FindProblemsUseCase {
                 .flatMap(List::stream)
                 .toList();
 
-        return problems.stream()
-                .map(FindProblemsResponse::from)
+        CertificateResponse certificateResponse = CertificateResponse.from(certificate);
+        List<ProblemsResponse> problemsResponses = problems.stream()
+                .map(ProblemsResponse::from)
                 .toList();
+
+        return FindProblemsResponse.of(certificateResponse, problemsResponses);
     }
 
     // TODO: 문제에 북마크 되어 있는지 표시해야 함
-    public List<FindProblemsResponse> execute(FindProblemsRequest request) {
-        return request.problemIds().stream()
+    public FindProblemsResponse execute(String memberId, FindProblemsRequest request) {
+        Member member = memberRepository.getReferenceById(memberId);
+        member.validateCurrentCertificate();
+        Certificate certificate = member.getCurrentCertificate();
+
+        CertificateResponse certificateResponse = CertificateResponse.from(certificate);
+        List<ProblemsResponse> problemsResponses = request.problemIds().stream()
                 .map(problemId -> problemRepository.findById(problemId)
                         .orElseThrow(() -> new ProblemBusinessException(ProblemErrorCode.PROBLEM_NOT_FOUND)))
-                .map(FindProblemsResponse::from)
+                .peek(problem -> {
+                    problem.validateProblemInCertificate(certificate);
+
+                })
+                .map(ProblemsResponse::from)
                 .toList();
+        return FindProblemsResponse.of(certificateResponse, problemsResponses);
     }
 
     private void validateProblemCount(int count) {

@@ -2,10 +2,7 @@ package com.jabiseo.problem.controller;
 
 import com.jabiseo.config.auth.AuthMember;
 import com.jabiseo.config.auth.AuthenticatedMember;
-import com.jabiseo.problem.dto.CreateReportRequest;
-import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
-import com.jabiseo.problem.dto.FindProblemsRequest;
-import com.jabiseo.problem.dto.FindProblemsResponse;
+import com.jabiseo.problem.dto.*;
 import com.jabiseo.problem.application.usecase.CreateReportUseCase;
 import com.jabiseo.problem.application.usecase.FindBookmarkedProblemsUseCase;
 import com.jabiseo.problem.application.usecase.FindProblemsUseCase;
@@ -32,7 +29,7 @@ public class ProblemController {
     private final FindBookmarkedProblemsUseCase findBookmarkedProblemsUseCase;
 
     @GetMapping("/set")
-    public ResponseEntity<List<FindProblemsResponse>> findProblems(
+    public ResponseEntity<FindProblemsResponse> findProblems(
             @AuthenticatedMember AuthMember member,
             // TODO: DTO 기반으로 변경
             @RequestParam(name = "certificate-id") String certificateId,
@@ -43,17 +40,17 @@ public class ProblemController {
             @Max(value = 20, message = "과목 당 문제 수는 20보다 작거나 같아야 합니다.")
             int count
     ) {
-        List<FindProblemsResponse> result =
+        FindProblemsResponse result =
                 findProblemsUseCase.execute(certificateId, subjectIds, examId, count);
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/set/query")
-    public ResponseEntity<List<FindProblemsResponse>> findProblems(
+    public ResponseEntity<FindProblemsResponse> findProblems(
             @AuthenticatedMember AuthMember member,
             @RequestBody FindProblemsRequest request
     ) {
-        List<FindProblemsResponse> result = findProblemsUseCase.execute(request);
+        FindProblemsResponse result = findProblemsUseCase.execute(member.getMemberId(), request);
         return ResponseEntity.ok(result);
     }
 

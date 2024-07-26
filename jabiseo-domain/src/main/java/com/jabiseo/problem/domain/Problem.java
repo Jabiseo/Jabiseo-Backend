@@ -3,6 +3,8 @@ package com.jabiseo.problem.domain;
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.certificate.domain.Exam;
 import com.jabiseo.certificate.domain.Subject;
+import com.jabiseo.certificate.exception.CertificateBusinessException;
+import com.jabiseo.certificate.exception.CertificateErrorCode;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -72,4 +74,9 @@ public class Problem {
                 answerNumber, solution, sequence, certificate, exam, subject);
     }
 
+    public void validateProblemInCertificate(Certificate certificate) {
+        if (!this.getCertificate().equals(certificate)) {
+            throw new CertificateBusinessException(CertificateErrorCode.PROBLEM_NOT_FOUND_IN_CERTIFICATE);
+        }
+    }
 }

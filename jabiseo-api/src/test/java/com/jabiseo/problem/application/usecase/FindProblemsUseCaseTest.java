@@ -9,7 +9,7 @@ import com.jabiseo.certificate.exception.CertificateErrorCode;
 import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindProblemsRequest;
-import com.jabiseo.problem.dto.FindProblemsResponse;
+import com.jabiseo.problem.dto.ProblemsResponse;
 import com.jabiseo.problem.exception.ProblemBusinessException;
 import com.jabiseo.problem.exception.ProblemErrorCode;
 import org.junit.jupiter.api.DisplayName;
@@ -71,7 +71,7 @@ class FindProblemsUseCaseTest {
                 .willReturn(List.of(problems.get(1)));
 
         //when
-        List<FindProblemsResponse> result = sut.execute(certificateId, List.of(subjectIds), Optional.of(examId), count);
+        List<ProblemsResponse> result = sut.execute(certificateId, List.of(subjectIds), Optional.of(examId), count);
 
         //then
         assertThat(result).hasSize(3);
@@ -106,7 +106,7 @@ class FindProblemsUseCaseTest {
                 .willReturn(List.of(problems.get(1)));
 
         //when
-        List<FindProblemsResponse> result = sut.execute(certificateId, List.of(subjectIds), Optional.empty(), count);
+        List<ProblemsResponse> result = sut.execute(certificateId, List.of(subjectIds), Optional.empty(), count);
 
         //then
         assertThat(result).hasSize(3);
@@ -208,7 +208,7 @@ class FindProblemsUseCaseTest {
         given(problemRepository.findById(problemIds[2])).willReturn(Optional.of(problem3));
 
         //when
-        List<FindProblemsResponse> result = sut.execute(request);
+        List<ProblemsResponse> result = sut.execute(member.getMemberId(), request);
 
         //then
         assertThat(result.get(0).problemId()).isEqualTo(problemIds[0]);
@@ -225,7 +225,7 @@ class FindProblemsUseCaseTest {
         given(problemRepository.findById(problemIds[0])).willReturn(Optional.empty());
 
         //when & then
-        assertThatThrownBy(() -> sut.execute(request))
+        assertThatThrownBy(() -> sut.execute(member.getMemberId(), request))
                 .isInstanceOf(ProblemBusinessException.class)
                 .hasFieldOrPropertyWithValue("errorCode", ProblemErrorCode.PROBLEM_NOT_FOUND);
     }

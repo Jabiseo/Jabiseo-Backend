@@ -7,7 +7,7 @@ import com.jabiseo.problem.domain.Problem;
 public record FindBookmarkedProblemsResponse(
         String problemId,
         ExamResponse examInfo,
-        SubjectResponse subject,
+        SubjectResponse subjectInfo,
         boolean isBookmark,
         String description
 ) {
