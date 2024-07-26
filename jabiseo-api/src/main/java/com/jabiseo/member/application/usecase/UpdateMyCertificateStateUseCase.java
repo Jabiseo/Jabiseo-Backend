@@ -2,7 +2,6 @@ package com.jabiseo.member.application.usecase;
 
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.certificate.domain.CertificateRepository;
-import com.jabiseo.certificate.exception.CertificateBusinessException;
 import com.jabiseo.certificate.exception.CertificateErrorCode;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
@@ -25,7 +24,7 @@ public class UpdateMyCertificateStateUseCase {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberBusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
         Certificate certificate = certificateRepository.findById(request.certificateId())
-                .orElseThrow(() -> new MemberBusinessException(MemberErrorCode.CURRENT_CERTIFICATE_NOT_EXIST));
+                .orElseThrow(() -> new MemberBusinessException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));
         member.updateCertificateState(certificate);
     }
 }
