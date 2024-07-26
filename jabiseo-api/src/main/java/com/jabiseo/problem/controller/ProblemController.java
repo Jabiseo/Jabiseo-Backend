@@ -1,5 +1,7 @@
 package com.jabiseo.problem.controller;
 
+import com.jabiseo.config.auth.AuthMember;
+import com.jabiseo.config.auth.AuthenticatedMember;
 import com.jabiseo.problem.dto.CreateReportRequest;
 import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
 import com.jabiseo.problem.dto.FindProblemsRequest;
@@ -31,6 +33,7 @@ public class ProblemController {
 
     @GetMapping("/set")
     public ResponseEntity<List<FindProblemsResponse>> findProblems(
+            @AuthenticatedMember AuthMember member,
             // TODO: DTO 기반으로 변경
             @RequestParam(name = "certificate-id") String certificateId,
             @RequestParam(name = "subject-id") List<String> subjectIds,
@@ -47,6 +50,7 @@ public class ProblemController {
 
     @PostMapping("/set/query")
     public ResponseEntity<List<FindProblemsResponse>> findProblems(
+            @AuthenticatedMember AuthMember member,
             @RequestBody FindProblemsRequest request
     ) {
         List<FindProblemsResponse> result = findProblemsUseCase.execute(request);
@@ -70,13 +74,13 @@ public class ProblemController {
 
     @GetMapping("/bookmarked")
     public ResponseEntity<List<FindBookmarkedProblemsResponse>> findBookmarkedProblems(
+            @AuthenticatedMember AuthMember member,
             // TODO: DTO 기반으로 변경
             @RequestParam(name = "exam-id") Optional<String> examId,
             @RequestParam(name = "subject-id") List<String> subjectIds,
             int page
     ) {
-        String memberId = "1"; // TODO: 로그인 기능 구현 후 로그인한 사용자의 ID로 변경
-        List<FindBookmarkedProblemsResponse> result = findBookmarkedProblemsUseCase.execute(memberId, examId, subjectIds, page);
+        List<FindBookmarkedProblemsResponse> result = findBookmarkedProblemsUseCase.execute(member.getMemberId(), examId, subjectIds, page);
         return ResponseEntity.ok(result);
     }
 }

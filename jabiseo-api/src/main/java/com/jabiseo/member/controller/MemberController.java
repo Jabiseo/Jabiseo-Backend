@@ -24,24 +24,27 @@ public class MemberController {
     private final UpdateMyCertificateStateUseCase updateMyCertificateStateUseCase;
 
     @GetMapping
-    public ResponseEntity<FindMyInfoResponse> findMyInfo(@AuthenticatedMember AuthMember member) {
+    public ResponseEntity<FindMyInfoResponse> findMyInfo(
+            @AuthenticatedMember AuthMember member
+    ) {
         FindMyInfoResponse result = findMyInfoUseCase.execute(member.getMemberId());
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/certificates")
-    public ResponseEntity<FindMyCertificateStateResponse> findMyCertificateStatus() {
-        String memberId = "1"; // TODO: 로그인 기능 구현 후 JWT에서 memberId 가져오기
-        FindMyCertificateStateResponse result = findMyCertificateStateUseCase.execute(memberId);
+    public ResponseEntity<FindMyCertificateStateResponse> findMyCertificateStatus(
+            @AuthenticatedMember AuthMember member
+    ) {
+        FindMyCertificateStateResponse result = findMyCertificateStateUseCase.execute(member.getMemberId());
         return ResponseEntity.ok(result);
     }
 
     @PatchMapping("/certificates")
     public ResponseEntity<Void> updateMyCertificateStatus(
-            @RequestBody UpdateMyCertificateStateRequest request
+            @RequestBody UpdateMyCertificateStateRequest request,
+            @AuthenticatedMember AuthMember member
     ) {
-        String memberId = "1"; // TODO: 로그인 기능 구현 후 JWT에서 memberId 가져오기
-        updateMyCertificateStateUseCase.execute(memberId, request);
+        updateMyCertificateStateUseCase.execute(member.getMemberId(), request);
         return ResponseEntity.ok().build();
     }
 

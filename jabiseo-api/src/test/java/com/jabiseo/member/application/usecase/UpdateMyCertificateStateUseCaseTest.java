@@ -2,6 +2,7 @@ package com.jabiseo.member.application.usecase;
 
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.certificate.domain.CertificateRepository;
+import com.jabiseo.certificate.exception.CertificateErrorCode;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
 import com.jabiseo.member.dto.UpdateMyCertificateStateRequest;
@@ -71,7 +72,7 @@ class UpdateMyCertificateStateUseCaseTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 현재 자격증 변경을 시도하면 예외처리한다.")
+    @DisplayName("존재하지 않는 자격증으로 현재 자격증 변경을 시도하면 예외처리한다.")
     void givenMemberIdAndNonExistedCertificateId_whenUpdatingCertificateState_thenReturnError() {
         //given
         String memberId = "1";
@@ -84,7 +85,7 @@ class UpdateMyCertificateStateUseCaseTest {
         UpdateMyCertificateStateRequest request = new UpdateMyCertificateStateRequest(nonExistedCertificateId);
         assertThatThrownBy(() -> sut.execute(memberId, request))
                 .isInstanceOf(MemberBusinessException.class)
-                .hasFieldOrPropertyWithValue("errorCode", MemberErrorCode.CURRENT_CERTIFICATE_NOT_EXIST);
+                .hasFieldOrPropertyWithValue("errorCode", CertificateErrorCode.CERTIFICATE_NOT_FOUND);
     }
 
 }
