@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 @Entity
 @Getter
@@ -29,8 +28,6 @@ public class Problem {
 
     private String choice4;
 
-    private String choice5;
-
     private int answerNumber;
 
     private String solution;
@@ -48,13 +45,11 @@ public class Problem {
     private Subject subject;
 
     public List<String> getChoices() {
-        return Stream.of(choice1, choice2, choice3, choice4, choice5)
-                .filter((choice) -> choice != null && !choice.isBlank())
-                .toList();
+        return List.of(choice1, choice2, choice3, choice4);
     }
 
-    public Problem(String id, String description, String choice1, String choice2, String choice3,
-                   String choice4, String choice5, int answerNumber, String solution,
+    public Problem(String id, String description, String choice1, String choice2,
+                   String choice3, String choice4, int answerNumber, String solution,
                    Certificate certificate, Exam exam, Subject subject) {
         this.id = id;
         this.description = description;
@@ -62,7 +57,6 @@ public class Problem {
         this.choice2 = choice2;
         this.choice3 = choice3;
         this.choice4 = choice4;
-        this.choice5 = choice5;
         this.answerNumber = answerNumber;
         this.solution = solution;
         this.certificate = certificate;
@@ -70,10 +64,10 @@ public class Problem {
         this.subject = subject;
     }
 
-    public static Problem of(String id, String description, String choice1, String choice2, String choice3,
-                             String choice4, String choice5, int answerNumber, String solution,
+    public static Problem of(String id, String description, String choice1, String choice2,
+                             String choice3, String choice4, int answerNumber, String solution,
                              Certificate certificate, Exam exam, Subject subject) {
-        return new Problem(id, description, choice1, choice2, choice3, choice4, choice5,
+        return new Problem(id, description, choice1, choice2, choice3, choice4,
                 answerNumber, solution, certificate, exam, subject);
     }
 
