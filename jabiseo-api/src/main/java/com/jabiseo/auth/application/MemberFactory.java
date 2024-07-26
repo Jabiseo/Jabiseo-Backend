@@ -3,9 +3,9 @@ package com.jabiseo.auth.application;
 
 import com.jabiseo.auth.application.oidc.OauthMemberInfo;
 import com.jabiseo.member.domain.Member;
-import com.jabiseo.member.domain.OauthServer;
 import com.jabiseo.member.domain.RandomNicknameGenerator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -14,10 +14,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MemberFactory {
 
-    private final RandomNicknameGenerator randomNicknameGenerator;
+    @Value("${jabiseo.default-image-url}")
+    private String DEFAULT_IMAGE_URL;
 
-    // TODO: S3 + CDN 생성 후 변경해야 한다.
-    private final String DEFAULT_IMAGE_URL = "https://github.com/Jabiseo/Jabiseo-Backend/assets/28949213/fb6cb510-05fa-4791-a9c1-74a379294936";
+    private final RandomNicknameGenerator randomNicknameGenerator;
 
     public Member createNew(OauthMemberInfo oauthMemberInfo) {
         String nickname = randomNicknameGenerator.generate();
