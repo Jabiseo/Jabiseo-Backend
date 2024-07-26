@@ -33,8 +33,6 @@ public class Problem {
 
     private int answerNumber;
 
-    private String theory;
-
     private String solution;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -56,7 +54,7 @@ public class Problem {
     }
 
     public Problem(String id, String description, String choice1, String choice2, String choice3,
-                   String choice4, String choice5, int answerNumber, String theory, String solution,
+                   String choice4, String choice5, int answerNumber, String solution,
                    Certificate certificate, Exam exam, Subject subject) {
         this.id = id;
         this.description = description;
@@ -66,7 +64,6 @@ public class Problem {
         this.choice4 = choice4;
         this.choice5 = choice5;
         this.answerNumber = answerNumber;
-        this.theory = theory;
         this.solution = solution;
         this.certificate = certificate;
         this.exam = exam;
@@ -74,10 +71,10 @@ public class Problem {
     }
 
     public static Problem of(String id, String description, String choice1, String choice2, String choice3,
-                             String choice4, String choice5, int answerNumber, String theory, String solution,
+                             String choice4, String choice5, int answerNumber, String solution,
                              Certificate certificate, Exam exam, Subject subject) {
         return new Problem(id, description, choice1, choice2, choice3, choice4, choice5,
-                answerNumber, theory, solution, certificate, exam, subject);
+                answerNumber, solution, certificate, exam, subject);
     }
 
 }

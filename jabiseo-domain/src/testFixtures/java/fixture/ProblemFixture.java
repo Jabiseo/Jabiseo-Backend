@@ -20,7 +20,6 @@ public class ProblemFixture {
                 "choice5",
                 1,
                 "problem theory",
-                "problem solution",
                 certificate,
                 exam,
                 subject
@@ -39,7 +38,6 @@ public class ProblemFixture {
                 "choice5",
                 1,
                 "problem theory",
-                "problem solution",
                 certificate,
                 ExamFixture.createExam("5432", certificate),
                 createSubject("9876", certificate)

@@ -14,7 +14,6 @@ public record FindProblemsResponse(
         String description,
         List<ChoiceResponse> choices,
         int answerNumber,
-        String theory,
         String solution
 ) {
     public static FindProblemsResponse from(Problem problem) {
@@ -26,7 +25,6 @@ public record FindProblemsResponse(
                 problem.getDescription(),
                 ChoiceResponse.fromChoices(problem.getChoices()),
                 problem.getAnswerNumber(),
-                problem.getTheory(),
                 problem.getSolution()
         );
     }
