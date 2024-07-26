@@ -43,8 +43,8 @@ class FindBookmarkedProblemsUseCaseTest {
     ProblemRepository problemRepository;
 
     @Test
-    @DisplayName("북마크 목록 조회를 성공한다.")
-    void givenProblemConditions_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
+    @DisplayName("examId가 있을 경우 북마크 목록 조회를 성공한다.")
+    void givenProblemConditionsContainsExamId_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
         //given
         String memberId = "1";
         String certificateId = "2";
@@ -67,6 +67,35 @@ class FindBookmarkedProblemsUseCaseTest {
 
         //when
         List<FindBookmarkedProblemsResponse> results = sut.execute(memberId, Optional.of(examId), List.of(subjectId), 0);
+
+        //then
+        assertThat(results.get(0)).isEqualTo(FindBookmarkedProblemsResponse.from(problem1));
+        assertThat(results.get(1)).isEqualTo(FindBookmarkedProblemsResponse.from(problem2));
+    }
+
+    @Test
+    @DisplayName("examId가 없을 경우 북마크 목록 조회를 성공한다.")
+    void givenProblemConditionsExceptExamId_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
+        //given
+        String memberId = "1";
+        String certificateId = "2";
+        String subjectId = "4";
+        String problemId1 = "5";
+        String problemId2 = "6";
+
+        Member member = createMember(memberId);
+        Certificate certificate = createCertificate(certificateId);
+        member.updateCertificateState(certificate);
+        createSubject(subjectId, certificate);
+        Problem problem1 = createProblem(problemId1);
+        Problem problem2 = createProblem(problemId2);
+        Pageable pageable = PageRequest.of(0, 10);
+        given(memberRepository.getReferenceById(memberId)).willReturn(member);
+        given(problemRepository.findBookmarkedBySubjectIdIn(memberId, List.of(subjectId), pageable))
+                .willReturn(List.of(problem1, problem2));
+
+        //when
+        List<FindBookmarkedProblemsResponse> results = sut.execute(memberId, Optional.empty(), List.of(subjectId), 0);
 
         //then
         assertThat(results.get(0)).isEqualTo(FindBookmarkedProblemsResponse.from(problem1));
