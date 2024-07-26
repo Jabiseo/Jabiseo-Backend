@@ -4,9 +4,11 @@ import com.jabiseo.problem.dto.CreateReportRequest;
 import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
 import com.jabiseo.problem.dto.FindProblemsRequest;
 import com.jabiseo.problem.dto.FindProblemsResponse;
-import com.jabiseo.problem.usecase.CreateReportUseCase;
-import com.jabiseo.problem.usecase.FindBookmarkedProblemsUseCase;
-import com.jabiseo.problem.usecase.FindProblemsUseCase;
+import com.jabiseo.problem.application.usecase.CreateReportUseCase;
+import com.jabiseo.problem.application.usecase.FindBookmarkedProblemsUseCase;
+import com.jabiseo.problem.application.usecase.FindProblemsUseCase;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,10 +31,14 @@ public class ProblemController {
 
     @GetMapping("/set")
     public ResponseEntity<List<FindProblemsResponse>> findProblems(
+            // TODO: DTO 기반으로 변경
             @RequestParam(name = "certificate-id") String certificateId,
             @RequestParam(name = "subject-id") List<String> subjectIds,
             @RequestParam(name = "exam-id", required = false) Optional<String> examId,
-            @RequestParam(required = false) int count
+            @RequestParam
+            @Min(value = 1, message = "과목 당 문제 수는 0보다 커야 합니다.")
+            @Max(value = 20, message = "과목 당 문제 수는 20보다 작거나 같아야 합니다.")
+            int count
     ) {
         List<FindProblemsResponse> result =
                 findProblemsUseCase.execute(certificateId, subjectIds, examId, count);
@@ -63,8 +69,14 @@ public class ProblemController {
     }
 
     @GetMapping("/bookmarked")
-    public ResponseEntity<List<FindBookmarkedProblemsResponse>> findBookmarkedProblems() {
-        List<FindBookmarkedProblemsResponse> result = findBookmarkedProblemsUseCase.execute();
+    public ResponseEntity<List<FindBookmarkedProblemsResponse>> findBookmarkedProblems(
+            // TODO: DTO 기반으로 변경
+            @RequestParam(name = "exam-id") Optional<String> examId,
+            @RequestParam(name = "subject-id") List<String> subjectIds,
+            int page
+    ) {
+        String memberId = "1"; // TODO: 로그인 기능 구현 후 로그인한 사용자의 ID로 변경
+        List<FindBookmarkedProblemsResponse> result = findBookmarkedProblemsUseCase.execute(memberId, examId, subjectIds, page);
         return ResponseEntity.ok(result);
     }
 }

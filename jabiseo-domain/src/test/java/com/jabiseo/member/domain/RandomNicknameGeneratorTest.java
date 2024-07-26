@@ -7,9 +7,9 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("랜덤 닉네임 생성기 테스트")
 class RandomNicknameGeneratorTest {
 
     @InjectMocks
@@ -21,9 +21,9 @@ class RandomNicknameGeneratorTest {
     void randomNicknameSuccess(){
         //given
         //when
-
         String generate = generator.generate();
         String isSuffix = generate.substring(generate.length()-4);
+
         //then
         assertThat(isSuffix).matches("\\d{4}");
     }
