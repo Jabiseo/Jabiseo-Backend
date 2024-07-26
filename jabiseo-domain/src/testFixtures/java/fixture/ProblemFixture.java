@@ -19,6 +19,7 @@ public class ProblemFixture {
                 "choice4",
                 1,
                 "problem theory",
+                1,
                 certificate,
                 exam,
                 subject
@@ -36,6 +37,7 @@ public class ProblemFixture {
                 "choice4",
                 1,
                 "problem theory",
+                1,
                 certificate,
                 ExamFixture.createExam("5432", certificate),
                 createSubject("9876", certificate)

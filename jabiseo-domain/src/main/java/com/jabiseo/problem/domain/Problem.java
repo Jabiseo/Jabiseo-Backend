@@ -32,6 +32,8 @@ public class Problem {
 
     private String solution;
 
+    private int sequence;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "certificate_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Certificate certificate;
@@ -48,9 +50,8 @@ public class Problem {
         return List.of(choice1, choice2, choice3, choice4);
     }
 
-    public Problem(String id, String description, String choice1, String choice2,
-                   String choice3, String choice4, int answerNumber, String solution,
-                   Certificate certificate, Exam exam, Subject subject) {
+    private Problem(String id, String description, String choice1, String choice2, String choice3, String choice4,
+                    int answerNumber, String solution, int sequence, Certificate certificate, Exam exam, Subject subject) {
         this.id = id;
         this.description = description;
         this.choice1 = choice1;
@@ -59,16 +60,16 @@ public class Problem {
         this.choice4 = choice4;
         this.answerNumber = answerNumber;
         this.solution = solution;
+        this.sequence = sequence;
         this.certificate = certificate;
         this.exam = exam;
         this.subject = subject;
     }
 
-    public static Problem of(String id, String description, String choice1, String choice2,
-                             String choice3, String choice4, int answerNumber, String solution,
-                             Certificate certificate, Exam exam, Subject subject) {
+    public static Problem of(String id, String description, String choice1, String choice2, String choice3, String choice4,
+                             int answerNumber, String solution, int sequence, Certificate certificate, Exam exam, Subject subject) {
         return new Problem(id, description, choice1, choice2, choice3, choice4,
-                answerNumber, solution, certificate, exam, subject);
+                answerNumber, solution, sequence, certificate, exam, subject);
     }
 
 }
