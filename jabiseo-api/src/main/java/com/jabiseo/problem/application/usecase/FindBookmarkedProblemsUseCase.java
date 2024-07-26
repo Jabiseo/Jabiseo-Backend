@@ -33,7 +33,7 @@ public class FindBookmarkedProblemsUseCase {
         Member member = memberRepository.getReferenceById(memberId);
         member.validateCurrentCertificate();
 
-        Certificate certificate = member.getCertificateState();
+        Certificate certificate = member.getCurrentCertificate();
         certificate.validateExamIdAndSubjectIds(examId, subjectIds);
 
         List<Problem> problems = examId.map(id ->

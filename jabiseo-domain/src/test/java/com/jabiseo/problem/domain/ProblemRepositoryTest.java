@@ -52,7 +52,7 @@ class ProblemRepositoryTest {
 
         Member member = createMember(memberId);
         Certificate certificate = createCertificate(certificateId);
-        member.updateCertificateState(certificate);
+        member.updateCurrentCertificate(certificate);
         List<Exam> exams = examId.stream()
                 .map(id -> createExam(id, certificate))
                 .toList();

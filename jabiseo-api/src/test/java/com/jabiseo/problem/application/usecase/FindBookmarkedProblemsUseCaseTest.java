@@ -55,7 +55,7 @@ class FindBookmarkedProblemsUseCaseTest {
 
         Member member = createMember(memberId);
         Certificate certificate = createCertificate(certificateId);
-        member.updateCertificateState(certificate);
+        member.updateCurrentCertificate(certificate);
         createExam(examId, certificate);
         createSubject(subjectId, certificate);
         Problem problem1 = createProblem(problemId1);
@@ -85,7 +85,7 @@ class FindBookmarkedProblemsUseCaseTest {
 
         Member member = createMember(memberId);
         Certificate certificate = createCertificate(certificateId);
-        member.updateCertificateState(certificate);
+        member.updateCurrentCertificate(certificate);
         createSubject(subjectId, certificate);
         Problem problem1 = createProblem(problemId1);
         Problem problem2 = createProblem(problemId2);
