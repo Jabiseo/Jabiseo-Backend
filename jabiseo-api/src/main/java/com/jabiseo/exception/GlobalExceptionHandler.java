@@ -3,9 +3,9 @@ package com.jabiseo.exception;
 import com.jabiseo.database.exception.PersistenceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -27,11 +27,11 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(code.getMessage(), code.getErrorCode()));
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        ErrorCode code = CommonErrorCode.INVALID_REQUEST;
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<?> handleMethodArgumentNotValidException(HandlerMethodValidationException e) {
+        ErrorCode code = CommonErrorCode.INVALID_REQUEST_PARAMETER;
         return ResponseEntity
                 .status(code.getStatusCode())
-                .body(new ErrorResponse(e.getMessage(), code.getErrorCode()));
+                .body(new ErrorResponse(code.getMessage(), code.getErrorCode()));
     }
 }
