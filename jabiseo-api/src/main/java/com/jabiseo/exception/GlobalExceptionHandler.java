@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HandlerMethodValidationException.class)
     public ResponseEntity<?> handleMethodValidationException(HandlerMethodValidationException e) {
-        ErrorCode errorCode = CommonErrorCode.INVALID_REQUEST_BODY;
+        ErrorCode errorCode = CommonErrorCode.INVALID_REQUEST_PARAMETER;
         log.error(e.getMessage());
         return ResponseEntity
                 .status(errorCode.getStatusCode())
