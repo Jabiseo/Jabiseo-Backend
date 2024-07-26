@@ -3,6 +3,7 @@ package com.jabiseo.problem.application.usecase;
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
+import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
 import lombok.RequiredArgsConstructor;
@@ -34,16 +35,12 @@ public class FindBookmarkedProblemsUseCase {
         Certificate certificate = member.getCertificateState();
         certificate.validateExamIdAndSubjectIds(examId, subjectIds);
 
-        if (examId.isPresent()) {
-            return problemRepository.findBookmarkedByExamIdAndSubjectIdIn(memberId, examId.get(), subjectIds, pageable)
-                    .stream()
-                    .map(FindBookmarkedProblemsResponse::from)
-                    .toList();
-        } else {
-            return problemRepository.findBookmarkedBySubjectIdIn(memberId, subjectIds, pageable)
-                    .stream()
-                    .map(FindBookmarkedProblemsResponse::from)
-                    .toList();
-        }
+        List<Problem> problems = examId.map(id ->
+                        problemRepository.findBookmarkedByExamIdAndSubjectIdIn(memberId, id, subjectIds, pageable))
+                .orElseGet(() -> problemRepository.findBookmarkedBySubjectIdIn(memberId, subjectIds, pageable));
+
+        return problems.stream()
+                .map(FindBookmarkedProblemsResponse::from)
+                .toList();
     }
 }
