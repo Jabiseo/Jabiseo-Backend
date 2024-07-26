@@ -1,6 +1,8 @@
 package com.jabiseo.certificate.domain;
 
 
+import com.jabiseo.certificate.exception.CertificateBusinessException;
+import com.jabiseo.certificate.exception.CertificateErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,6 +11,7 @@ import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -56,5 +59,26 @@ public class Certificate {
         return exams.stream()
                 .map(Exam::getId)
                 .anyMatch(id -> id.equals(examId));
+    }
+
+    private void validateSubjectIds(List<String> subjectIds) {
+        // 자격증에 해당하는 과목들이 모두 있는지 검사
+        subjectIds.forEach(subjectId -> {
+            if (!this.containsSubject(subjectId)) {
+                throw new CertificateBusinessException(CertificateErrorCode.SUBJECT_NOT_FOUND_IN_CERTIFICATE);
+            }
+        });
+    }
+
+    private void validateExamId(Optional<String> examId) {
+        // 자격증에 해당하는 시험이 있는지 검사
+        if (examId.isPresent() && !this.containsExam(examId.get())) {
+            throw new CertificateBusinessException(CertificateErrorCode.EXAM_NOT_FOUND_IN_CERTIFICATE);
+        }
+    }
+
+    public void validateExamIdAndSubjectIds(Optional<String> examId, List<String> subjectIds) {
+        validateExamId(examId);
+        validateSubjectIds(subjectIds);
     }
 }

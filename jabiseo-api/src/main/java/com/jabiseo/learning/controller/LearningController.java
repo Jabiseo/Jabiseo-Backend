@@ -1,7 +1,7 @@
 package com.jabiseo.learning.controller;
 
 import com.jabiseo.learning.dto.CreateLearningRequest;
-import com.jabiseo.learning.usecase.CreateLearningUseCase;
+import com.jabiseo.learning.application.usecase.CreateLearningUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
