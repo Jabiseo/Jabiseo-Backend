@@ -31,6 +31,7 @@ public class FindBookmarkedProblemsUseCase {
         Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
 
         Member member = memberRepository.getReferenceById(memberId);
+        member.validateCurrentCertificate();
 
         Certificate certificate = member.getCertificateState();
         certificate.validateExamIdAndSubjectIds(examId, subjectIds);

@@ -85,10 +85,9 @@ public class Member {
         bookmarks.add(bookmark);
     }
 
-    public Certificate getCertificateState() {
-        if (this.certificateState == null) {
+    public void validateCurrentCertificate() {
+        if (certificateState == null) {
             throw new MemberBusinessException(MemberErrorCode.CURRENT_CERTIFICATE_NOT_EXIST);
         }
-        return certificateState;
     }
 }

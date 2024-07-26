@@ -8,9 +8,10 @@ public record FindMyCertificateStateResponse(
         String certificateId
 ) {
     public static FindMyCertificateStateResponse of(Member member, Certificate certificate) {
-        if (certificate == null) {
-            return new FindMyCertificateStateResponse(member.getId(), null);
-        }
         return new FindMyCertificateStateResponse(member.getId(), certificate.getId());
+    }
+
+    public static FindMyCertificateStateResponse from(Member member) {
+        return new FindMyCertificateStateResponse(member.getId(), null);
     }
 }

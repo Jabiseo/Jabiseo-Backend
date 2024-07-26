@@ -19,6 +19,11 @@ public class FindMyCertificateStateUseCase {
     public FindMyCertificateStateResponse execute(String memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberBusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
-        return FindMyCertificateStateResponse.of(member, member.getCertificateState());
+
+        if (member.getCertificateState() == null) {
+            return FindMyCertificateStateResponse.from(member);
+        } else {
+            return FindMyCertificateStateResponse.of(member, member.getCertificateState());
+        }
     }
 }
