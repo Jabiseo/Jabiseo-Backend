@@ -5,7 +5,7 @@ import com.jabiseo.certificate.domain.Subject;
 
 public class SubjectFixture {
 
-    public static Subject createSubject(String subjectId, Certificate certificate) {
+    public static Subject createSubject(Long subjectId, Certificate certificate) {
         return Subject.of(subjectId, "subject name", 1, certificate);
     }
 

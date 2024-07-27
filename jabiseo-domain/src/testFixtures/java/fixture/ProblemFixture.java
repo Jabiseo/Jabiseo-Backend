@@ -10,7 +10,7 @@ import static fixture.ExamFixture.createExam;
 import static fixture.SubjectFixture.createSubject;
 
 public class ProblemFixture {
-    public static Problem createProblem(String id, Certificate certificate, Exam exam, Subject subject) {
+    public static Problem createProblem(Long id, Certificate certificate, Exam exam, Subject subject) {
         return Problem.of(
                 id,
                 "problem description",
@@ -26,7 +26,7 @@ public class ProblemFixture {
                 subject
         );
     }
-    public static Problem createProblem(String id, Certificate certificate) {
+    public static Problem createProblem(Long id, Certificate certificate) {
         return Problem.of(
                 id,
                 "problem description",
@@ -38,14 +38,14 @@ public class ProblemFixture {
                 "problem theory",
                 1,
                 certificate,
-                createExam("5432", certificate),
-                createSubject("9876", certificate)
+                createExam(5432L, certificate),
+                createSubject(9876L, certificate)
         );
     }
 
 
-    public static Problem createProblem(String id) {
-        Certificate certificate = createCertificate("1234");
+    public static Problem createProblem(Long id) {
+        Certificate certificate = createCertificate(1234L);
         return Problem.of(
                 id,
                 "problem description",
@@ -57,8 +57,8 @@ public class ProblemFixture {
                 "problem theory",
                 1,
                 certificate,
-                createExam("5432", certificate),
-                createSubject("9876", certificate)
+                createExam(5432L, certificate),
+                createSubject(9876L, certificate)
         );
     }
 }

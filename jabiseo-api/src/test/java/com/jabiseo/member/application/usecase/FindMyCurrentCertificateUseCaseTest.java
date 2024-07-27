@@ -36,7 +36,7 @@ class FindMyCurrentCertificateUseCaseTest {
     void givenMemberId_whenFindingCurrentCertificate_thenFindCertificateStatus() {
         //given
         String memberId = "1";
-        String certificateId = "2";
+        Long certificateId = 2L;
         Certificate certificate = createCertificate(certificateId);
         Member member = createMember(memberId);
         member.updateCurrentCertificate(certificate);

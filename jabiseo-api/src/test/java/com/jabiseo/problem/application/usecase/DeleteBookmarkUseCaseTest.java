@@ -39,7 +39,7 @@ class DeleteBookmarkUseCaseTest {
     void givenMemberIdAndProblemId_whenDeletingBookmark_thenDeleteBookmark() {
         //given
         String memberId = "1";
-        String problemId = "2";
+        Long problemId = 2L;
         Member member = createMember(memberId);
         Problem problem = createProblem(problemId);
         Bookmark bookmark = Bookmark.of(member, problem);
@@ -60,7 +60,7 @@ class DeleteBookmarkUseCaseTest {
     void givenNonExistBookmarkWithMemberIdAndProblemId_whenDeletingBookmark_thenReturnError() {
         //given
         String memberId = "1";
-        String problemId = "2";
+        Long problemId = 2L;
         given(bookmarkRepository.findByMemberIdAndProblemId(memberId, problemId)).willReturn(Optional.empty());
 
         //when & then

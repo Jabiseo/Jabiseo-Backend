@@ -30,8 +30,8 @@ class FindCertificateListUseCaseTest {
     @DisplayName("자격증 목록 조회를 성공한다.")
     void givenCertificates_whenFindingCertificates_thenFindCertificates() {
         //given
-        String certificateId1 = "1";
-        String certificateId2 = "2";
+        Long certificateId1 = 1L;
+        Long certificateId2 = 2L;
         Certificate certificate1 = createCertificate(certificateId1);
         Certificate certificate2 = createCertificate(certificateId2);
         given(certificateRepository.findAll()).willReturn(List.of(certificate1, certificate2));

@@ -41,9 +41,9 @@ class ProblemRepositoryTest {
 
     private String memberId;
     private Member member;
-    private List<String> examId;
-    private List<String> subjectId;
-    private List<String> problemIds;
+    private List<Long> examId;
+    private List<Long> subjectId;
+    private List<Long> problemIds;
     private Certificate certificate;
     private List<Exam> exams;
     private List<Subject> subjects;
@@ -52,10 +52,10 @@ class ProblemRepositoryTest {
     void setUp() {
         //given
         memberId = "memberId";
-        String certificateId = "certificateId";
-        examId = List.of("examId1", "examId2");
-        subjectId = List.of("subjectId1", "subjectId2", "subjectId3");
-        problemIds = List.of("pid1", "pid2", "pid3", "pid4", "pid5", "pid6", "pid7", "pid8", "pid9", "pid10", "pid11");
+        Long certificateId = 100L;
+        examId = List.of(200L, 300L);
+        subjectId = List.of(400L, 500L, 600L);
+        problemIds = List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L);
 
         member = createMember(memberId);
         certificate = createCertificate(certificateId);
