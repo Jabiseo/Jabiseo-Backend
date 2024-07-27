@@ -1,6 +1,7 @@
 package com.jabiseo.client;
 
-import com.jabiseo.exception.ErrorCode;
+import com.jabiseo.common.exception.ErrorCode;
+import lombok.Getter;
 
 public enum NetworkApiErrorCode implements ErrorCode {
     KAKAO_JWK_API_FAIL("카카오 kauth jwk 연결 실패", "NETWORK_001", ErrorCode.INTERNAL_SERVER_ERROR);

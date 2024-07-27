@@ -1,7 +1,7 @@
 package com.jabiseo.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jabiseo.exception.ErrorCode;
+import com.jabiseo.common.exception.ErrorCode;
 import com.jabiseo.exception.ErrorResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;

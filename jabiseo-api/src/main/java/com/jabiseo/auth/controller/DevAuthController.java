@@ -2,7 +2,7 @@ package com.jabiseo.auth.controller;
 
 import com.jabiseo.auth.application.DevLoginHelper;
 import com.jabiseo.auth.dto.LoginResponse;
-import com.jabiseo.exception.CommonErrorCode;
+import com.jabiseo.common.exception.CommonErrorCode;
 import com.jabiseo.exception.ErrorResponse;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;

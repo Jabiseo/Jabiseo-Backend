@@ -1,7 +1,7 @@
 package com.jabiseo.member.exception;
 
-import com.jabiseo.exception.BusinessException;
-import com.jabiseo.exception.ErrorCode;
+import com.jabiseo.common.exception.BusinessException;
+import com.jabiseo.common.exception.ErrorCode;
 
 public class MemberBusinessException extends BusinessException {
 

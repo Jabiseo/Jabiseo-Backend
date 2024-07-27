@@ -15,5 +15,4 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
 
     implementation project(":jabiseo-domain")
-    implementation project(":jabiseo-common")
 }

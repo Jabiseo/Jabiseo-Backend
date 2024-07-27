@@ -1,5 +1,7 @@
 package com.jabiseo.exception;
 
+import com.jabiseo.common.exception.ErrorCode;
+
 public record ErrorResponse(
         String message,
         String errorCode
