@@ -26,10 +26,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FindProblemsUseCase {
 
-    private static final int MIN_PROBLEM_PER_SUBJECT_COUNT = 1;
-    private static final int MAX_PROBLEM_PER_SUBJECT_COUNT = 20;
-
-
     private final CertificateRepository certificateRepository;
     private final ProblemRepository problemRepository;
     private final MemberRepository memberRepository;
@@ -40,8 +36,6 @@ public class FindProblemsUseCase {
                 .orElseThrow(() -> new CertificateBusinessException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));
 
         certificate.validateExamIdAndSubjectIds(examId, subjectIds);
-        // TODO: controller에서 검증한다 해도 여기에 검증 로직이 안 들어가도 되는지 확인
-        validateProblemCount(count);
 
         // TODO: 과목별로 문제를 가져와서 쿼리를 5번 날리는 로직에서 1번의 쿼리로 변경해야 함. 하지만 최종적으로 과목 순서가 유지되어야 함
         List<Problem> problems = subjectIds.stream()
@@ -60,30 +54,5 @@ public class FindProblemsUseCase {
                 .toList();
 
         return FindProblemsResponse.of(certificateResponse, problemsDetailRespons);
-    }
-
-    // TODO: 문제에 북마크 되어 있는지 표시해야 함
-    public FindProblemsResponse execute(String memberId, FindProblemsRequest request) {
-        Member member = memberRepository.getReferenceById(memberId);
-        member.validateCurrentCertificate();
-        Certificate certificate = member.getCurrentCertificate();
-
-        CertificateResponse certificateResponse = CertificateResponse.from(certificate);
-        List<ProblemsDetailResponse> problemsDetailResponses = request.problemIds().stream()
-                .map(problemId -> problemRepository.findById(problemId)
-                        .orElseThrow(() -> new ProblemBusinessException(ProblemErrorCode.PROBLEM_NOT_FOUND)))
-                .peek(problem -> {
-                    problem.validateProblemInCertificate(certificate);
-                })
-                .map(ProblemsDetailResponse::from)
-                .toList();
-        return FindProblemsResponse.of(certificateResponse, problemsDetailResponses);
-    }
-
-    private void validateProblemCount(int count) {
-        // 문제의 개수가 올바른지 검사
-        if (count < MIN_PROBLEM_PER_SUBJECT_COUNT || count > MAX_PROBLEM_PER_SUBJECT_COUNT) {
-            throw new ProblemBusinessException(ProblemErrorCode.INVALID_PROBLEM_COUNT);
-        }
     }
 }
