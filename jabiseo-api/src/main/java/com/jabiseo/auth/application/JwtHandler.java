@@ -21,7 +21,7 @@ public class JwtHandler {
     private final Key refreshKey;
     private final Integer accessExpiredMin;
     private final Integer refreshExpiredDay;
-    private final String APP_ISSUER = "jabiseo";
+    private static final String APP_ISSUER = "jabiseo";
 
     public JwtHandler(JwtProperty jwtProperty) {
         byte[] accessEncodeByte = Base64.getEncoder().encode((jwtProperty.getAccessKey().getBytes()));
@@ -34,11 +34,8 @@ public class JwtHandler {
 
 
     public String createAccessToken(Member member) {
-        System.out.println(this.accessExpiredMin);
         Instant accessExpiredTime = Instant.now()
                 .plus(this.accessExpiredMin, ChronoUnit.MINUTES);
-        System.out.println(accessExpiredTime);
-        System.out.println(Instant.now());
         Map<String, Object> payload = new HashMap<>();
 
         return Jwts.builder()
@@ -53,7 +50,6 @@ public class JwtHandler {
     public String createRefreshToken() {
         Instant refreshExpiredTime = Instant.now()
                 .plus(this.refreshExpiredDay, ChronoUnit.DAYS);
-        System.out.println("refreshExpiredTime: " + refreshExpiredTime);
         return Jwts.builder()
                 .setExpiration(Date.from(refreshExpiredTime))
                 .signWith(refreshKey)
