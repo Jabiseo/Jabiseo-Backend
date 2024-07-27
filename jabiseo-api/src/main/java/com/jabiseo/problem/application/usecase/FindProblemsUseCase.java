@@ -69,7 +69,7 @@ public class FindProblemsUseCase {
         Certificate certificate = member.getCurrentCertificate();
 
         CertificateResponse certificateResponse = CertificateResponse.from(certificate);
-        List<ProblemsDetailResponse> problemsDetailRespons = request.problemIds().stream()
+        List<ProblemsDetailResponse> problemsDetailResponses = request.problemIds().stream()
                 .map(problemId -> problemRepository.findById(problemId)
                         .orElseThrow(() -> new ProblemBusinessException(ProblemErrorCode.PROBLEM_NOT_FOUND)))
                 .peek(problem -> {
@@ -77,7 +77,7 @@ public class FindProblemsUseCase {
                 })
                 .map(ProblemsDetailResponse::from)
                 .toList();
-        return FindProblemsResponse.of(certificateResponse, problemsDetailRespons);
+        return FindProblemsResponse.of(certificateResponse, problemsDetailResponses);
     }
 
     private void validateProblemCount(int count) {
