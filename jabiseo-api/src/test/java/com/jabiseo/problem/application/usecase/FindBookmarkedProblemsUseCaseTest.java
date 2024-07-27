@@ -8,12 +8,14 @@ import com.jabiseo.member.exception.MemberErrorCode;
 import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
+import com.jabiseo.problem.dto.ProblemsResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -63,14 +65,16 @@ class FindBookmarkedProblemsUseCaseTest {
         Pageable pageable = PageRequest.of(0, 10);
         given(memberRepository.getReferenceById(memberId)).willReturn(member);
         given(problemRepository.findBookmarkedByExamIdAndSubjectIdIn(memberId, examId, List.of(subjectId), pageable))
-                .willReturn(List.of(problem1, problem2));
+                .willReturn(new PageImpl<>(List.of(problem1, problem2), pageable, 2));
 
         //when
-        List<FindBookmarkedProblemsResponse> results = sut.execute(memberId, Optional.of(examId), List.of(subjectId), 0);
+        FindBookmarkedProblemsResponse results = sut.execute(memberId, Optional.of(examId), List.of(subjectId), 0);
 
         //then
-        assertThat(results.get(0)).isEqualTo(FindBookmarkedProblemsResponse.from(problem1));
-        assertThat(results.get(1)).isEqualTo(FindBookmarkedProblemsResponse.from(problem2));
+        assertThat(results.totalCount()).isEqualTo(2);
+        assertThat(results.totalPage()).isEqualTo(1);
+        assertThat(results.problems().get(0)).isEqualTo(ProblemsResponse.from(problem1));
+        assertThat(results.problems().get(1)).isEqualTo(ProblemsResponse.from(problem2));
     }
 
     @Test
@@ -92,14 +96,16 @@ class FindBookmarkedProblemsUseCaseTest {
         Pageable pageable = PageRequest.of(0, 10);
         given(memberRepository.getReferenceById(memberId)).willReturn(member);
         given(problemRepository.findBookmarkedBySubjectIdIn(memberId, List.of(subjectId), pageable))
-                .willReturn(List.of(problem1, problem2));
+                .willReturn(new PageImpl<>(List.of(problem1, problem2), pageable, 2));
 
         //when
-        List<FindBookmarkedProblemsResponse> results = sut.execute(memberId, Optional.empty(), List.of(subjectId), 0);
+        FindBookmarkedProblemsResponse results = sut.execute(memberId, Optional.empty(), List.of(subjectId), 0);
 
         //then
-        assertThat(results.get(0)).isEqualTo(FindBookmarkedProblemsResponse.from(problem1));
-        assertThat(results.get(1)).isEqualTo(FindBookmarkedProblemsResponse.from(problem2));
+        assertThat(results.totalCount()).isEqualTo(2);
+        assertThat(results.totalPage()).isEqualTo(1);
+        assertThat(results.problems().get(0)).isEqualTo(ProblemsResponse.from(problem1));
+        assertThat(results.problems().get(1)).isEqualTo(ProblemsResponse.from(problem2));
     }
 
     @Test
