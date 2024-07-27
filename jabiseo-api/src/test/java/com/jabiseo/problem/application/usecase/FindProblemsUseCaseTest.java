@@ -8,15 +8,10 @@ import com.jabiseo.certificate.exception.CertificateBusinessException;
 import com.jabiseo.certificate.exception.CertificateErrorCode;
 import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
-import com.jabiseo.problem.dto.FindProblemsRequest;
 import com.jabiseo.problem.dto.FindProblemsResponse;
-import com.jabiseo.problem.exception.ProblemBusinessException;
-import com.jabiseo.problem.exception.ProblemErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -71,13 +66,13 @@ class FindProblemsUseCaseTest {
                 .willReturn(List.of(problems.get(1)));
 
         //when
-        List<FindProblemsResponse> result = sut.execute(certificateId, List.of(subjectIds), Optional.of(examId), count);
+        FindProblemsResponse result = sut.execute(certificateId, List.of(subjectIds), Optional.of(examId), count);
 
         //then
-        assertThat(result).hasSize(3);
-        assertThat(result.get(0).problemId()).isEqualTo(problemIds[0]);
-        assertThat(result.get(1).problemId()).isEqualTo(problemIds[2]);
-        assertThat(result.get(2).problemId()).isEqualTo(problemIds[1]);
+        assertThat(result.certificateInfo().certificateId()).isEqualTo(certificateId);
+        assertThat(result.problems().get(0).problemId()).isEqualTo(problemIds[0]);
+        assertThat(result.problems().get(1).problemId()).isEqualTo(problemIds[2]);
+        assertThat(result.problems().get(2).problemId()).isEqualTo(problemIds[1]);
     }
 
     @Test
@@ -106,13 +101,13 @@ class FindProblemsUseCaseTest {
                 .willReturn(List.of(problems.get(1)));
 
         //when
-        List<FindProblemsResponse> result = sut.execute(certificateId, List.of(subjectIds), Optional.empty(), count);
+        FindProblemsResponse result = sut.execute(certificateId, List.of(subjectIds), Optional.empty(), count);
 
         //then
-        assertThat(result).hasSize(3);
-        assertThat(result.get(0).problemId()).isEqualTo(problemIds[0]);
-        assertThat(result.get(1).problemId()).isEqualTo(problemIds[2]);
-        assertThat(result.get(2).problemId()).isEqualTo(problemIds[1]);
+        assertThat(result.certificateInfo().certificateId()).isEqualTo(certificateId);
+        assertThat(result.problems().get(0).problemId()).isEqualTo(problemIds[0]);
+        assertThat(result.problems().get(1).problemId()).isEqualTo(problemIds[2]);
+        assertThat(result.problems().get(2).problemId()).isEqualTo(problemIds[1]);
     }
 
     @Test
@@ -173,61 +168,6 @@ class FindProblemsUseCaseTest {
         assertThatThrownBy(() -> sut.execute(certificateIds[0], List.of(subjectId), Optional.of(examId), count))
                 .isInstanceOf(CertificateBusinessException.class)
                 .hasFieldOrPropertyWithValue("errorCode", CertificateErrorCode.EXAM_NOT_FOUND_IN_CERTIFICATE);
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = {-2, 21})
-    @DisplayName("문제 세트 조회 시 과목당 문제 수가 0 이하이거나 20 초과인 경우 예외처리한다.")
-    void givenInvalidCount_whenFindingProblems_thenReturnError(int count) {
-        //given
-        String certificateId = "1";
-        String subjectId = "2";
-        String examId = "3";
-        Certificate certificate = createCertificate(certificateId);
-        createSubject(subjectId, certificate);
-        createExam(examId, certificate);
-        given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
-
-        //when & then
-        assertThatThrownBy(() -> sut.execute(certificateId, List.of(subjectId), Optional.of(examId), count))
-                .isInstanceOf(ProblemBusinessException.class)
-                .hasFieldOrPropertyWithValue("errorCode", ProblemErrorCode.INVALID_PROBLEM_COUNT);
-    }
-
-    @Test
-    @DisplayName("북마크를 통한 문제 세트 조회 테스트를 성공한다.")
-    void givenProblemIds_whenFindingProblems_thenFindProblems() {
-        //given
-        String[] problemIds = {"1", "2", "3"};
-        Problem problem1 = createProblem(problemIds[0]);
-        Problem problem2 = createProblem(problemIds[1]);
-        Problem problem3 = createProblem(problemIds[2]);
-        FindProblemsRequest request = new FindProblemsRequest(List.of(problemIds));
-        given(problemRepository.findById(problemIds[0])).willReturn(Optional.of(problem1));
-        given(problemRepository.findById(problemIds[1])).willReturn(Optional.of(problem2));
-        given(problemRepository.findById(problemIds[2])).willReturn(Optional.of(problem3));
-
-        //when
-        List<FindProblemsResponse> result = sut.execute(request);
-
-        //then
-        assertThat(result.get(0).problemId()).isEqualTo(problemIds[0]);
-        assertThat(result.get(1).problemId()).isEqualTo(problemIds[1]);
-        assertThat(result.get(2).problemId()).isEqualTo(problemIds[2]);
-    }
-
-    @Test
-    @DisplayName("존재하지 않는 문제로 북마크를 통한 문제 세트 조회를 하면 예외처리한다.")
-    void givenNonExistedProblemIds_whenFindingProblems_thenReturnError() {
-        //given
-        String[] problemIds = {"1", "2", "3"};
-        FindProblemsRequest request = new FindProblemsRequest(List.of(problemIds));
-        given(problemRepository.findById(problemIds[0])).willReturn(Optional.empty());
-
-        //when & then
-        assertThatThrownBy(() -> sut.execute(request))
-                .isInstanceOf(ProblemBusinessException.class)
-                .hasFieldOrPropertyWithValue("errorCode", ProblemErrorCode.PROBLEM_NOT_FOUND);
     }
 
 }

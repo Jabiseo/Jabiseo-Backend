@@ -40,12 +40,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception e) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(e.getMessage());
-        stringBuilder.append(CommonErrorCode.INTERNAL_SERVER_ERROR.getMessage());
+        StringBuilder errorMessage = new StringBuilder();
+        errorMessage.append(e.getMessage())
+                .append(" ")
+                .append(CommonErrorCode.INTERNAL_SERVER_ERROR.getMessage());
         return ResponseEntity
                 .status(ErrorCode.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse(stringBuilder.toString(), CommonErrorCode.INTERNAL_SERVER_ERROR.getErrorCode()));
+                .body(new ErrorResponse(errorMessage.toString(), CommonErrorCode.INTERNAL_SERVER_ERROR.getErrorCode()));
     }
 
 }

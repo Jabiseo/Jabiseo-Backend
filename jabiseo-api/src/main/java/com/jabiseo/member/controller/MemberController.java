@@ -2,12 +2,12 @@ package com.jabiseo.member.controller;
 
 import com.jabiseo.config.auth.AuthMember;
 import com.jabiseo.config.auth.AuthenticatedMember;
-import com.jabiseo.member.dto.FindMyCertificateStateResponse;
+import com.jabiseo.member.dto.FindMyCurrentCertificateResponse;
 import com.jabiseo.member.dto.FindMyInfoResponse;
-import com.jabiseo.member.dto.UpdateMyCertificateStateRequest;
-import com.jabiseo.member.application.usecase.FindMyCertificateStateUseCase;
+import com.jabiseo.member.dto.UpdateMyCurrentCertificateRequest;
+import com.jabiseo.member.application.usecase.FindMyCurrentCertificateUseCase;
 import com.jabiseo.member.application.usecase.FindMyInfoUseCase;
-import com.jabiseo.member.application.usecase.UpdateMyCertificateStateUseCase;
+import com.jabiseo.member.application.usecase.UpdateMyCurrentCertificateUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +19,9 @@ public class MemberController {
 
     private final FindMyInfoUseCase findMyInfoUseCase;
 
-    private final FindMyCertificateStateUseCase findMyCertificateStateUseCase;
+    private final FindMyCurrentCertificateUseCase findMyCurrentCertificateUseCase;
 
-    private final UpdateMyCertificateStateUseCase updateMyCertificateStateUseCase;
+    private final UpdateMyCurrentCertificateUseCase updateMyCurrentCertificateUseCase;
 
     @GetMapping
     public ResponseEntity<FindMyInfoResponse> findMyInfo(
@@ -32,19 +32,19 @@ public class MemberController {
     }
 
     @GetMapping("/certificates")
-    public ResponseEntity<FindMyCertificateStateResponse> findMyCertificateStatus(
+    public ResponseEntity<FindMyCurrentCertificateResponse> findMyCertificateStatus(
             @AuthenticatedMember AuthMember member
     ) {
-        FindMyCertificateStateResponse result = findMyCertificateStateUseCase.execute(member.getMemberId());
+        FindMyCurrentCertificateResponse result = findMyCurrentCertificateUseCase.execute(member.getMemberId());
         return ResponseEntity.ok(result);
     }
 
     @PatchMapping("/certificates")
     public ResponseEntity<Void> updateMyCertificateStatus(
-            @RequestBody UpdateMyCertificateStateRequest request,
+            @RequestBody UpdateMyCurrentCertificateRequest request,
             @AuthenticatedMember AuthMember member
     ) {
-        updateMyCertificateStateUseCase.execute(member.getMemberId(), request);
+        updateMyCurrentCertificateUseCase.execute(member.getMemberId(), request);
         return ResponseEntity.ok().build();
     }
 

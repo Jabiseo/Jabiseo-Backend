@@ -7,6 +7,7 @@ import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,22 +27,24 @@ public class FindBookmarkedProblemsUseCase {
 
     private final ProblemRepository problemRepository;
 
-    public List<FindBookmarkedProblemsResponse> execute(String memberId, Optional<String> examId, List<String> subjectIds, int page) {
+    public FindBookmarkedProblemsResponse execute(String memberId, Optional<String> examId, List<String> subjectIds, int page) {
 
         Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
 
         Member member = memberRepository.getReferenceById(memberId);
         member.validateCurrentCertificate();
 
-        Certificate certificate = member.getCertificateState();
+        Certificate certificate = member.getCurrentCertificate();
         certificate.validateExamIdAndSubjectIds(examId, subjectIds);
 
-        List<Problem> problems = examId.map(id ->
+        Page<Problem> problems = examId.map(id ->
                         problemRepository.findBookmarkedByExamIdAndSubjectIdIn(memberId, id, subjectIds, pageable))
                 .orElseGet(() -> problemRepository.findBookmarkedBySubjectIdIn(memberId, subjectIds, pageable));
 
-        return problems.stream()
-                .map(FindBookmarkedProblemsResponse::from)
-                .toList();
+        return FindBookmarkedProblemsResponse.of(
+                problems.getTotalElements(),
+                problems.getTotalPages(),
+                problems.getContent()
+        );
     }
 }

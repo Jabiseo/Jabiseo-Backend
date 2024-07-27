@@ -25,7 +25,7 @@ class MemberTest {
         String certificateId = "2";
         Member member = createMember(memberId);
         Certificate certificate = createCertificate(certificateId);
-        member.updateCertificateState(certificate);
+        member.updateCurrentCertificate(certificate);
 
         //when & then
         assertDoesNotThrow(member::validateCurrentCertificate);

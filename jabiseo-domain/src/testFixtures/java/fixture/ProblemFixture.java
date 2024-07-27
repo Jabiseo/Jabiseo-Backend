@@ -6,6 +6,7 @@ import com.jabiseo.certificate.domain.Subject;
 import com.jabiseo.problem.domain.Problem;
 
 import static fixture.CertificateFixture.createCertificate;
+import static fixture.ExamFixture.createExam;
 import static fixture.SubjectFixture.createSubject;
 
 public class ProblemFixture {
@@ -17,15 +18,31 @@ public class ProblemFixture {
                 "choice2",
                 "choice3",
                 "choice4",
-                "choice5",
                 1,
                 "problem theory",
-                "problem solution",
+                1,
                 certificate,
                 exam,
                 subject
         );
     }
+    public static Problem createProblem(String id, Certificate certificate) {
+        return Problem.of(
+                id,
+                "problem description",
+                "choice1",
+                "choice2",
+                "choice3",
+                "choice4",
+                1,
+                "problem theory",
+                1,
+                certificate,
+                createExam("5432", certificate),
+                createSubject("9876", certificate)
+        );
+    }
+
 
     public static Problem createProblem(String id) {
         Certificate certificate = createCertificate("1234");
@@ -36,12 +53,11 @@ public class ProblemFixture {
                 "choice2",
                 "choice3",
                 "choice4",
-                "choice5",
                 1,
                 "problem theory",
-                "problem solution",
+                1,
                 certificate,
-                ExamFixture.createExam("5432", certificate),
+                createExam("5432", certificate),
                 createSubject("9876", certificate)
         );
     }

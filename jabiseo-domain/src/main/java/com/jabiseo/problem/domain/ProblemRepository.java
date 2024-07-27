@@ -1,5 +1,6 @@
 package com.jabiseo.problem.domain;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,8 +18,8 @@ public interface ProblemRepository extends JpaRepository<Problem, String> {
     List<Problem> findRandomBySubjectId(String subjectId, int count);
 
     @Query(value = "select p from Bookmark b join b.problem p where b.member.id = :memberId and p.exam.id = :examId and p.subject.id in :subjectIds")
-    List<Problem> findBookmarkedByExamIdAndSubjectIdIn(String memberId, String examId, List<String> subjectIds, Pageable pageable);
+    Page<Problem> findBookmarkedByExamIdAndSubjectIdIn(String memberId, String examId, List<String> subjectIds, Pageable pageable);
 
     @Query(value = "select p from Bookmark b join b.problem p where b.member.id = :memberId and p.subject.id in :subjectIds")
-    List<Problem> findBookmarkedBySubjectIdIn(String memberId, List<String> subjectIds, Pageable pageable);
+    Page<Problem> findBookmarkedBySubjectIdIn(String memberId, List<String> subjectIds, Pageable pageable);
 }
