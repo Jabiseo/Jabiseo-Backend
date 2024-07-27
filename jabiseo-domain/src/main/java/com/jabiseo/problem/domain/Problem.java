@@ -3,12 +3,13 @@ package com.jabiseo.problem.domain;
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.certificate.domain.Exam;
 import com.jabiseo.certificate.domain.Subject;
+import com.jabiseo.certificate.exception.CertificateBusinessException;
+import com.jabiseo.certificate.exception.CertificateErrorCode;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 @Entity
 @Getter
@@ -29,13 +30,11 @@ public class Problem {
 
     private String choice4;
 
-    private String choice5;
-
     private int answerNumber;
 
-    private String theory;
-
     private String solution;
+
+    private int sequence;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "certificate_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
@@ -50,34 +49,34 @@ public class Problem {
     private Subject subject;
 
     public List<String> getChoices() {
-        return Stream.of(choice1, choice2, choice3, choice4, choice5)
-                .filter((choice) -> choice != null && !choice.isBlank())
-                .toList();
+        return List.of(choice1, choice2, choice3, choice4);
     }
 
-    public Problem(String id, String description, String choice1, String choice2, String choice3,
-                   String choice4, String choice5, int answerNumber, String theory, String solution,
-                   Certificate certificate, Exam exam, Subject subject) {
+    private Problem(String id, String description, String choice1, String choice2, String choice3, String choice4,
+                    int answerNumber, String solution, int sequence, Certificate certificate, Exam exam, Subject subject) {
         this.id = id;
         this.description = description;
         this.choice1 = choice1;
         this.choice2 = choice2;
         this.choice3 = choice3;
         this.choice4 = choice4;
-        this.choice5 = choice5;
         this.answerNumber = answerNumber;
-        this.theory = theory;
         this.solution = solution;
+        this.sequence = sequence;
         this.certificate = certificate;
         this.exam = exam;
         this.subject = subject;
     }
 
-    public static Problem of(String id, String description, String choice1, String choice2, String choice3,
-                             String choice4, String choice5, int answerNumber, String theory, String solution,
-                             Certificate certificate, Exam exam, Subject subject) {
-        return new Problem(id, description, choice1, choice2, choice3, choice4, choice5,
-                answerNumber, theory, solution, certificate, exam, subject);
+    public static Problem of(String id, String description, String choice1, String choice2, String choice3, String choice4,
+                             int answerNumber, String solution, int sequence, Certificate certificate, Exam exam, Subject subject) {
+        return new Problem(id, description, choice1, choice2, choice3, choice4,
+                answerNumber, solution, sequence, certificate, exam, subject);
     }
 
+    public void validateProblemInCertificate(Certificate certificate) {
+        if (!this.getCertificate().equals(certificate)) {
+            throw new CertificateBusinessException(CertificateErrorCode.PROBLEM_NOT_FOUND_IN_CERTIFICATE);
+        }
+    }
 }

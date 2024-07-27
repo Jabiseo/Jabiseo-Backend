@@ -1,9 +1,9 @@
 package com.jabiseo.problem.controller;
 
-import com.jabiseo.problem.dto.CreateReportRequest;
-import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
-import com.jabiseo.problem.dto.FindProblemsRequest;
-import com.jabiseo.problem.dto.FindProblemsResponse;
+import com.jabiseo.config.auth.AuthMember;
+import com.jabiseo.config.auth.AuthenticatedMember;
+import com.jabiseo.problem.application.usecase.FindProblemsByIdUseCase;
+import com.jabiseo.problem.dto.*;
 import com.jabiseo.problem.application.usecase.CreateReportUseCase;
 import com.jabiseo.problem.application.usecase.FindBookmarkedProblemsUseCase;
 import com.jabiseo.problem.application.usecase.FindProblemsUseCase;
@@ -25,13 +25,16 @@ public class ProblemController {
 
     private final FindProblemsUseCase findProblemsUseCase;
 
+    private final FindProblemsByIdUseCase findProblemsByIdUseCase;
+
     private final CreateReportUseCase createReportUseCase;
 
     private final FindBookmarkedProblemsUseCase findBookmarkedProblemsUseCase;
 
     @GetMapping("/set")
-    public ResponseEntity<List<FindProblemsResponse>> findProblems(
-            // TODO: DTO 기반으로 변경
+    public ResponseEntity<FindProblemsResponse> findProblems(
+            @AuthenticatedMember AuthMember member,
+            // TODO: Valid에 대한 테스트
             @RequestParam(name = "certificate-id") String certificateId,
             @RequestParam(name = "subject-id") List<String> subjectIds,
             @RequestParam(name = "exam-id", required = false) Optional<String> examId,
@@ -40,16 +43,17 @@ public class ProblemController {
             @Max(value = 20, message = "과목 당 문제 수는 20보다 작거나 같아야 합니다.")
             int count
     ) {
-        List<FindProblemsResponse> result =
+        FindProblemsResponse result =
                 findProblemsUseCase.execute(certificateId, subjectIds, examId, count);
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/set/query")
-    public ResponseEntity<List<FindProblemsResponse>> findProblems(
+    public ResponseEntity<FindProblemsResponse> findProblems(
+            @AuthenticatedMember AuthMember member,
             @RequestBody FindProblemsRequest request
     ) {
-        List<FindProblemsResponse> result = findProblemsUseCase.execute(request);
+        FindProblemsResponse result = findProblemsByIdUseCase.execute(member.getMemberId(), request);
         return ResponseEntity.ok(result);
     }
 
@@ -69,14 +73,14 @@ public class ProblemController {
     }
 
     @GetMapping("/bookmarked")
-    public ResponseEntity<List<FindBookmarkedProblemsResponse>> findBookmarkedProblems(
+    public ResponseEntity<FindBookmarkedProblemsResponse> findBookmarkedProblems(
+            @AuthenticatedMember AuthMember member,
             // TODO: DTO 기반으로 변경
             @RequestParam(name = "exam-id") Optional<String> examId,
             @RequestParam(name = "subject-id") List<String> subjectIds,
             int page
     ) {
-        String memberId = "1"; // TODO: 로그인 기능 구현 후 로그인한 사용자의 ID로 변경
-        List<FindBookmarkedProblemsResponse> result = findBookmarkedProblemsUseCase.execute(memberId, examId, subjectIds, page);
+        FindBookmarkedProblemsResponse result = findBookmarkedProblemsUseCase.execute(member.getMemberId(), examId, subjectIds, page);
         return ResponseEntity.ok(result);
     }
 }

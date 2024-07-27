@@ -1,6 +1,6 @@
 package com.jabiseo.member.dto;
 
-public record UpdateMyCertificateStateRequest(
+public record UpdateMyCurrentCertificateRequest(
         String certificateId
 ) {
 }

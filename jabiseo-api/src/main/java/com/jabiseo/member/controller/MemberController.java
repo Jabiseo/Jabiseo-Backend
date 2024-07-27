@@ -2,12 +2,12 @@ package com.jabiseo.member.controller;
 
 import com.jabiseo.config.auth.AuthMember;
 import com.jabiseo.config.auth.AuthenticatedMember;
-import com.jabiseo.member.dto.FindMyCertificateStateResponse;
+import com.jabiseo.member.dto.FindMyCurrentCertificateResponse;
 import com.jabiseo.member.dto.FindMyInfoResponse;
-import com.jabiseo.member.dto.UpdateMyCertificateStateRequest;
-import com.jabiseo.member.application.usecase.FindMyCertificateStateUseCase;
+import com.jabiseo.member.dto.UpdateMyCurrentCertificateRequest;
+import com.jabiseo.member.application.usecase.FindMyCurrentCertificateUseCase;
 import com.jabiseo.member.application.usecase.FindMyInfoUseCase;
-import com.jabiseo.member.application.usecase.UpdateMyCertificateStateUseCase;
+import com.jabiseo.member.application.usecase.UpdateMyCurrentCertificateUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,29 +19,32 @@ public class MemberController {
 
     private final FindMyInfoUseCase findMyInfoUseCase;
 
-    private final FindMyCertificateStateUseCase findMyCertificateStateUseCase;
+    private final FindMyCurrentCertificateUseCase findMyCurrentCertificateUseCase;
 
-    private final UpdateMyCertificateStateUseCase updateMyCertificateStateUseCase;
+    private final UpdateMyCurrentCertificateUseCase updateMyCurrentCertificateUseCase;
 
     @GetMapping
-    public ResponseEntity<FindMyInfoResponse> findMyInfo(@AuthenticatedMember AuthMember member) {
+    public ResponseEntity<FindMyInfoResponse> findMyInfo(
+            @AuthenticatedMember AuthMember member
+    ) {
         FindMyInfoResponse result = findMyInfoUseCase.execute(member.getMemberId());
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/certificates")
-    public ResponseEntity<FindMyCertificateStateResponse> findMyCertificateStatus() {
-        String memberId = "1"; // TODO: 로그인 기능 구현 후 JWT에서 memberId 가져오기
-        FindMyCertificateStateResponse result = findMyCertificateStateUseCase.execute(memberId);
+    public ResponseEntity<FindMyCurrentCertificateResponse> findMyCertificateStatus(
+            @AuthenticatedMember AuthMember member
+    ) {
+        FindMyCurrentCertificateResponse result = findMyCurrentCertificateUseCase.execute(member.getMemberId());
         return ResponseEntity.ok(result);
     }
 
     @PatchMapping("/certificates")
     public ResponseEntity<Void> updateMyCertificateStatus(
-            @RequestBody UpdateMyCertificateStateRequest request
+            @RequestBody UpdateMyCurrentCertificateRequest request,
+            @AuthenticatedMember AuthMember member
     ) {
-        String memberId = "1"; // TODO: 로그인 기능 구현 후 JWT에서 memberId 가져오기
-        updateMyCertificateStateUseCase.execute(memberId, request);
+        updateMyCurrentCertificateUseCase.execute(member.getMemberId(), request);
         return ResponseEntity.ok().build();
     }
 

@@ -2,9 +2,10 @@ package com.jabiseo.member.application.usecase;
 
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.certificate.domain.CertificateRepository;
+import com.jabiseo.certificate.exception.CertificateErrorCode;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
-import com.jabiseo.member.dto.UpdateMyCertificateStateRequest;
+import com.jabiseo.member.dto.UpdateMyCurrentCertificateRequest;
 import com.jabiseo.member.exception.MemberBusinessException;
 import com.jabiseo.member.exception.MemberErrorCode;
 import org.junit.jupiter.api.DisplayName;
@@ -22,12 +23,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
-@DisplayName("자격증 상태 변경 테스트")
+@DisplayName("현재 자격증 변경 테스트")
 @ExtendWith(MockitoExtension.class)
-class UpdateMyCertificateStateUseCaseTest {
+class UpdateMyCurrentCertificateUseCaseTest {
 
     @InjectMocks
-    UpdateMyCertificateStateUseCase sut;
+    UpdateMyCurrentCertificateUseCase sut;
 
     @Mock
     MemberRepository memberRepository;
@@ -37,7 +38,7 @@ class UpdateMyCertificateStateUseCaseTest {
 
     @Test
     @DisplayName("현재 자격증 변경을 성공한다.")
-    void givenMemberIdAndCertificateId_whenUpdatingCertificateState_thenUpdateCertificateState() {
+    void givenMemberIdAndCertificateId_whenUpdatingCurrentCertificate_thenUpdateCurrentCertificate() {
         //given
         String memberId = "1";
         String certificateId = "2";
@@ -47,23 +48,23 @@ class UpdateMyCertificateStateUseCaseTest {
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
 
         //when
-        UpdateMyCertificateStateRequest request = new UpdateMyCertificateStateRequest(certificateId);
+        UpdateMyCurrentCertificateRequest request = new UpdateMyCurrentCertificateRequest(certificateId);
         sut.execute(memberId, request);
 
         //then
-        assertThat(member.getCertificateState()).isEqualTo(certificate);
+        assertThat(member.getCurrentCertificate()).isEqualTo(certificate);
     }
 
     @Test
     @DisplayName("존재하지 않는 회원의 현재 자격증 변경을 시도하면 예외처리한다.")
-    void givenCertificateIdAndNonExistedMemberId_whenUpdatingCertificateState_thenReturnError() {
+    void givenCertificateIdAndNonExistedMemberId_whenUpdatingCurrentCertificate_thenReturnError() {
         //given
         String nonExistedMemberId = "1";
         String certificateId = "2";
         given(memberRepository.findById(nonExistedMemberId)).willReturn(Optional.empty());
 
         //when & then
-        UpdateMyCertificateStateRequest request = new UpdateMyCertificateStateRequest(certificateId);
+        UpdateMyCurrentCertificateRequest request = new UpdateMyCurrentCertificateRequest(certificateId);
         assertThatThrownBy(() -> sut.execute(nonExistedMemberId, request))
                 .isInstanceOf(MemberBusinessException.class)
                 .hasFieldOrPropertyWithValue("errorCode", MemberErrorCode.MEMBER_NOT_FOUND);
@@ -71,8 +72,8 @@ class UpdateMyCertificateStateUseCaseTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 현재 자격증 변경을 시도하면 예외처리한다.")
-    void givenMemberIdAndNonExistedCertificateId_whenUpdatingCertificateState_thenReturnError() {
+    @DisplayName("존재하지 않는 자격증으로 현재 자격증 변경을 시도하면 예외처리한다.")
+    void givenMemberIdAndNonExistedCertificateId_whenUpdatingCurrentCertificate_thenReturnError() {
         //given
         String memberId = "1";
         String nonExistedCertificateId = "2";
@@ -81,10 +82,10 @@ class UpdateMyCertificateStateUseCaseTest {
         given(certificateRepository.findById(nonExistedCertificateId)).willReturn(Optional.empty());
 
         //when & then
-        UpdateMyCertificateStateRequest request = new UpdateMyCertificateStateRequest(nonExistedCertificateId);
+        UpdateMyCurrentCertificateRequest request = new UpdateMyCurrentCertificateRequest(nonExistedCertificateId);
         assertThatThrownBy(() -> sut.execute(memberId, request))
                 .isInstanceOf(MemberBusinessException.class)
-                .hasFieldOrPropertyWithValue("errorCode", MemberErrorCode.CURRENT_CERTIFICATE_NOT_EXIST);
+                .hasFieldOrPropertyWithValue("errorCode", CertificateErrorCode.CERTIFICATE_NOT_FOUND);
     }
 
 }

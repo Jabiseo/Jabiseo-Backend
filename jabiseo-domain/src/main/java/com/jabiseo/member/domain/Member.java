@@ -55,8 +55,8 @@ public class Member {
     private LocalDateTime lastAccessAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "certificate_state_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-    private Certificate certificateState;
+    @JoinColumn(name = "current_certificate_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+     private Certificate currentCertificate;
 
     @OneToMany(mappedBy = "member")
     @BatchSize(size = 100)
@@ -76,8 +76,8 @@ public class Member {
         return new Member(id, email, nickname, oauthId, oauthServer, profileImage);
     }
 
-    public Member updateCertificateState(Certificate certificate) {
-        this.certificateState = certificate;
+    public Member updateCurrentCertificate(Certificate certificate) {
+        this.currentCertificate = certificate;
         return this;
     }
 
@@ -86,7 +86,7 @@ public class Member {
     }
 
     public void validateCurrentCertificate() {
-        if (certificateState == null) {
+        if (currentCertificate == null) {
             throw new MemberBusinessException(MemberErrorCode.CURRENT_CERTIFICATE_NOT_EXIST);
         }
     }

@@ -1,9 +1,11 @@
 package com.jabiseo.problem.controller;
 
-import com.jabiseo.problem.dto.CreateBookmarkRequest;
-import com.jabiseo.problem.dto.DeleteBookmarkRequest;
+import com.jabiseo.config.auth.AuthMember;
+import com.jabiseo.config.auth.AuthenticatedMember;
 import com.jabiseo.problem.application.usecase.CreateBookmarkUseCase;
 import com.jabiseo.problem.application.usecase.DeleteBookmarkUseCase;
+import com.jabiseo.problem.dto.CreateBookmarkRequest;
+import com.jabiseo.problem.dto.DeleteBookmarkRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +24,10 @@ public class BookmarkController {
 
     @PostMapping
     public ResponseEntity<Void> createBookmark(
-            @RequestBody CreateBookmarkRequest request
+            @RequestBody CreateBookmarkRequest request,
+            @AuthenticatedMember AuthMember member
     ) {
-        String memberId = "1"; // TODO : 로그인 기능 구현 후 로그인한 사용자의 ID로 변경
-        String bookmarkId = createBookmarkUseCase.execute(memberId, request);
+        String bookmarkId = createBookmarkUseCase.execute(member.getMemberId(), request);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -38,10 +40,10 @@ public class BookmarkController {
 
     @DeleteMapping
     public ResponseEntity<Void> deleteBookmark(
-            @RequestBody DeleteBookmarkRequest request
+            @RequestBody DeleteBookmarkRequest request,
+            @AuthenticatedMember AuthMember member
     ) {
-        String memberId = "1"; // TODO : 로그인 기능 구현 후 로그인한 사용자의 ID로 변경
-        deleteBookmarkUseCase.execute(memberId, request);
+        deleteBookmarkUseCase.execute(member.getMemberId(), request);
         return ResponseEntity.noContent().build();
     }
 }
