@@ -4,16 +4,11 @@ import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.certificate.domain.CertificateRepository;
 import com.jabiseo.certificate.exception.CertificateBusinessException;
 import com.jabiseo.certificate.exception.CertificateErrorCode;
-import com.jabiseo.member.domain.Member;
-import com.jabiseo.member.domain.MemberRepository;
 import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.CertificateResponse;
-import com.jabiseo.problem.dto.FindProblemsRequest;
 import com.jabiseo.problem.dto.FindProblemsResponse;
 import com.jabiseo.problem.dto.ProblemsDetailResponse;
-import com.jabiseo.problem.exception.ProblemBusinessException;
-import com.jabiseo.problem.exception.ProblemErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +23,6 @@ public class FindProblemsUseCase {
 
     private final CertificateRepository certificateRepository;
     private final ProblemRepository problemRepository;
-    private final MemberRepository memberRepository;
 
     // TODO: 문제에 북마크 되어 있는지 표시해야 함
     public FindProblemsResponse execute(String certificateId, List<String> subjectIds, Optional<String> examId, int count) {
@@ -49,10 +43,10 @@ public class FindProblemsUseCase {
                 .toList();
 
         CertificateResponse certificateResponse = CertificateResponse.from(certificate);
-        List<ProblemsDetailResponse> problemsDetailRespons = problems.stream()
+        List<ProblemsDetailResponse> problemsDetailResponses = problems.stream()
                 .map(ProblemsDetailResponse::from)
                 .toList();
 
-        return FindProblemsResponse.of(certificateResponse, problemsDetailRespons);
+        return FindProblemsResponse.of(certificateResponse, problemsDetailResponses);
     }
 }

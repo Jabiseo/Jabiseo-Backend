@@ -2,6 +2,7 @@ package com.jabiseo.problem.controller;
 
 import com.jabiseo.config.auth.AuthMember;
 import com.jabiseo.config.auth.AuthenticatedMember;
+import com.jabiseo.problem.application.usecase.FindProblemsByIdUseCase;
 import com.jabiseo.problem.dto.*;
 import com.jabiseo.problem.application.usecase.CreateReportUseCase;
 import com.jabiseo.problem.application.usecase.FindBookmarkedProblemsUseCase;
@@ -23,6 +24,8 @@ import java.util.Optional;
 public class ProblemController {
 
     private final FindProblemsUseCase findProblemsUseCase;
+
+    private final FindProblemsByIdUseCase findProblemsByIdUseCase;
 
     private final CreateReportUseCase createReportUseCase;
 
@@ -50,7 +53,7 @@ public class ProblemController {
             @AuthenticatedMember AuthMember member,
             @RequestBody FindProblemsRequest request
     ) {
-        FindProblemsResponse result = findProblemsUseCase.execute(member.getMemberId(), request);
+        FindProblemsResponse result = findProblemsByIdUseCase.execute(member.getMemberId(), request);
         return ResponseEntity.ok(result);
     }
 
