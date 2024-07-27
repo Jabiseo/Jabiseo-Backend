@@ -34,7 +34,7 @@ public class ProblemController {
     @GetMapping("/set")
     public ResponseEntity<FindProblemsResponse> findProblems(
             @AuthenticatedMember AuthMember member,
-            // TODO: DTO 기반으로 변경
+            // TODO: Valid에 대한 테스트
             @RequestParam(name = "certificate-id") String certificateId,
             @RequestParam(name = "subject-id") List<String> subjectIds,
             @RequestParam(name = "exam-id", required = false) Optional<String> examId,
