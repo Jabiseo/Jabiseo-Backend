@@ -74,7 +74,7 @@ jobs:
             GIT_TAG="v0.0.0"
           fi
           
-          DATE=$(date +'%Y%m%d') 
+          DATE=$(date +'%Y%m%d%H%M') 
           COMMIT_SHA=$(git rev-parse --short HEAD) 
           DOCKER_TAG="${GIT_TAG}-${DATE}-${COMMIT_SHA}"
           DOCKER_IMAGE="${{env.ECR_URI}}:${DOCKER_TAG}"
