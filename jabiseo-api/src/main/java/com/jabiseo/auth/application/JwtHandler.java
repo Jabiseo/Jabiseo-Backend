@@ -61,20 +61,6 @@ public class JwtHandler {
     }
 
 
-    public boolean validateAccessToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(accessKey)
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (ExpiredJwtException e) {
-            throw new AuthenticationBusinessException(AuthenticationErrorCode.EXPIRED_APP_JWT);
-        } catch (Exception e) {
-            throw new AuthenticationBusinessException(AuthenticationErrorCode.INVALID_APP_JWT);
-        }
-    }
-
     public boolean validateRefreshToken(String refreshToken) {
         try {
             Jwts.parserBuilder()
