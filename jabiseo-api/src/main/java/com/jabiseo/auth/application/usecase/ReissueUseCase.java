@@ -3,7 +3,9 @@ package com.jabiseo.auth.application.usecase;
 import com.jabiseo.auth.application.JwtHandler;
 import com.jabiseo.auth.dto.LoginResponse;
 import com.jabiseo.auth.dto.ReissueRequest;
+import com.jabiseo.auth.dto.ReissueResponse;
 import com.jabiseo.auth.exception.AuthenticationBusinessException;
+import com.jabiseo.auth.exception.AuthenticationErrorCode;
 import com.jabiseo.cache.RedisCacheRepository;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
@@ -13,28 +15,27 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class ReissueUseCase {
-
-    /*
-     *
-     */
 
     private final MemberRepository memberRepository;
     private final RedisCacheRepository redisCacheRepository;
     private final JwtHandler jwtHandler;
 
-    public LoginResponse execute(ReissueRequest request, String memberId) {
+    public ReissueResponse execute(ReissueRequest request, String memberId) {
         Member member = memberRepository.getReferenceById(memberId);
 
-        String token = redisCacheRepository.getToken(memberId);
-        if (!isCorretToken(token, request.refreshToken())) {
-        }
-        return new LoginResponse("access_token", "refresh_token");
-    }
+        jwtHandler.validateRefreshToken(request.refreshToken());
 
-    private boolean isCorretToken(String savedToken, String request) {
-        return request.equals(savedToken);
+        String savedToken = redisCacheRepository.findToken(memberId)
+                .orElseThrow(() -> new AuthenticationBusinessException(AuthenticationErrorCode.REQUIRE_LOGIN));
+
+        if (!savedToken.equals(request.refreshToken())) {
+            throw new AuthenticationBusinessException(AuthenticationErrorCode.NOT_MATCH_REFRESH);
+        }
+
+        String accessToken = jwtHandler.createAccessToken(member);
+        return new ReissueResponse(accessToken);
     }
 
 

@@ -7,6 +7,7 @@ import com.jabiseo.auth.application.usecase.LogoutUseCase;
 import com.jabiseo.auth.application.usecase.ReissueUseCase;
 import com.jabiseo.auth.application.usecase.WithdrawUseCase;
 import com.jabiseo.auth.dto.ReissueRequest;
+import com.jabiseo.auth.dto.ReissueResponse;
 import com.jabiseo.config.auth.AuthMember;
 import com.jabiseo.config.auth.AuthenticatedMember;
 import jakarta.validation.Valid;
@@ -37,8 +38,8 @@ public class AuthController {
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<LoginResponse> reissue(@Valid @RequestBody ReissueRequest request, @AuthenticatedMember AuthMember member) {
-        LoginResponse result = reissueUseCase.execute(request, member.getMemberId());
+    public ResponseEntity<ReissueResponse> reissue(@Valid @RequestBody ReissueRequest request, @AuthenticatedMember AuthMember member) {
+        ReissueResponse result = reissueUseCase.execute(request, member.getMemberId());
         return ResponseEntity.ok(result);
     }
 

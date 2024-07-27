@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -31,8 +32,9 @@ public class RedisCacheRepository {
         operation.set(MEMBER_TOKEN_PREFIX + key, value);
     }
 
-    public String getToken(String key) {
-        return operation.get(MEMBER_TOKEN_PREFIX + key);
+    public Optional<String> findToken(String key) {
+        String token = operation.get(MEMBER_TOKEN_PREFIX + key);
+        return Optional.ofNullable(token);
     }
 
     public void savePublicKey(String key, List<OidcPublicKey> publicKeys) {
