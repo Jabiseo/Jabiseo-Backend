@@ -18,6 +18,7 @@ public class RedisCacheRepository {
 
     private final RedisTemplate<String, String> redisStringTemplate;
     private final ValueOperations<String, String> operation;
+    private static final String MEMBER_TOKEN_PREFIX = "member_token:";
     private final ObjectMapper mapper = new ObjectMapper();
 
     public RedisCacheRepository(RedisTemplate<String, String> redisStringTemplate) {
@@ -27,14 +28,16 @@ public class RedisCacheRepository {
 
 
     public void saveToken(String key, String value) {
-        operation.set(key, value);
+        operation.set(MEMBER_TOKEN_PREFIX + key, value);
     }
 
+    public String getToken(String key) {
+        return operation.get(MEMBER_TOKEN_PREFIX + key);
+    }
 
     public void savePublicKey(String key, List<OidcPublicKey> publicKeys) {
         try {
             String publicKeyString = mapper.writeValueAsString(publicKeys);
-
             // TODO: timeout 값 논의 필요
             operation.set(key, publicKeyString, 1, TimeUnit.DAYS);
         } catch (JsonProcessingException e) {

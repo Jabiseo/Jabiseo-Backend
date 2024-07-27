@@ -6,6 +6,9 @@ import com.jabiseo.auth.application.usecase.LoginUseCase;
 import com.jabiseo.auth.application.usecase.LogoutUseCase;
 import com.jabiseo.auth.application.usecase.ReissueUseCase;
 import com.jabiseo.auth.application.usecase.WithdrawUseCase;
+import com.jabiseo.auth.dto.ReissueRequest;
+import com.jabiseo.config.auth.AuthMember;
+import com.jabiseo.config.auth.AuthenticatedMember;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +37,8 @@ public class AuthController {
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<LoginResponse> reissue(String refreshToken) {
-        LoginResponse result = reissueUseCase.reissue(refreshToken);
+    public ResponseEntity<LoginResponse> reissue(@Valid @RequestBody ReissueRequest request, @AuthenticatedMember AuthMember member) {
+        LoginResponse result = reissueUseCase.execute(request, member.getMemberId());
         return ResponseEntity.ok(result);
     }
 
