@@ -42,7 +42,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private Claims getClaimsFromToken(String token, HttpServletRequest request) {
         if (request.getRequestURI().equals(REISSUE_REQUEST)) {
-            return jwtHandler.getClaimFromExpiredAccessToken(token);
+            jwtHandler.validateAccessTokenNotCheckExpired(token);
+        } else {
+            jwtHandler.validateAccessToken(token);
         }
         return jwtHandler.getClaimsFromAccessToken(token);
     }

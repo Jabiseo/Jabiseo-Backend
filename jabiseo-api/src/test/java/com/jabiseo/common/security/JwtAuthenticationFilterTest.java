@@ -65,7 +65,7 @@ class JwtAuthenticationFilterTest {
 
         //then
         verify(jwtHandler, never()).getClaimsFromAccessToken(any());
-        verify(jwtHandler, never()).getClaimFromExpiredAccessToken(any());
+        verify(jwtHandler, never()).validateAccessToken(any());
         verify(chain, times(1)).doFilter(request, response);
     }
 
@@ -83,8 +83,8 @@ class JwtAuthenticationFilterTest {
         jwtAuthenticationFilter.doFilterInternal(request, response, chain);
 
         //then
-        verify(jwtHandler, times(1)).getClaimsFromAccessToken(token);
-        verify(jwtHandler, times(0)).getClaimFromExpiredAccessToken(token);
+        verify(jwtHandler, times(1)).validateAccessToken(token);
+        verify(jwtHandler, times(0)).validateAccessTokenNotCheckExpired(token);
     }
 
     @Test
@@ -120,14 +120,14 @@ class JwtAuthenticationFilterTest {
         String memberId = "memberId";
 
         given(claims.getSubject()).willReturn(memberId);
-        given(jwtHandler.getClaimFromExpiredAccessToken(token)).willReturn(claims);
+        given(jwtHandler.getClaimsFromAccessToken(token)).willReturn(claims);
 
         //when
         jwtAuthenticationFilter.doFilterInternal(request, response, chain);
 
         //then
-        verify(jwtHandler, never()).getClaimsFromAccessToken(token);
-        verify(jwtHandler, times(1)).getClaimFromExpiredAccessToken(token);
+        verify(jwtHandler, never()).validateAccessToken(token);
+        verify(jwtHandler, times(1)).validateAccessTokenNotCheckExpired(token);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assertThat(authentication).isNotNull();
         assertThat(authentication.getPrincipal().toString()).isEqualTo(memberId);

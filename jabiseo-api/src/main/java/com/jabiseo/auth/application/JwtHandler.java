@@ -3,6 +3,7 @@ package com.jabiseo.auth.application;
 import com.jabiseo.auth.exception.AuthenticationBusinessException;
 import com.jabiseo.auth.exception.AuthenticationErrorCode;
 import com.jabiseo.member.domain.Member;
+import io.jsonwebtoken.ClaimJwtException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -56,6 +57,34 @@ public class JwtHandler {
                 .compact();
     }
 
+    public void validateAccessToken(String accessToken){
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(accessKey)
+                    .build()
+                    .parseClaimsJws(accessToken)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            throw new AuthenticationBusinessException(AuthenticationErrorCode.EXPIRED_APP_JWT);
+        } catch (Exception e) {
+            throw new AuthenticationBusinessException(AuthenticationErrorCode.INVALID_APP_JWT);
+        }
+    }
+
+    public void validateAccessTokenNotCheckExpired(String accessToken){
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(accessKey)
+                    .build()
+                    .parseClaimsJws(accessToken)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            return;
+        } catch (Exception e) {
+            throw new AuthenticationBusinessException(AuthenticationErrorCode.INVALID_APP_JWT);
+        }
+    }
+
 
     public void validateRefreshToken(String refreshToken) {
         try {
@@ -71,20 +100,6 @@ public class JwtHandler {
     }
 
 
-    public Claims getClaimFromExpiredAccessToken(String accessToken) {
-        try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(accessKey)
-                    .build()
-                    .parseClaimsJws(accessToken)
-                    .getBody();
-        } catch (ExpiredJwtException e) {
-            return e.getClaims();
-        } catch (Exception e) {
-            throw new AuthenticationBusinessException(AuthenticationErrorCode.INVALID_APP_JWT);
-        }
-    }
-
     public Claims getClaimsFromAccessToken(String token) {
         try {
             return Jwts
@@ -93,8 +108,9 @@ public class JwtHandler {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-        } catch (ExpiredJwtException e) {
-            throw new AuthenticationBusinessException(AuthenticationErrorCode.EXPIRED_APP_JWT);
+        } catch (ClaimJwtException e) {
+            // 기존 검증에서 처리후 가져오는 동작
+            return e.getClaims();
         } catch (Exception e) {
             throw new AuthenticationBusinessException(AuthenticationErrorCode.INVALID_APP_JWT);
         }
