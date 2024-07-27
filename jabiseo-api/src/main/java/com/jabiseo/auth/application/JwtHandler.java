@@ -61,13 +61,12 @@ public class JwtHandler {
     }
 
 
-    public boolean validateRefreshToken(String refreshToken) {
+    public void validateRefreshToken(String refreshToken) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(refreshKey)
                     .build()
                     .parseClaimsJws(refreshToken);
-            return true;
         } catch (ExpiredJwtException e) {
             throw new AuthenticationBusinessException(AuthenticationErrorCode.EXPIRED_APP_JWT);
         } catch (Exception e) {
