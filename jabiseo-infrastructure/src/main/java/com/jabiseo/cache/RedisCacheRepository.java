@@ -29,12 +29,20 @@ public class RedisCacheRepository {
 
 
     public void saveToken(String key, String value) {
-        operation.set(MEMBER_TOKEN_PREFIX + key, value);
+        operation.set(toMemberTokenKey(key), value);
     }
 
     public Optional<String> findToken(String key) {
-        String token = operation.get(MEMBER_TOKEN_PREFIX + key);
+        String token = operation.get(toMemberTokenKey(key));
         return Optional.ofNullable(token);
+    }
+
+    public void deleteToken(String key){
+        operation.getAndDelete(toMemberTokenKey(key));
+    }
+
+    private String toMemberTokenKey(String id){
+        return MEMBER_TOKEN_PREFIX + id;
     }
 
     public void savePublicKey(String key, List<OidcPublicKey> publicKeys) {

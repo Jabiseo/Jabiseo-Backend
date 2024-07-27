@@ -44,8 +44,8 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout() {
-        logoutUseCase.execute();
+    public ResponseEntity<Void> logout(@AuthenticatedMember AuthMember member) {
+        logoutUseCase.execute(member.getMemberId());
         return ResponseEntity.noContent().build();
     }
 
