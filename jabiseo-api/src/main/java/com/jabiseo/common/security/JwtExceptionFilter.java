@@ -1,8 +1,8 @@
 package com.jabiseo.common.security;
 
 import com.jabiseo.common.ResponseFactory;
-import com.jabiseo.exception.BusinessException;
-import com.jabiseo.exception.CommonErrorCode;
+import com.jabiseo.common.exception.BusinessException;
+import com.jabiseo.common.exception.CommonErrorCode;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

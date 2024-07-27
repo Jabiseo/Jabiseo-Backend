@@ -1,4 +1,4 @@
-package com.jabiseo.exception;
+package com.jabiseo.common.exception;
 
 import lombok.Getter;
 

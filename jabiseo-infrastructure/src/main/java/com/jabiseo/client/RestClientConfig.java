@@ -1,8 +1,6 @@
 package com.jabiseo.client;
 
 
-import com.jabiseo.exception.CommonErrorCode;
-import com.jabiseo.exception.ErrorCode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatusCode;
