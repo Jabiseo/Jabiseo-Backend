@@ -8,7 +8,7 @@ import com.jabiseo.client.OidcPublicKeyResponse;
 import com.jabiseo.auth.exception.AuthenticationBusinessException;
 import com.jabiseo.auth.exception.AuthenticationErrorCode;
 import com.jabiseo.auth.application.oidc.property.KakaoOidcProperty;
-import com.jabiseo.exception.CommonErrorCode;
+import com.jabiseo.common.exception.CommonErrorCode;
 import com.jabiseo.member.domain.OauthServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

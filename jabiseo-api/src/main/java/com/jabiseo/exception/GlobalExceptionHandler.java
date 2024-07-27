@@ -1,5 +1,8 @@
 package com.jabiseo.exception;
 
+import com.jabiseo.common.exception.BusinessException;
+import com.jabiseo.common.exception.CommonErrorCode;
+import com.jabiseo.common.exception.ErrorCode;
 import com.jabiseo.database.exception.PersistenceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

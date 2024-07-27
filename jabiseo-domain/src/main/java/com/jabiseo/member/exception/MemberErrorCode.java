@@ -1,6 +1,6 @@
 package com.jabiseo.member.exception;
 
-import com.jabiseo.exception.ErrorCode;
+import com.jabiseo.common.exception.ErrorCode;
 import lombok.Getter;
 
 @Getter

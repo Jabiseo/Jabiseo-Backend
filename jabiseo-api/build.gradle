@@ -18,7 +18,6 @@ dependencies {
 
     implementation project(":jabiseo-domain")
     implementation project(":jabiseo-infrastructure")
-    implementation project(":jabiseo-common")
     testImplementation(testFixtures(project(":jabiseo-domain")))
 
 
