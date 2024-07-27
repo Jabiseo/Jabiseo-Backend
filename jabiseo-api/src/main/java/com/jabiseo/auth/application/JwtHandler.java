@@ -34,9 +34,11 @@ public class JwtHandler {
 
 
     public String createAccessToken(Member member) {
+        System.out.println(this.accessExpiredMin);
         Instant accessExpiredTime = Instant.now()
                 .plus(this.accessExpiredMin, ChronoUnit.MINUTES);
-
+        System.out.println(accessExpiredTime);
+        System.out.println(Instant.now());
         Map<String, Object> payload = new HashMap<>();
 
         return Jwts.builder()
@@ -51,6 +53,7 @@ public class JwtHandler {
     public String createRefreshToken() {
         Instant refreshExpiredTime = Instant.now()
                 .plus(this.refreshExpiredDay, ChronoUnit.DAYS);
+        System.out.println("refreshExpiredTime: " + refreshExpiredTime);
         return Jwts.builder()
                 .setExpiration(Date.from(refreshExpiredTime))
                 .signWith(refreshKey)
@@ -72,12 +75,13 @@ public class JwtHandler {
         }
     }
 
-    public void validateRefreshToken(String refreshToken) {
+    public boolean validateRefreshToken(String refreshToken) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(refreshKey)
                     .build()
                     .parseClaimsJws(refreshToken);
+            return true;
         } catch (ExpiredJwtException e) {
             throw new AuthenticationBusinessException(AuthenticationErrorCode.EXPIRED_APP_JWT);
         } catch (Exception e) {
@@ -101,11 +105,17 @@ public class JwtHandler {
     }
 
     public Claims getClaimsFromAccessToken(String token) {
-        return Jwts
-                .parserBuilder()
-                .setSigningKey(accessKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts
+                    .parserBuilder()
+                    .setSigningKey(accessKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            throw new AuthenticationBusinessException(AuthenticationErrorCode.EXPIRED_APP_JWT);
+        } catch (Exception e) {
+            throw new AuthenticationBusinessException(AuthenticationErrorCode.INVALID_APP_JWT);
+        }
     }
 }

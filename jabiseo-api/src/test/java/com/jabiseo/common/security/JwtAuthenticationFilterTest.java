@@ -64,7 +64,8 @@ class JwtAuthenticationFilterTest {
         jwtAuthenticationFilter.doFilterInternal(request, response, chain);
 
         //then
-        verify(jwtHandler, never()).validateAccessToken(any());
+        verify(jwtHandler, never()).getClaimsFromAccessToken(any());
+        verify(jwtHandler, never()).getClaimFromExpiredAccessToken(any());
         verify(chain, times(1)).doFilter(request, response);
     }
 
@@ -76,14 +77,14 @@ class JwtAuthenticationFilterTest {
         String headerValue = "Bearer " + token;
         request.addHeader("Authorization", headerValue);
 
-        given(jwtHandler.validateAccessToken(token)).willReturn(true);
         given(jwtHandler.getClaimsFromAccessToken(token)).willReturn(claims);
 
         // when
         jwtAuthenticationFilter.doFilterInternal(request, response, chain);
 
         //then
-        verify(jwtHandler, times(1)).validateAccessToken(token);
+        verify(jwtHandler, times(1)).getClaimsFromAccessToken(token);
+        verify(jwtHandler, times(0)).getClaimFromExpiredAccessToken(token);
     }
 
     @Test
@@ -96,7 +97,6 @@ class JwtAuthenticationFilterTest {
         String memberId = "memberId";
 
 
-        given(jwtHandler.validateAccessToken(token)).willReturn(true);
         given(claims.getSubject()).willReturn(memberId);
         given(jwtHandler.getClaimsFromAccessToken(token)).willReturn(claims);
 
@@ -104,6 +104,30 @@ class JwtAuthenticationFilterTest {
         jwtAuthenticationFilter.doFilterInternal(request, response, chain);
 
         //then
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        assertThat(authentication).isNotNull();
+        assertThat(authentication.getPrincipal().toString()).isEqualTo(memberId);
+    }
+
+    @Test
+    @DisplayName("reissue 요청 시 expired 검사안하고 Claim을 가져와 context에 저장한다.")
+    void reissueNotCheckExpired() throws ServletException, IOException {
+        //given
+        String token = "tokens";
+        String headerValue = "Bearer " + token;
+        request.addHeader("Authorization", headerValue);
+        request.setRequestURI("/api/auth/reissue");
+        String memberId = "memberId";
+
+        given(claims.getSubject()).willReturn(memberId);
+        given(jwtHandler.getClaimFromExpiredAccessToken(token)).willReturn(claims);
+
+        //when
+        jwtAuthenticationFilter.doFilterInternal(request, response, chain);
+
+        //then
+        verify(jwtHandler, never()).getClaimsFromAccessToken(token);
+        verify(jwtHandler, times(1)).getClaimFromExpiredAccessToken(token);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assertThat(authentication).isNotNull();
         assertThat(authentication.getPrincipal().toString()).isEqualTo(memberId);
