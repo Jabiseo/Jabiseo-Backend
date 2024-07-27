@@ -35,9 +35,9 @@ public class ProblemController {
     public ResponseEntity<FindProblemsResponse> findProblems(
             @AuthenticatedMember AuthMember member,
             // TODO: Valid에 대한 테스트
-            @RequestParam(name = "certificate-id") String certificateId,
-            @RequestParam(name = "subject-id") List<String> subjectIds,
-            @RequestParam(name = "exam-id", required = false) Optional<String> examId,
+            @RequestParam(name = "certificate-id") Long certificateId,
+            @RequestParam(name = "subject-id") List<Long> subjectIds,
+            @RequestParam(name = "exam-id", required = false) Optional<Long> examId,
             @RequestParam
             @Min(value = 1, message = "과목 당 문제 수는 0보다 커야 합니다.")
             @Max(value = 20, message = "과목 당 문제 수는 20보다 작거나 같아야 합니다.")
@@ -76,8 +76,8 @@ public class ProblemController {
     public ResponseEntity<FindBookmarkedProblemsResponse> findBookmarkedProblems(
             @AuthenticatedMember AuthMember member,
             // TODO: DTO 기반으로 변경
-            @RequestParam(name = "exam-id") Optional<String> examId,
-            @RequestParam(name = "subject-id") List<String> subjectIds,
+            @RequestParam(name = "exam-id") Optional<Long> examId,
+            @RequestParam(name = "subject-id") List<Long> subjectIds,
             int page
     ) {
         FindBookmarkedProblemsResponse result = findBookmarkedProblemsUseCase.execute(member.getMemberId(), examId, subjectIds, page);

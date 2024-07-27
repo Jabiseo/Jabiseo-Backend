@@ -6,8 +6,8 @@ import java.util.Optional;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, String> {
 
-    boolean existsByMemberIdAndProblemId(String memberId, String problemId);
+    boolean existsByMemberIdAndProblemId(String memberId, Long problemId);
 
-    Optional<Bookmark> findByMemberIdAndProblemId(String memberId, String problemId);
+    Optional<Bookmark> findByMemberIdAndProblemId(String memberId, Long problemId);
 
 }

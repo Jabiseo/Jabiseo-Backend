@@ -20,7 +20,7 @@ public class Certificate {
 
     @Id
     @Column(name = "certificate_id")
-    private String id;
+    private Long id;
 
     private String name;
 
@@ -32,12 +32,12 @@ public class Certificate {
     @OneToMany(mappedBy = "certificate")
     private List<Subject> subjects = new ArrayList<>();
 
-    private Certificate(String id, String name) {
+    private Certificate(Long id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public static Certificate of(String id, String name) {
+    public static Certificate of(Long id, String name) {
         return new Certificate(id, name);
     }
 
@@ -49,19 +49,19 @@ public class Certificate {
         subjects.add(subject);
     }
 
-    public boolean containsSubject(String subjectId) {
+    public boolean containsSubject(Long subjectId) {
         return subjects.stream()
                 .map(Subject::getId)
                 .anyMatch(id -> id.equals(subjectId));
     }
 
-    public boolean containsExam(String examId) {
+    public boolean containsExam(Long examId) {
         return exams.stream()
                 .map(Exam::getId)
                 .anyMatch(id -> id.equals(examId));
     }
 
-    private void validateSubjectIds(List<String> subjectIds) {
+    private void validateSubjectIds(List<Long> subjectIds) {
         // 자격증에 해당하는 과목들이 모두 있는지 검사
         subjectIds.forEach(subjectId -> {
             if (!this.containsSubject(subjectId)) {
@@ -70,14 +70,14 @@ public class Certificate {
         });
     }
 
-    private void validateExamId(Optional<String> examId) {
+    private void validateExamId(Optional<Long> examId) {
         // 자격증에 해당하는 시험이 있는지 검사
         if (examId.isPresent() && !this.containsExam(examId.get())) {
             throw new CertificateBusinessException(CertificateErrorCode.EXAM_NOT_FOUND_IN_CERTIFICATE);
         }
     }
 
-    public void validateExamIdAndSubjectIds(Optional<String> examId, List<String> subjectIds) {
+    public void validateExamIdAndSubjectIds(Optional<Long> examId, List<Long> subjectIds) {
         validateExamId(examId);
         validateSubjectIds(subjectIds);
     }

@@ -25,7 +25,7 @@ public class FindProblemsUseCase {
     private final ProblemRepository problemRepository;
 
     // TODO: 문제에 북마크 되어 있는지 표시해야 함
-    public FindProblemsResponse execute(String certificateId, List<String> subjectIds, Optional<String> examId, int count) {
+    public FindProblemsResponse execute(Long certificateId, List<Long> subjectIds, Optional<Long> examId, int count) {
         Certificate certificate = certificateRepository.findById(certificateId)
                 .orElseThrow(() -> new CertificateBusinessException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));
 

@@ -3,7 +3,7 @@ package com.jabiseo.problem.dto;
 import com.jabiseo.certificate.domain.Certificate;
 
 public record CertificateResponse(
-        String certificateId,
+        Long certificateId,
         String name
 ) {
     public static CertificateResponse from(Certificate certificate) {

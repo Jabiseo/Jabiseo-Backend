@@ -30,7 +30,7 @@ public class CertificateController {
 
     @GetMapping("/{certificate-id}")
     public ResponseEntity<FindCertificateDetailResponse> findCertificate(
-            @PathVariable(name = "certificate-id") String certificateId
+            @PathVariable(name = "certificate-id") Long certificateId
     ) {
         FindCertificateDetailResponse result = findCertificateDetailUseCase.execute(certificateId);
         return ResponseEntity.ok(result);
