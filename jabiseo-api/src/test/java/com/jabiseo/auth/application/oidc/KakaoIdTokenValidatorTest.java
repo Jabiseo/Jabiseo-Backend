@@ -38,8 +38,6 @@ class KakaoIdTokenValidatorTest {
     @Mock
     KakaoOidcProperty kakaoOidcProperty;
 
-    @Mock
-    IdTokenJwtHandler idTokenJwtHandler;
 
     @Mock
     KakaoKauthClient kakaoKauthClient;

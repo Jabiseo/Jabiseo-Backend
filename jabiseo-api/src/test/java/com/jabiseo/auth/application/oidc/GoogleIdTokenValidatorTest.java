@@ -32,9 +32,6 @@ class GoogleIdTokenValidatorTest {
     GoogleIdTokenValidator validator;
 
     @Mock
-    IdTokenJwtHandler idTokenJwtHandler;
-
-    @Mock
     GoogleOidcProperty googleOidcProperty;
 
     @Mock

@@ -71,7 +71,7 @@ public class GoogleIdTokenValidator extends AbstractIdTokenValidator {
             if (config == null) {
                 ResponseEntity<GoogleOpenIdConfiguration> oidcConfiguration = googleAccountsClient.getOidcConfiguration();
                 config = oidcConfiguration.getBody();
-                redisCacheRepository.saveOpenConfiguation(OPENID_CONFIGURATION_CACHE_KEY, config);
+                redisCacheRepository.saveOpenConfiguration(OPENID_CONFIGURATION_CACHE_KEY, config);
             }
             return googleOidcClient.getPublicKeys(config.getJwks_uri());
         } catch (NetworkApiException e) {

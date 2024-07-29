@@ -72,7 +72,7 @@ public class RedisCacheRepository {
         }
     }
 
-    public void saveOpenConfiguation(String key, GoogleOpenIdConfiguration configuration) {
+    public void saveOpenConfiguration(String key, GoogleOpenIdConfiguration configuration) {
         try {
             String configDocs = mapper.writeValueAsString(configuration);
             operation.set(key, configDocs, 1, TimeUnit.DAYS);
