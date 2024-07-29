@@ -3,7 +3,7 @@ package com.jabiseo.certificate.dto;
 import com.jabiseo.certificate.domain.Exam;
 
 public record ExamResponse(
-        String examId,
+        Long examId,
         String description
 ) {
     public static ExamResponse from(Exam exam) {

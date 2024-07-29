@@ -49,11 +49,11 @@ class FindBookmarkedProblemsUseCaseTest {
     void givenProblemConditionsContainsExamId_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
         //given
         String memberId = "1";
-        String certificateId = "2";
-        String examId = "3";
-        String subjectId = "4";
-        String problemId1 = "5";
-        String problemId2 = "6";
+        Long certificateId = 2L;
+        Long examId = 3L;
+        Long subjectId = 4L;
+        Long problemId1 = 5L;
+        Long problemId2 = 6L;
 
         Member member = createMember(memberId);
         Certificate certificate = createCertificate(certificateId);
@@ -82,10 +82,10 @@ class FindBookmarkedProblemsUseCaseTest {
     void givenProblemConditionsExceptExamId_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
         //given
         String memberId = "1";
-        String certificateId = "2";
-        String subjectId = "4";
-        String problemId1 = "5";
-        String problemId2 = "6";
+        Long certificateId = 2L;
+        Long subjectId = 4L;
+        Long problemId1 = 5L;
+        Long problemId2 = 6L;
 
         Member member = createMember(memberId);
         Certificate certificate = createCertificate(certificateId);
@@ -113,8 +113,8 @@ class FindBookmarkedProblemsUseCaseTest {
     void givenMemberWithNoCurrentCertificate_whenFindingBookmarkedProblems_thenReturnError() {
         //given
         String memberId = "1";
-        String examId = "3";
-        String subjectId = "4";
+        Long examId = 3L;
+        Long subjectId = 4L;
 
         Member member = createMember(memberId);
         given(memberRepository.getReferenceById(memberId)).willReturn(member);

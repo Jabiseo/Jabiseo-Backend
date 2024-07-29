@@ -5,7 +5,7 @@ import com.jabiseo.certificate.dto.SubjectResponse;
 import com.jabiseo.problem.domain.Problem;
 
 public record ProblemsResponse(
-        String problemId,
+        Long problemId,
         ExamResponse examInfo,
         SubjectResponse subjectInfo,
         boolean isBookmark,

@@ -25,7 +25,7 @@ import static fixture.ProblemFixture.createProblem;
 import static fixture.SubjectFixture.createSubject;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 @DisplayName("문제 세트 조회 테스트")
@@ -45,80 +45,88 @@ class FindProblemsUseCaseTest {
     @DisplayName("시험 조건이 있는 문제 세트 조회를 성공한다.")
     void givenIdsIncludeExamIdAndCount_whenFindingProblems_then() {
         //given
-        String certificateId = "1";
-        String[] subjectIds = {"2", "3"};
-        String examId = "4";
-        String[] problemIds = {"5", "6", "7"};
+        Long certificateId = 1L;
+        List<Long> subjectIds = List.of(2L, 3L);
+        Long examId = 4L;
+        List<Long> problemIds = List.of(5L, 6L, 7L);
         int count = 4;
+
         Certificate certificate = createCertificate(certificateId);
-        Subject subject1 = createSubject(subjectIds[0], certificate);
-        Subject subject2 = createSubject(subjectIds[1], certificate);
+        List<Subject> subjects = subjectIds.stream()
+                .map(id -> createSubject(id, certificate))
+                .toList();
         Exam exam = createExam(examId, certificate);
         List<Problem> problems = List.of(
-                createProblem(problemIds[0], certificate, exam, subject1),
-                createProblem(problemIds[1], certificate, exam, subject2),
-                createProblem(problemIds[2], certificate, exam, subject1)
+                createProblem(problemIds.get(0), certificate, exam, subjects.get(0)),
+                createProblem(problemIds.get(1), certificate, exam, subjects.get(1)),
+                createProblem(problemIds.get(2), certificate, exam, subjects.get(0))
         );
+
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
-        given(problemRepository.findRandomByExamIdAndSubjectId(examId, subjectIds[0], count))
+        given(problemRepository.findRandomByExamIdAndSubjectId(examId, subjectIds.get(0), count))
                 .willReturn(List.of(problems.get(0), problems.get(2)));
-        given(problemRepository.findRandomByExamIdAndSubjectId(examId, subjectIds[1], count))
+        given(problemRepository.findRandomByExamIdAndSubjectId(examId, subjectIds.get(1), count))
                 .willReturn(List.of(problems.get(1)));
 
         //when
-        FindProblemsResponse result = sut.execute(certificateId, List.of(subjectIds), Optional.of(examId), count);
+        FindProblemsResponse result = sut.execute(certificateId, subjectIds, Optional.of(examId), count);
 
         //then
         assertThat(result.certificateInfo().certificateId()).isEqualTo(certificateId);
-        assertThat(result.problems().get(0).problemId()).isEqualTo(problemIds[0]);
-        assertThat(result.problems().get(1).problemId()).isEqualTo(problemIds[2]);
-        assertThat(result.problems().get(2).problemId()).isEqualTo(problemIds[1]);
+        assertThat(result.problems().get(0).problemId()).isEqualTo(problemIds.get(0));
+        assertThat(result.problems().get(1).problemId()).isEqualTo(problemIds.get(2));
+        assertThat(result.problems().get(2).problemId()).isEqualTo(problemIds.get(1));
     }
 
     @Test
     @DisplayName("시험 조건이 없는 문제 세트 조회를 성공한다.")
     void givenIdsExcludeExamIdAndCount_whenFindingProblems_then() {
         //given
-        String certificateId = "1";
-        String[] subjectIds = {"2", "3"};
-        String[] examIds = {"4", "8"};
-        String[] problemIds = {"5", "6", "7"};
+        Long certificateId = 1L;
+        List<Long> subjectIds = List.of(2L, 3L);
+        List<Long> examIds = List.of(4L, 8L);
+        List<Long> problemIds = List.of(5L, 6L, 7L);
         int count = 4;
+
         Certificate certificate = createCertificate(certificateId);
-        Subject subject1 = createSubject(subjectIds[0], certificate);
-        Subject subject2 = createSubject(subjectIds[1], certificate);
-        Exam exam1 = createExam(examIds[0], certificate);
-        Exam exam2 = createExam(examIds[1], certificate);
+        List<Subject> subjects = subjectIds.stream()
+                .map(id -> createSubject(id, certificate))
+                .toList();
+        List<Exam> exams = examIds.stream()
+                .map(id -> createExam(id, certificate))
+                .toList();
         List<Problem> problems = List.of(
-                createProblem(problemIds[0], certificate, exam1, subject1),
-                createProblem(problemIds[1], certificate, exam2, subject2),
-                createProblem(problemIds[2], certificate, exam2, subject1)
+                createProblem(problemIds.get(0), certificate, exams.get(0), subjects.get(0)),
+                createProblem(problemIds.get(1), certificate, exams.get(1), subjects.get(1)),
+                createProblem(problemIds.get(2), certificate, exams.get(1), subjects.get(0))
         );
+
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
-        given(problemRepository.findRandomBySubjectId(subjectIds[0], count))
+        given(problemRepository.findRandomBySubjectId(subjectIds.get(0), count))
                 .willReturn(List.of(problems.get(0), problems.get(2)));
-        given(problemRepository.findRandomBySubjectId(subjectIds[1], count))
+        given(problemRepository.findRandomBySubjectId(subjectIds.get(1), count))
                 .willReturn(List.of(problems.get(1)));
 
         //when
-        FindProblemsResponse result = sut.execute(certificateId, List.of(subjectIds), Optional.empty(), count);
+        FindProblemsResponse result = sut.execute(certificateId, subjectIds, Optional.empty(), count);
 
         //then
         assertThat(result.certificateInfo().certificateId()).isEqualTo(certificateId);
-        assertThat(result.problems().get(0).problemId()).isEqualTo(problemIds[0]);
-        assertThat(result.problems().get(1).problemId()).isEqualTo(problemIds[2]);
-        assertThat(result.problems().get(2).problemId()).isEqualTo(problemIds[1]);
+        assertThat(result.problems().get(0).problemId()).isEqualTo(problemIds.get(0));
+        assertThat(result.problems().get(1).problemId()).isEqualTo(problemIds.get(2));
+        assertThat(result.problems().get(2).problemId()).isEqualTo(problemIds.get(1));
     }
 
     @Test
     @DisplayName("문제 세트 조회 시 자격증이 존재하지 않는 경우 예외처리한다.")
     void givenInvalidCertificate_whenFindingProblems_thenReturnError() {
         //given
-        String certificateId = "1";
-        String subjectId = "2";
-        String examId = "3";
+        Long certificateId = 1L;
+        Long subjectId = 2L;
+        Long examId = 3L;
         int count = 4;
-        given(certificateRepository.findById(anyString())).willReturn(Optional.empty());
+
+        given(certificateRepository.findById(anyLong())).willReturn(Optional.empty());
 
         //when & then
         assertThatThrownBy(() -> sut.execute(certificateId, List.of(subjectId), Optional.of(examId), count))
@@ -130,20 +138,21 @@ class FindProblemsUseCaseTest {
     @DisplayName("문제 세트 조회 시 자격증에 과목들이 하나라도 매칭되지 않는 경우 예외처리한다.")
     void givenNotMatchingCertificateIdAndSubjectId_whenFindingProblems_thenReturnError() {
         //given
-        String[] certificateIds = {"1", "8"};
-        String[] subjectIds = {"2", "3"};
-        String examId = "4";
+        List<Long> certificateIds = List.of(1L, 8L);
+        List<Long> subjectIds = List.of(2L, 3L);
+        Long examId = 4L;
         int count = 4;
-        Certificate certificate1 = createCertificate(certificateIds[0]);
-        Certificate certificate2 = createCertificate(certificateIds[1]);
+
+        Certificate certificate1 = createCertificate(certificateIds.get(0));
+        Certificate certificate2 = createCertificate(certificateIds.get(1));
         createExam(examId, certificate1);
-        createSubject(subjectIds[0], certificate1);
-        createSubject(subjectIds[1], certificate2);
-        given(certificateRepository.findById(certificateIds[0])).willReturn(Optional.of(certificate1));
+        subjectIds.forEach(subjectId -> createSubject(subjectId, certificate2));
+
+        given(certificateRepository.findById(certificateIds.get(0))).willReturn(Optional.of(certificate1));
 
 
         //when & then
-        assertThatThrownBy(() -> sut.execute(certificateIds[0], List.of(subjectIds), Optional.of(examId), count))
+        assertThatThrownBy(() -> sut.execute(certificateIds.get(0), subjectIds, Optional.of(examId), count))
                 .isInstanceOf(CertificateBusinessException.class)
                 .hasFieldOrPropertyWithValue("errorCode", CertificateErrorCode.SUBJECT_NOT_FOUND_IN_CERTIFICATE);
     }
@@ -152,20 +161,22 @@ class FindProblemsUseCaseTest {
     @DisplayName("문제 세트 조회 시 자격증에 시험이 매칭되지 않는 경우 예외처리한다.")
     void givenNotMatchingCertificateIdAndExamId_whenFindingProblems_thenReturnError() {
         //given
-        String[] certificateIds = {"1", "8"};
-        String subjectId = "2";
-        String examId = "4";
+        List<Long> certificateIds = List.of(1L, 8L);
+        Long subjectId = 2L;
+        Long examId = 4L;
         int count = 4;
-        Certificate certificate1 = createCertificate(certificateIds[0]);
-        Certificate certificate2 = createCertificate(certificateIds[1]);
-        createExam(examId, certificate2);
-        createSubject(subjectId, certificate1);
 
-        given(certificateRepository.findById(certificateIds[0])).willReturn(Optional.of(certificate1));
+        List<Certificate> certificates = certificateIds.stream()
+                .map(certificateId -> createCertificate(certificateId))
+                .toList();
+        createExam(examId, certificates.get(1));
+        createSubject(subjectId, certificates.get(0));
+
+        given(certificateRepository.findById(certificateIds.get(0))).willReturn(Optional.of(certificates.get(0)));
 
 
         //when & then
-        assertThatThrownBy(() -> sut.execute(certificateIds[0], List.of(subjectId), Optional.of(examId), count))
+        assertThatThrownBy(() -> sut.execute(certificateIds.get(0), List.of(subjectId), Optional.of(examId), count))
                 .isInstanceOf(CertificateBusinessException.class)
                 .hasFieldOrPropertyWithValue("errorCode", CertificateErrorCode.EXAM_NOT_FOUND_IN_CERTIFICATE);
     }

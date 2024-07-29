@@ -22,7 +22,7 @@ class MemberTest {
     void givenMember_whenValidateCurrentCertificate_thenDoesNotThrowException() {
         //given
         String memberId = "1";
-        String certificateId = "2";
+        Long certificateId = 2L;
         Member member = createMember(memberId);
         Certificate certificate = createCertificate(certificateId);
         member.updateCurrentCertificate(certificate);

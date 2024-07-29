@@ -7,7 +7,7 @@ import com.jabiseo.problem.domain.Problem;
 import java.util.List;
 
 public record ProblemsDetailResponse(
-        String problemId,
+        Long problemId,
         ExamResponse examInfo,
         SubjectResponse subjectInfo,
         boolean isBookmark,

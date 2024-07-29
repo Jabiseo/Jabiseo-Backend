@@ -48,7 +48,7 @@ class CreateBookmarkUseCaseTest {
     void givenMemberIdAndProblemId_whenCreatingBookmark_thenCreateBookmark() {
         //given
         String memberId = "1";
-        String problemId = "2";
+        Long problemId = 2L;
         Member member = createMember(memberId);
         Problem problem = createProblem(problemId);
         given(memberRepository.getReferenceById(memberId)).willReturn(member);
@@ -74,7 +74,7 @@ class CreateBookmarkUseCaseTest {
     void givenAlreadyExistedMemberIdAndProblemId_whenCreatingBookmark_thenReturnError() {
         //given
         String memberId = "1";
-        String problemId = "2";
+        Long problemId = 2L;
         given(bookmarkRepository.existsByMemberIdAndProblemId(memberId, problemId)).willReturn(true);
 
 
@@ -90,7 +90,7 @@ class CreateBookmarkUseCaseTest {
     void givenMemberIdAndNonExistedProblemId_whenCreatingBookmark_thenReturnError() {
         //given
         String memberId = "1";
-        String problemId = "2";
+        Long problemId = 2L;
         given(bookmarkRepository.existsByMemberIdAndProblemId(memberId, problemId)).willReturn(false);
         given(problemRepository.findById(problemId)).willReturn(Optional.empty());
 

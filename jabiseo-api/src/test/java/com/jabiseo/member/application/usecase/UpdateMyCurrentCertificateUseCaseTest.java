@@ -41,7 +41,7 @@ class UpdateMyCurrentCertificateUseCaseTest {
     void givenMemberIdAndCertificateId_whenUpdatingCurrentCertificate_thenUpdateCurrentCertificate() {
         //given
         String memberId = "1";
-        String certificateId = "2";
+        Long certificateId = 2L;
         Member member = createMember(memberId);
         Certificate certificate = createCertificate(certificateId);
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
@@ -60,7 +60,7 @@ class UpdateMyCurrentCertificateUseCaseTest {
     void givenCertificateIdAndNonExistedMemberId_whenUpdatingCurrentCertificate_thenReturnError() {
         //given
         String nonExistedMemberId = "1";
-        String certificateId = "2";
+        Long certificateId = 2L;
         given(memberRepository.findById(nonExistedMemberId)).willReturn(Optional.empty());
 
         //when & then
@@ -76,7 +76,7 @@ class UpdateMyCurrentCertificateUseCaseTest {
     void givenMemberIdAndNonExistedCertificateId_whenUpdatingCurrentCertificate_thenReturnError() {
         //given
         String memberId = "1";
-        String nonExistedCertificateId = "2";
+        Long nonExistedCertificateId = 2L;
         Member member = createMember(memberId);
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
         given(certificateRepository.findById(nonExistedCertificateId)).willReturn(Optional.empty());

@@ -5,7 +5,7 @@ import com.jabiseo.member.domain.Member;
 
 public record FindMyCurrentCertificateResponse(
         String memberId,
-        String certificateId
+        Long certificateId
 ) {
     public static FindMyCurrentCertificateResponse of(Member member, Certificate certificate) {
         return new FindMyCurrentCertificateResponse(member.getId(), certificate.getId());

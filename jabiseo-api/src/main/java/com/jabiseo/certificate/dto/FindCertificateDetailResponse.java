@@ -5,7 +5,7 @@ import com.jabiseo.certificate.domain.Certificate;
 import java.util.List;
 
 public record FindCertificateDetailResponse(
-        String certificateId,
+        Long certificateId,
         String name,
         List<ExamResponse> exams,
         List<SubjectResponse> subjects

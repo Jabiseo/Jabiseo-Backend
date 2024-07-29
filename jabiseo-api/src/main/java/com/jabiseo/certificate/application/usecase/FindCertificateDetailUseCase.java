@@ -16,8 +16,8 @@ public class FindCertificateDetailUseCase {
 
     private final CertificateRepository certificateRepository;
 
-    public FindCertificateDetailResponse execute(String id) {
-        Certificate certificate = certificateRepository.findById(id)
+    public FindCertificateDetailResponse execute(Long certificateId) {
+        Certificate certificate = certificateRepository.findById(certificateId)
                 .orElseThrow(() -> new CertificateBusinessException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));
         return FindCertificateDetailResponse.from(certificate);
     }

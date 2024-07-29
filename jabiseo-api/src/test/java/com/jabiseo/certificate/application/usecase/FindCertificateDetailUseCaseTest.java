@@ -35,9 +35,9 @@ class FindCertificateDetailUseCaseTest {
     @DisplayName("자격증 정보 조회를 성공한다.")
     void givenCertificateId_whenFindingCertificate_thenFindCertificate() {
         //given
-        String certificateId = "1";
-        String examId = "2";
-        String subjectId = "3";
+        Long certificateId = 1L;
+        Long examId = 2L;
+        Long subjectId = 3L;
         Certificate certificate = createCertificate(certificateId);
         createExam(examId, certificate);
         createSubject(subjectId, certificate);
@@ -57,7 +57,7 @@ class FindCertificateDetailUseCaseTest {
     @DisplayName("존재하지 않는 자격증 정보를 조회하면 예외처리한다.")
     void givenNonExistedCertificateId_whenFindingCertificate_thenReturnException() {
         //given
-        String nonExistedCertificateId = "1";
+        Long nonExistedCertificateId = 1L;
         given(certificateRepository.findById(nonExistedCertificateId)).willReturn(Optional.empty());
 
         //when & then
