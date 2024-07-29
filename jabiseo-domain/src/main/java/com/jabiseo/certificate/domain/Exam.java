@@ -12,6 +12,7 @@ public class Exam {
 
     @Id
     @Column(name = "exam_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String description;

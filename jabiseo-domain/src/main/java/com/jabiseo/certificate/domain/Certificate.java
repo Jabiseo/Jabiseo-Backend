@@ -20,6 +20,7 @@ public class Certificate {
 
     @Id
     @Column(name = "certificate_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;

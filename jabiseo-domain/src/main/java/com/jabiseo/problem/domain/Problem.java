@@ -18,6 +18,7 @@ public class Problem {
 
     @Id
     @Column(name = "problem_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String description;
