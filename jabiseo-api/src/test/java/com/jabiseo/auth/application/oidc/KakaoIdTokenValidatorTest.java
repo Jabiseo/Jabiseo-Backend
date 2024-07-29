@@ -113,7 +113,7 @@ class KakaoIdTokenValidatorTest {
 
     @Test
     @DisplayName("카카오 jwk 획득 api 호출 실패시 에러를 반환한다")
-    void getJwkKakaoApiCallingFailThrownExcetpion(){
+    void getJwkKakaoApiCallingFailThrownException(){
         //given
         given(redisCacheRepository.getPublicKeys(any())).willReturn(null);
         given(kakaoKauthClient.getPublicKeys()).willThrow(NetworkApiException.class);
@@ -126,6 +126,6 @@ class KakaoIdTokenValidatorTest {
     }
 
     private OidcPublicKey mockPublicKey(String kid) {
-        return new OidcPublicKey(kid, "a", "u", "n", "e");
+        return new OidcPublicKey(kid, "a", "u", "n", "e",".");
     }
 }

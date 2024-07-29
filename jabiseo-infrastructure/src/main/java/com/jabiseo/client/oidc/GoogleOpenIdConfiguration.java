@@ -8,6 +8,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
 @ToString
 public class GoogleOpenIdConfiguration {

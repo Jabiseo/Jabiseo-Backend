@@ -5,6 +5,7 @@ import com.jabiseo.auth.application.oidc.property.GoogleOidcProperty;
 import com.jabiseo.auth.exception.AuthenticationBusinessException;
 import com.jabiseo.auth.exception.AuthenticationErrorCode;
 import com.jabiseo.cache.RedisCacheRepository;
+import com.jabiseo.client.NetworkApiException;
 import com.jabiseo.client.oidc.GoogleAccountsClient;
 import com.jabiseo.client.oidc.GoogleOidcClient;
 import com.jabiseo.client.oidc.GoogleOpenIdConfiguration;
@@ -73,7 +74,7 @@ public class GoogleIdTokenValidator extends AbstractIdTokenValidator {
                 redisCacheRepository.saveOpenConfiguation(OPENID_CONFIGURATION_CACHE_KEY, config);
             }
             return googleOidcClient.getPublicKeys(config.getJwks_uri());
-        } catch (NullPointerException e) {
+        } catch (NetworkApiException e) {
             log.error(e.getMessage());
             throw new AuthenticationBusinessException(AuthenticationErrorCode.GET_JWK_FAIL);
         }
