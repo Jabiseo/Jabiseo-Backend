@@ -5,8 +5,10 @@ import lombok.Getter;
 
 @Getter
 public enum NetworkApiErrorCode implements ErrorCode {
-    KAKAO_JWK_API_FAIL("카카오 kauth jwk 연결 실패", "NETWORK_001", ErrorCode.INTERNAL_SERVER_ERROR);
-
+    COMMON_API_FAIL("API  fail", "NETWORK_001", ErrorCode.INTERNAL_SERVER_ERROR),
+    KAKAO_JWK_API_FAIL("카카오 kauth jwk 연결 실패", "NETWORK_002", ErrorCode.INTERNAL_SERVER_ERROR),
+    GOOGLE_OPENAI_CONFIG_API_FAIL("구글 openai 연결 실패", "NETWORK_003", ErrorCode.INTERNAL_SERVER_ERROR),
+    GOOGLE_JWK_API_FAIL("구글 jwk 연결 실패", "NETWORK_004", ErrorCode.INTERNAL_SERVER_ERROR);
     private final String message;
     private final String errorCode;
     private final int statusCode;

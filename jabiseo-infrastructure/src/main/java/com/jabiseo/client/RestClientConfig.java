@@ -1,6 +1,8 @@
 package com.jabiseo.client;
 
 
+import com.jabiseo.client.oidc.GoogleAccountsClient;
+import com.jabiseo.client.oidc.KakaoKauthClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatusCode;
@@ -10,7 +12,6 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 @Configuration
 public class RestClientConfig {
-
 
     @Bean
     public KakaoKauthClient kakaoKauthClient() {
@@ -27,4 +28,22 @@ public class RestClientConfig {
                 .build()
                 .createClient(KakaoKauthClient.class);
     }
+
+    @Bean
+    public GoogleAccountsClient googleOidcClient() {
+        RestClient client = RestClient.builder()
+                .baseUrl("https://accounts.google.com")
+                .defaultStatusHandler(HttpStatusCode::isError, ((request, response) -> {
+                    throw new NetworkApiException(NetworkApiErrorCode.GOOGLE_OPENAI_CONFIG_API_FAIL);
+                }))
+                .build();
+
+        return HttpServiceProxyFactory
+                .builder()
+                .exchangeAdapter(RestClientAdapter.create(client))
+                .build()
+                .createClient(GoogleAccountsClient.class);
+    }
+
+
 }

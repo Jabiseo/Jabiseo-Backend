@@ -2,9 +2,11 @@ package com.jabiseo.cache;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jabiseo.client.OidcPublicKey;
+import com.jabiseo.client.oidc.GoogleOpenIdConfiguration;
+import com.jabiseo.client.oidc.OidcPublicKey;
 import com.jabiseo.common.exception.BusinessException;
 import com.jabiseo.common.exception.CommonErrorCode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Component
+@Slf4j
 public class RedisCacheRepository {
 
     private final RedisTemplate<String, String> redisStringTemplate;
@@ -37,11 +40,11 @@ public class RedisCacheRepository {
         return Optional.ofNullable(token);
     }
 
-    public void deleteToken(String key){
+    public void deleteToken(String key) {
         operation.getAndDelete(toMemberTokenKey(key));
     }
 
-    private String toMemberTokenKey(String id){
+    private String toMemberTokenKey(String id) {
         return MEMBER_TOKEN_PREFIX + id;
     }
 
@@ -51,6 +54,7 @@ public class RedisCacheRepository {
             // TODO: timeout 값 논의 필요
             operation.set(key, publicKeyString, 1, TimeUnit.DAYS);
         } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
             throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
@@ -63,9 +67,32 @@ public class RedisCacheRepository {
         try {
             return Arrays.asList(mapper.readValue(values, OidcPublicKey[].class));
         } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
             throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
+    public void saveOpenConfiguration(String key, GoogleOpenIdConfiguration configuration) {
+        try {
+            String configDocs = mapper.writeValueAsString(configuration);
+            operation.set(key, configDocs, 1, TimeUnit.DAYS);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
+            throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
 
+    public GoogleOpenIdConfiguration getGoogleConfiguration(String key) {
+        String value = operation.get(key);
+        if (value == null) {
+            return null;
+        }
+
+        try {
+            return mapper.readValue(value, GoogleOpenIdConfiguration.class);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
+            throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

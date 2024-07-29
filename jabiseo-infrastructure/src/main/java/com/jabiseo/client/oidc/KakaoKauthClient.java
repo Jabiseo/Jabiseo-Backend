@@ -1,4 +1,4 @@
-package com.jabiseo.client;
+package com.jabiseo.client.oidc;
 
 ;
 import org.springframework.http.ResponseEntity;
