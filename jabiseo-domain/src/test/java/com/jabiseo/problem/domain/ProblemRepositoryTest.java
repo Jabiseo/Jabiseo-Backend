@@ -19,7 +19,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static fixture.CertificateFixture.createCertificate;
 import static fixture.ExamFixture.createExam;
@@ -41,9 +43,8 @@ class ProblemRepositoryTest {
 
     private String memberId;
     private Member member;
-    private List<Long> examId;
-    private List<Long> subjectId;
-    private List<Long> problemIds;
+    private List<Long> examIds;
+    private List<Long> subjectIds;
     private Certificate certificate;
     private List<Exam> exams;
     private List<Subject> subjects;
@@ -51,26 +52,23 @@ class ProblemRepositoryTest {
     @BeforeEach
     void setUp() {
         //given
-        memberId = "memberId";
-        Long certificateId = 100L;
-        examId = List.of(200L, 300L);
-        subjectId = List.of(400L, 500L, 600L);
-        problemIds = List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L);
 
+        memberId = "memberId";
         member = createMember(memberId);
-        certificate = createCertificate(certificateId);
+        certificate = createCertificate();
         member.updateCurrentCertificate(certificate);
-        exams = examId.stream()
-                .map(id -> createExam(id, certificate))
-                .toList();
-        subjects = subjectId.stream()
-                .map(id -> createSubject(id, certificate))
-                .toList();
+        exams = new ArrayList<>();
+        IntStream.range(0, 2).forEach(i -> exams.add(createExam(certificate)));
+        subjects = new ArrayList<>();
+        IntStream.range(0, 3).forEach(i -> subjects.add(createSubject(certificate)));
 
         entityManager.persist(member);
         entityManager.persist(certificate);
         exams.forEach(entityManager::persist);
         subjects.forEach(entityManager::persist);
+
+        examIds = exams.stream().map(Exam::getId).toList();
+        subjectIds = subjects.stream().map(Subject::getId).toList();
     }
 
     @Test
@@ -78,10 +76,10 @@ class ProblemRepositoryTest {
     void givenExamAndSubjectConditions_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
         //given
         List<Problem> requestProblems = List.of(
-                createProblem(problemIds.get(0), certificate, exams.get(0), subjects.get(0)),
-                createProblem(problemIds.get(1), certificate, exams.get(0), subjects.get(1)),
-                createProblem(problemIds.get(2), certificate, exams.get(0), subjects.get(2)),
-                createProblem(problemIds.get(3), certificate, exams.get(1), subjects.get(0))
+                createProblem(certificate, exams.get(0), subjects.get(0)),
+                createProblem(certificate, exams.get(0), subjects.get(1)),
+                createProblem(certificate, exams.get(0), subjects.get(2)),
+                createProblem(certificate, exams.get(1), subjects.get(0))
         );
         List<Bookmark> bookmarks = requestProblems.stream()
                 .map(problem -> Bookmark.of(member, problem))
@@ -92,7 +90,7 @@ class ProblemRepositoryTest {
 
         //when
         Page<Problem> problems = problemRepository.findBookmarkedByExamIdAndSubjectIdIn(
-                memberId, examId.get(0), List.of(subjectId.get(0), subjectId.get(1)), pageable
+                memberId, examIds.get(0), List.of(subjectIds.get(0), subjectIds.get(1)), pageable
         );
 
         //then
@@ -104,10 +102,10 @@ class ProblemRepositoryTest {
     void givenSubjectConditions_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
         //given
         List<Problem> requestProblems = List.of(
-                createProblem(problemIds.get(0), certificate, exams.get(0), subjects.get(0)),
-                createProblem(problemIds.get(1), certificate, exams.get(0), subjects.get(1)),
-                createProblem(problemIds.get(2), certificate, exams.get(0), subjects.get(2)),
-                createProblem(problemIds.get(3), certificate, exams.get(1), subjects.get(0))
+                createProblem(certificate, exams.get(0), subjects.get(0)),
+                createProblem(certificate, exams.get(0), subjects.get(1)),
+                createProblem(certificate, exams.get(0), subjects.get(2)),
+                createProblem(certificate, exams.get(1), subjects.get(0))
         );
         List<Bookmark> bookmarks = requestProblems.stream()
                 .map(problem -> Bookmark.of(member, problem))
@@ -118,7 +116,7 @@ class ProblemRepositoryTest {
 
         //when
         Page<Problem> problems = problemRepository.findBookmarkedBySubjectIdIn(
-                memberId, List.of(subjectId.get(0), subjectId.get(1)), pageable
+                memberId, List.of(subjectIds.get(0), subjectIds.get(1)), pageable
         );
 
         //then
@@ -127,11 +125,11 @@ class ProblemRepositoryTest {
 
     @ParameterizedTest
     @DisplayName("페이지 수가 2개 이상인 경우, 시험, 과목 조건에 따라 북마크된 문제가 정상적으로 동작한다.")
-    @CsvSource({"0, 10", "1, 1"})
+    @CsvSource({"0, 10", "1, 5"})
     void givenExamAndSubjectConditionsWithMultiplePage_whenFindingBookmarkedProblems_thenFindBookmarkedProblems(int page, int pageSize) {
         //given
-        List<Problem> requestProblems = problemIds.stream()
-                .map(id -> createProblem(id, certificate, exams.get(0), subjects.get(0)))
+        List<Problem> requestProblems = IntStream.range(0, 15)
+                .mapToObj(id -> createProblem(certificate, exams.get(0), subjects.get(0)))
                 .toList();
         List<Bookmark> bookmarks = requestProblems.stream()
                 .map(problem -> Bookmark.of(member, problem))
@@ -142,7 +140,7 @@ class ProblemRepositoryTest {
 
         //when
         Page<Problem> problems = problemRepository.findBookmarkedBySubjectIdIn(
-                memberId, List.of(subjectId.get(0), subjectId.get(0)), pageable
+                memberId, List.of(subjectIds.get(0), subjectIds.get(0)), pageable
         );
 
         //then
