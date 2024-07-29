@@ -33,13 +33,12 @@ public class Certificate {
     @OneToMany(mappedBy = "certificate")
     private List<Subject> subjects = new ArrayList<>();
 
-    private Certificate(Long id, String name) {
-        this.id = id;
+    private Certificate(String name) {
         this.name = name;
     }
 
-    public static Certificate of(Long id, String name) {
-        return new Certificate(id, name);
+    public static Certificate of(String name) {
+        return new Certificate(name);
     }
 
     public void addExam(Exam exam) {

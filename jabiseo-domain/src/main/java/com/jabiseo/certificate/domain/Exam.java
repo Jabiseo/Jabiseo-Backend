@@ -25,16 +25,15 @@ public class Exam {
     @JoinColumn(name = "certificate_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Certificate certificate;
 
-    private Exam(Long id, String description, int examYear, int yearRound, Certificate certificate) {
-        this.id = id;
+    private Exam(String description, int examYear, int yearRound, Certificate certificate) {
         this.description = description;
         this.examYear = examYear;
         this.yearRound = yearRound;
         this.certificate = certificate;
     }
 
-    public static Exam of(Long id, String description, int examYear, int round, Certificate certificate) {
-        Exam exam = new Exam(id, description, examYear, round, certificate);
+    public static Exam of(String description, int examYear, int round, Certificate certificate) {
+        Exam exam = new Exam(description, examYear, round, certificate);
         certificate.addExam(exam);
         return exam;
     }

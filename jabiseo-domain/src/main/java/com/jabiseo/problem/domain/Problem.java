@@ -53,9 +53,8 @@ public class Problem {
         return List.of(choice1, choice2, choice3, choice4);
     }
 
-    private Problem(Long id, String description, String choice1, String choice2, String choice3, String choice4,
+    private Problem(String description, String choice1, String choice2, String choice3, String choice4,
                     int answerNumber, String solution, int sequence, Certificate certificate, Exam exam, Subject subject) {
-        this.id = id;
         this.description = description;
         this.choice1 = choice1;
         this.choice2 = choice2;
@@ -69,9 +68,9 @@ public class Problem {
         this.subject = subject;
     }
 
-    public static Problem of(Long id, String description, String choice1, String choice2, String choice3, String choice4,
+    public static Problem of(String description, String choice1, String choice2, String choice3, String choice4,
                              int answerNumber, String solution, int sequence, Certificate certificate, Exam exam, Subject subject) {
-        return new Problem(id, description, choice1, choice2, choice3, choice4,
+        return new Problem(description, choice1, choice2, choice3, choice4,
                 answerNumber, solution, sequence, certificate, exam, subject);
     }
 
