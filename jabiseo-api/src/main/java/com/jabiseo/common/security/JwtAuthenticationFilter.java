@@ -24,20 +24,29 @@ import java.util.Set;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtHandler jwtHandler;
-    private static final  String AUTHORIZATION_HEADER = "Authorization";
+    private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String HEADER_PREFIX = "Bearer ";
-
+    private static final String REISSUE_REQUEST = "/api/auth/reissue";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = extractTokenFromRequest(request);
 
-        if (StringUtils.hasText(token) && jwtHandler.validateAccessToken(token)) {
-            Claims claims = jwtHandler.getClaimsFromAccessToken(token);
+        if (StringUtils.hasText(token)) {
+            Claims claims = getClaimsFromToken(token, request);
             setAuthenticationToContext(claims);
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private Claims getClaimsFromToken(String token, HttpServletRequest request) {
+        if (request.getRequestURI().equals(REISSUE_REQUEST)) {
+            jwtHandler.validateAccessTokenNotCheckExpired(token);
+        } else {
+            jwtHandler.validateAccessToken(token);
+        }
+        return jwtHandler.getClaimsFromAccessToken(token);
     }
 
     private void setAuthenticationToContext(Claims jwtClaim) {

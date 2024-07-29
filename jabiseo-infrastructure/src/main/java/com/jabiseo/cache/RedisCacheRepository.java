@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -18,6 +19,7 @@ public class RedisCacheRepository {
 
     private final RedisTemplate<String, String> redisStringTemplate;
     private final ValueOperations<String, String> operation;
+    private static final String MEMBER_TOKEN_PREFIX = "member_token:";
     private final ObjectMapper mapper = new ObjectMapper();
 
     public RedisCacheRepository(RedisTemplate<String, String> redisStringTemplate) {
@@ -27,14 +29,25 @@ public class RedisCacheRepository {
 
 
     public void saveToken(String key, String value) {
-        operation.set(key, value);
+        operation.set(toMemberTokenKey(key), value);
     }
 
+    public Optional<String> findToken(String key) {
+        String token = operation.get(toMemberTokenKey(key));
+        return Optional.ofNullable(token);
+    }
+
+    public void deleteToken(String key){
+        operation.getAndDelete(toMemberTokenKey(key));
+    }
+
+    private String toMemberTokenKey(String id){
+        return MEMBER_TOKEN_PREFIX + id;
+    }
 
     public void savePublicKey(String key, List<OidcPublicKey> publicKeys) {
         try {
             String publicKeyString = mapper.writeValueAsString(publicKeys);
-
             // TODO: timeout 값 논의 필요
             operation.set(key, publicKeyString, 1, TimeUnit.DAYS);
         } catch (JsonProcessingException e) {
