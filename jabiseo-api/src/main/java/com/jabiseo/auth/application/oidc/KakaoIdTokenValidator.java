@@ -1,10 +1,10 @@
 package com.jabiseo.auth.application.oidc;
 
 import com.jabiseo.cache.RedisCacheRepository;
-import com.jabiseo.client.KakaoKauthClient;
+import com.jabiseo.client.oidc.KakaoKauthClient;
 import com.jabiseo.client.NetworkApiException;
-import com.jabiseo.client.OidcPublicKey;
-import com.jabiseo.client.OidcPublicKeyResponse;
+import com.jabiseo.client.oidc.OidcPublicKey;
+import com.jabiseo.client.oidc.OidcPublicKeyResponse;
 import com.jabiseo.auth.exception.AuthenticationBusinessException;
 import com.jabiseo.auth.exception.AuthenticationErrorCode;
 import com.jabiseo.auth.application.oidc.property.KakaoOidcProperty;

@@ -1,4 +1,4 @@
-package com.jabiseo.client;
+package com.jabiseo.client.oidc;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,13 +16,15 @@ public class OidcPublicKey {
     private String use;
     private String n;
     private String e;
+    private String kty;
 
-    public OidcPublicKey(String kid, String alg, String use, String n, String e) {
+    public OidcPublicKey(String kid, String alg, String use, String n, String e, String kty) {
         this.kid = kid;
         this.alg = alg;
         this.use = use;
         this.n = n;
         this.e = e;
+        this.kty = kty;
     }
 
     @Override
