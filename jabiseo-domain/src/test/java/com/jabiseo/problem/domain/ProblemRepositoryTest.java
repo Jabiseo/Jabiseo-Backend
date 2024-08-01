@@ -3,20 +3,19 @@ package com.jabiseo.problem.domain;
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.certificate.domain.Exam;
 import com.jabiseo.certificate.domain.Subject;
+import com.jabiseo.common.config.JpaConfig;
+import com.jabiseo.common.config.QueryDslConfig;
 import com.jabiseo.member.domain.Member;
+import com.jabiseo.problem.dto.ProblemWithBookmarkDto;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
@@ -32,7 +31,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
-@DisplayName("Problem Repository 테스트")
+@Import({JpaConfig.class, QueryDslConfig.class})
+@DisplayName("문제 세트에 대한 Problem Repository 테스트")
 class ProblemRepositoryTest {
 
     @Autowired
@@ -42,110 +42,102 @@ class ProblemRepositoryTest {
     private EntityManager entityManager;
 
     private Long memberId;
-    private Member member;
     private List<Long> examIds;
     private List<Long> subjectIds;
     private Certificate certificate;
     private List<Exam> exams;
     private List<Subject> subjects;
+    private int count;
 
     @BeforeEach
     void setUp() {
         //given
-
-        member = createMember();
+        Member member = createMember();
         certificate = createCertificate();
         member.updateCurrentCertificate(certificate);
         exams = new ArrayList<>();
         IntStream.range(0, 2).forEach(i -> exams.add(createExam(certificate)));
         subjects = new ArrayList<>();
         IntStream.range(0, 3).forEach(i -> subjects.add(createSubject(certificate)));
+        List<Problem> requestProblems = List.of(
+                createProblem(certificate, exams.get(0), subjects.get(0)),
+                createProblem(certificate, exams.get(0), subjects.get(0)),
+                createProblem(certificate, exams.get(0), subjects.get(2)),
+                createProblem(certificate, exams.get(1), subjects.get(0))
+        );
+        List<Bookmark> bookmarks = List.of(
+                Bookmark.of(member, requestProblems.get(0)),
+                Bookmark.of(member, requestProblems.get(3))
+        );
 
         entityManager.persist(member);
         entityManager.persist(certificate);
         exams.forEach(entityManager::persist);
         subjects.forEach(entityManager::persist);
+        requestProblems.forEach(entityManager::persist);
+        bookmarks.forEach(entityManager::persist);
 
         examIds = exams.stream().map(Exam::getId).toList();
         subjectIds = subjects.stream().map(Subject::getId).toList();
         memberId = member.getId();
+
+        count = 10;
     }
 
     @Test
-    @DisplayName("시험, 과목 조건에 따라 북마크된 문제를 조회하는 쿼리가 정상적으로 동작한다.")
-    void givenExamAndSubjectConditions_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
-        //given
-        List<Problem> requestProblems = List.of(
-                createProblem(certificate, exams.get(0), subjects.get(0)),
-                createProblem(certificate, exams.get(0), subjects.get(1)),
-                createProblem(certificate, exams.get(0), subjects.get(2)),
-                createProblem(certificate, exams.get(1), subjects.get(0))
-        );
-        List<Bookmark> bookmarks = requestProblems.stream()
-                .map(problem -> Bookmark.of(member, problem))
-                .toList();
-        requestProblems.forEach(entityManager::persist);
-        bookmarks.forEach(entityManager::persist);
-        Pageable pageable = PageRequest.of(0, 10);
-
-
+    @DisplayName("로그인한 유저가 시험, 과목 조건에 따라 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
+    void givenLoginMemberWithExamAndSubjectConditions_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
         //when
-        Page<Problem> problems = problemRepository.findBookmarkedByExamIdAndSubjectIdIn(
-                memberId, examIds.get(0), List.of(subjectIds.get(0), subjectIds.get(1)), pageable
+        List<ProblemWithBookmarkDto> problems = problemRepository.findRandomByExamIdAndSubjectId(
+                memberId, examIds.get(0), subjectIds.get(0), count
         );
 
         //then
         assertThat(problems).hasSize(2);
+        long trueCount = problems.stream().filter(ProblemWithBookmarkDto::isBookmark).count();
+        assertThat(trueCount).isEqualTo(1);
     }
 
     @Test
-    @DisplayName("시험 조건은 없고 과목에 따라 북마크된 문제를 조회하는 쿼리가 정상적으로 동작한다.")
-    void givenSubjectConditions_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
-        //given
-        List<Problem> requestProblems = List.of(
-                createProblem(certificate, exams.get(0), subjects.get(0)),
-                createProblem(certificate, exams.get(0), subjects.get(1)),
-                createProblem(certificate, exams.get(0), subjects.get(2)),
-                createProblem(certificate, exams.get(1), subjects.get(0))
-        );
-        List<Bookmark> bookmarks = requestProblems.stream()
-                .map(problem -> Bookmark.of(member, problem))
-                .toList();
-        requestProblems.forEach(entityManager::persist);
-        bookmarks.forEach(entityManager::persist);
-        Pageable pageable = PageRequest.of(0, 10);
-
+    @DisplayName("로그인한 유저가 시험을 제외한 과목 조건에 따라 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
+    void givenLoginMemberWithSubjectConditions_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
         //when
-        Page<Problem> problems = problemRepository.findBookmarkedBySubjectIdIn(
-                memberId, List.of(subjectIds.get(0), subjectIds.get(1)), pageable
+        List<ProblemWithBookmarkDto> problems = problemRepository.findRandomByExamIdAndSubjectId(
+                memberId, null, subjectIds.get(0), count
         );
 
         //then
         assertThat(problems).hasSize(3);
+        long trueCount = problems.stream().filter(ProblemWithBookmarkDto::isBookmark).count();
+        assertThat(trueCount).isEqualTo(2);
     }
 
-    @ParameterizedTest
-    @DisplayName("페이지 수가 2개 이상인 경우, 시험, 과목 조건에 따라 북마크된 문제가 정상적으로 동작한다.")
-    @CsvSource({"0, 10", "1, 5"})
-    void givenExamAndSubjectConditionsWithMultiplePage_whenFindingBookmarkedProblems_thenFindBookmarkedProblems(int page, int pageSize) {
-        //given
-        List<Problem> requestProblems = IntStream.range(0, 15)
-                .mapToObj(id -> createProblem(certificate, exams.get(0), subjects.get(0)))
-                .toList();
-        List<Bookmark> bookmarks = requestProblems.stream()
-                .map(problem -> Bookmark.of(member, problem))
-                .toList();
-        requestProblems.forEach(entityManager::persist);
-        bookmarks.forEach(entityManager::persist);
-        Pageable pageable = PageRequest.of(page, 10);
-
+    @Test
+    @DisplayName("비로그인 유저가 시험, 과목 조건에 따라 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
+    void givenNonLoginMemberWithExamAndSubjectConditions_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
         //when
-        Page<Problem> problems = problemRepository.findBookmarkedBySubjectIdIn(
-                memberId, List.of(subjectIds.get(0), subjectIds.get(0)), pageable
+        List<ProblemWithBookmarkDto> problems = problemRepository.findRandomByExamIdAndSubjectId(
+                null, examIds.get(0), subjectIds.get(0), count
         );
 
         //then
-        assertThat(problems).hasSize(pageSize);
+        assertThat(problems).hasSize(2);
+        long trueCount = problems.stream().filter(ProblemWithBookmarkDto::isBookmark).count();
+        assertThat(trueCount).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("비로그인 유저가 시험을 제외한 과목 조건에 따라 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
+    void givenNonLoginMemberWithSubjectConditions_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
+        //when
+        List<ProblemWithBookmarkDto> problems = problemRepository.findRandomByExamIdAndSubjectId(
+                null, null, subjectIds.get(0), count
+        );
+
+        //then
+        assertThat(problems).hasSize(3);
+        long trueCount = problems.stream().filter(ProblemWithBookmarkDto::isBookmark).count();
+        assertThat(trueCount).isEqualTo(0);
     }
 
 }

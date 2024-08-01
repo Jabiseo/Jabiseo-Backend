@@ -20,7 +20,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Optional;
 
 import static fixture.CertificateFixture.createCertificate;
 import static fixture.ExamFixture.createExam;
@@ -68,7 +67,7 @@ class FindBookmarkedProblemsUseCaseTest {
                 .willReturn(new PageImpl<>(List.of(problem1, problem2), pageable, 2));
 
         //when
-        FindBookmarkedProblemsResponse results = sut.execute(memberId, Optional.of(examId), List.of(subjectId), 0);
+        FindBookmarkedProblemsResponse results = sut.execute(memberId, examId, List.of(subjectId), 0);
 
         //then
         assertThat(results.totalCount()).isEqualTo(2);
@@ -99,7 +98,7 @@ class FindBookmarkedProblemsUseCaseTest {
                 .willReturn(new PageImpl<>(List.of(problem1, problem2), pageable, 2));
 
         //when
-        FindBookmarkedProblemsResponse results = sut.execute(memberId, Optional.empty(), List.of(subjectId), 0);
+        FindBookmarkedProblemsResponse results = sut.execute(memberId, null, List.of(subjectId), 0);
 
         //then
         assertThat(results.totalCount()).isEqualTo(2);
@@ -120,7 +119,7 @@ class FindBookmarkedProblemsUseCaseTest {
         given(memberRepository.getReferenceById(memberId)).willReturn(member);
 
         //when & then
-        assertThatThrownBy(() -> sut.execute(memberId, Optional.of(examId), List.of(subjectId), 0))
+        assertThatThrownBy(() -> sut.execute(memberId, examId, List.of(subjectId), 0))
                 .isInstanceOf(MemberBusinessException.class)
                 .hasFieldOrPropertyWithValue("errorCode", MemberErrorCode.CURRENT_CERTIFICATE_NOT_EXIST);
     }
