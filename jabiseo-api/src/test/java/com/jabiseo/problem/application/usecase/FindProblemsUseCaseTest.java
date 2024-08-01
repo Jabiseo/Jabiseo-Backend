@@ -71,9 +71,9 @@ class FindProblemsUseCaseTest {
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
-        given(problemRepository.findRandomByExamIdAndSubjectId(memberId, examId, subjectIds.get(0), count))
+        given(problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(memberId, examId, subjectIds.get(0), count))
                 .willReturn(List.of(problemWithBookmarkDtos.get(0), problemWithBookmarkDtos.get(2)));
-        given(problemRepository.findRandomByExamIdAndSubjectId(memberId, examId, subjectIds.get(1), count))
+        given(problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(memberId, examId, subjectIds.get(1), count))
                 .willReturn(List.of(problemWithBookmarkDtos.get(1)));
 
         //when
@@ -114,9 +114,9 @@ class FindProblemsUseCaseTest {
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
-        given(problemRepository.findRandomByExamIdAndSubjectId(memberId, null, subjectIds.get(0), count))
+        given(problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(memberId, null, subjectIds.get(0), count))
                 .willReturn(List.of(problemWithBookmarkDtos.get(0), problemWithBookmarkDtos.get(2)));
-        given(problemRepository.findRandomByExamIdAndSubjectId(memberId, null, subjectIds.get(1), count))
+        given(problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(memberId, null, subjectIds.get(1), count))
                 .willReturn(List.of(problemWithBookmarkDtos.get(1)));
 
         //when
@@ -154,9 +154,9 @@ class FindProblemsUseCaseTest {
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
-        given(problemRepository.findRandomByExamIdAndSubjectId(null, examId, subjectIds.get(0), count))
+        given(problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(0), count))
                 .willReturn(List.of(problemWithBookmarkDtos.get(0), problemWithBookmarkDtos.get(2)));
-        given(problemRepository.findRandomByExamIdAndSubjectId(null, examId, subjectIds.get(1), count))
+        given(problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(1), count))
                 .willReturn(List.of(problemWithBookmarkDtos.get(1)));
 
         //when
@@ -196,9 +196,9 @@ class FindProblemsUseCaseTest {
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
-        given(problemRepository.findRandomByExamIdAndSubjectId(null, null, subjectIds.get(0), count))
+        given(problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(null, null, subjectIds.get(0), count))
                 .willReturn(List.of(problemWithBookmarkDtos.get(0), problemWithBookmarkDtos.get(2)));
-        given(problemRepository.findRandomByExamIdAndSubjectId(null, null, subjectIds.get(1), count))
+        given(problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(null, null, subjectIds.get(1), count))
                 .willReturn(List.of(problemWithBookmarkDtos.get(1)));
 
         //when

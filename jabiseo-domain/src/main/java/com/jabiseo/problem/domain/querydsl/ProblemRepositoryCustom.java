@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface ProblemRepositoryCustom {
 
-    List<ProblemWithBookmarkDto> findRandomByExamIdAndSubjectId(Long memberId, Long examId, Long subjectId, int count);
+    List<ProblemWithBookmarkDto> findRandomByExamIdAndSubjectIdWithBookmark(Long memberId, Long examId, Long subjectId, int count);
 
 }

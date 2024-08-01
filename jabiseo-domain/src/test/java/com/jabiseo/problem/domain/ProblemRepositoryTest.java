@@ -88,7 +88,7 @@ class ProblemRepositoryTest {
     @DisplayName("로그인한 유저가 시험, 과목 조건에 따라 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
     void givenLoginMemberWithExamAndSubjectConditions_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
         //when
-        List<ProblemWithBookmarkDto> problems = problemRepository.findRandomByExamIdAndSubjectId(
+        List<ProblemWithBookmarkDto> problems = problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(
                 memberId, examIds.get(0), subjectIds.get(0), count
         );
 
@@ -102,7 +102,7 @@ class ProblemRepositoryTest {
     @DisplayName("로그인한 유저가 시험을 제외한 과목 조건에 따라 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
     void givenLoginMemberWithSubjectConditions_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
         //when
-        List<ProblemWithBookmarkDto> problems = problemRepository.findRandomByExamIdAndSubjectId(
+        List<ProblemWithBookmarkDto> problems = problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(
                 memberId, null, subjectIds.get(0), count
         );
 
@@ -116,7 +116,7 @@ class ProblemRepositoryTest {
     @DisplayName("비로그인 유저가 시험, 과목 조건에 따라 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
     void givenNonLoginMemberWithExamAndSubjectConditions_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
         //when
-        List<ProblemWithBookmarkDto> problems = problemRepository.findRandomByExamIdAndSubjectId(
+        List<ProblemWithBookmarkDto> problems = problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(
                 null, examIds.get(0), subjectIds.get(0), count
         );
 
@@ -130,7 +130,7 @@ class ProblemRepositoryTest {
     @DisplayName("비로그인 유저가 시험을 제외한 과목 조건에 따라 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
     void givenNonLoginMemberWithSubjectConditions_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
         //when
-        List<ProblemWithBookmarkDto> problems = problemRepository.findRandomByExamIdAndSubjectId(
+        List<ProblemWithBookmarkDto> problems = problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(
                 null, null, subjectIds.get(0), count
         );
 

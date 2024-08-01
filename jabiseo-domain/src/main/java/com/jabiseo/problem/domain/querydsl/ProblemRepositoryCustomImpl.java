@@ -23,7 +23,7 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<ProblemWithBookmarkDto> findRandomByExamIdAndSubjectId(Long memberId, Long examId, Long subjectId, int count) {
+    public List<ProblemWithBookmarkDto> findRandomByExamIdAndSubjectIdWithBookmark(Long memberId, Long examId, Long subjectId, int count) {
         return queryFactory
                 .select(
                         Projections.constructor(

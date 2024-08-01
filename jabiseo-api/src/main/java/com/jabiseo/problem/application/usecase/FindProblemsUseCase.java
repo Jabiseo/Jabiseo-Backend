@@ -31,7 +31,7 @@ public class FindProblemsUseCase {
 
         // TODO: 과목별로 문제를 가져와서 쿼리를 5번 날리는 로직에서 1번의 쿼리로 변경해야 함. 하지만 최종적으로 과목 순서가 유지되어야 함
         List<ProblemWithBookmarkDto> problemWithBookmarkDtos = subjectIds.stream()
-                .map(subjectId -> problemRepository.findRandomByExamIdAndSubjectId(memberId, examId, subjectId, count))
+                .map(subjectId -> problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(memberId, examId, subjectId, count))
                 .flatMap(List::stream)
                 .toList();
 
