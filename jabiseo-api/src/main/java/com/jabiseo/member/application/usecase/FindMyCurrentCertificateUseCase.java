@@ -16,7 +16,7 @@ public class FindMyCurrentCertificateUseCase {
 
     private final MemberRepository memberRepository;
 
-    public FindMyCurrentCertificateResponse execute(String memberId) {
+    public FindMyCurrentCertificateResponse execute(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberBusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
 

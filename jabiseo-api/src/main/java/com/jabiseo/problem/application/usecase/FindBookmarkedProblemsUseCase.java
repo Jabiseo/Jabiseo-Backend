@@ -27,7 +27,7 @@ public class FindBookmarkedProblemsUseCase {
 
     private final ProblemRepository problemRepository;
 
-    public FindBookmarkedProblemsResponse execute(String memberId, Optional<Long> examId, List<Long> subjectIds, int page) {
+    public FindBookmarkedProblemsResponse execute(Long memberId, Optional<Long> examId, List<Long> subjectIds, int page) {
 
         Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
 

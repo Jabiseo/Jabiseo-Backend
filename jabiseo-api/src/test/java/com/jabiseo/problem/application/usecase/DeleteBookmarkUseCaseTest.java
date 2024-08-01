@@ -38,7 +38,7 @@ class DeleteBookmarkUseCaseTest {
     @DisplayName("북마크 삭제를 성공한다.")
     void givenMemberIdAndProblemId_whenDeletingBookmark_thenDeleteBookmark() {
         //given
-        String memberId = "1";
+        Long memberId = 1L;
         Long problemId = 2L;
         Member member = createMember(memberId);
         Problem problem = createProblem(problemId);
@@ -59,7 +59,7 @@ class DeleteBookmarkUseCaseTest {
     @DisplayName("존재하지 않는 북마크를 삭제하는 경우 예외처리한다.")
     void givenNonExistBookmarkWithMemberIdAndProblemId_whenDeletingBookmark_thenReturnError() {
         //given
-        String memberId = "1";
+        Long memberId = 1L;
         Long problemId = 2L;
         given(bookmarkRepository.findByMemberIdAndProblemId(memberId, problemId)).willReturn(Optional.empty());
 

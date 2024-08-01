@@ -27,7 +27,7 @@ public class BookmarkController {
             @RequestBody CreateBookmarkRequest request,
             @AuthenticatedMember AuthMember member
     ) {
-        String bookmarkId = createBookmarkUseCase.execute(member.getMemberId(), request);
+        Long bookmarkId = createBookmarkUseCase.execute(member.getMemberId(), request);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()

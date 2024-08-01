@@ -40,7 +40,7 @@ class UpdateMyCurrentCertificateUseCaseTest {
     @DisplayName("현재 자격증 변경을 성공한다.")
     void givenMemberIdAndCertificateId_whenUpdatingCurrentCertificate_thenUpdateCurrentCertificate() {
         //given
-        String memberId = "1";
+        Long memberId = 1L;
         Long certificateId = 2L;
         Member member = createMember(memberId);
         Certificate certificate = createCertificate(certificateId);
@@ -59,7 +59,7 @@ class UpdateMyCurrentCertificateUseCaseTest {
     @DisplayName("존재하지 않는 회원의 현재 자격증 변경을 시도하면 예외처리한다.")
     void givenCertificateIdAndNonExistedMemberId_whenUpdatingCurrentCertificate_thenReturnError() {
         //given
-        String nonExistedMemberId = "1";
+        Long nonExistedMemberId = 1L;
         Long certificateId = 2L;
         given(memberRepository.findById(nonExistedMemberId)).willReturn(Optional.empty());
 
@@ -75,7 +75,7 @@ class UpdateMyCurrentCertificateUseCaseTest {
     @DisplayName("존재하지 않는 자격증으로 현재 자격증 변경을 시도하면 예외처리한다.")
     void givenMemberIdAndNonExistedCertificateId_whenUpdatingCurrentCertificate_thenReturnError() {
         //given
-        String memberId = "1";
+        Long memberId = 1L;
         Long nonExistedCertificateId = 2L;
         Member member = createMember(memberId);
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));

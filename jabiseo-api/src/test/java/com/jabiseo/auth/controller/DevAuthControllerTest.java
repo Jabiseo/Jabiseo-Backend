@@ -48,7 +48,7 @@ class DevAuthControllerTest {
     @DisplayName("개발용 로그인 요청")
     void devLoginSuccess() throws Exception {
         //given
-        String memberId = "1234";
+        Long memberId = 1234L;
         given(devLoginHelper.login(memberId)).willReturn(new LoginResponse("accc", "refresh"));
 
         //when

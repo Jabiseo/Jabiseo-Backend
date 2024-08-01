@@ -4,6 +4,7 @@ import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.member.exception.MemberBusinessException;
 import com.jabiseo.member.exception.MemberErrorCode;
 import com.jabiseo.problem.domain.Bookmark;
+import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -28,8 +29,9 @@ import java.util.List;
 public class Member {
 
     @Id
+    @Tsid
     @Column(name = "member_id")
-    private String id;
+    private Long id;
 
     private String email;
 
@@ -62,8 +64,7 @@ public class Member {
     @BatchSize(size = 100)
     private List<Bookmark> bookmarks = new ArrayList<>();
 
-    private Member(String id, String email, String nickname, String oauthId, OauthServer oauthServer, String profileImage) {
-        this.id = id;
+    private Member(String email, String nickname, String oauthId, OauthServer oauthServer, String profileImage) {
         this.email = email;
         this.nickname = nickname;
         this.oauthId = oauthId;
@@ -71,9 +72,9 @@ public class Member {
         this.profileImage = profileImage;
     }
 
-    public static Member of(String id, String email, String nickname,
+    public static Member of(String email, String nickname,
                             String oauthId, OauthServer oauthServer, String profileImage) {
-        return new Member(id, email, nickname, oauthId, oauthServer, profileImage);
+        return new Member(email, nickname, oauthId, oauthServer, profileImage);
     }
 
     public Member updateCurrentCertificate(Certificate certificate) {

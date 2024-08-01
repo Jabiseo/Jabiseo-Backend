@@ -21,9 +21,6 @@ public class MemberFactory {
 
     public Member createNew(OauthMemberInfo oauthMemberInfo) {
         String nickname = randomNicknameGenerator.generate();
-
-        // TODO: ID 생성 전략을 통해 따로 생성해야 한다.
-        String id = UUID.randomUUID().toString();
-        return Member.of(id, oauthMemberInfo.getEmail(), nickname, oauthMemberInfo.getOauthId(), oauthMemberInfo.getOauthServer(), DEFAULT_IMAGE_URL);
+        return Member.of(oauthMemberInfo.getEmail(), nickname, oauthMemberInfo.getOauthId(), oauthMemberInfo.getOauthServer(), DEFAULT_IMAGE_URL);
     }
 }

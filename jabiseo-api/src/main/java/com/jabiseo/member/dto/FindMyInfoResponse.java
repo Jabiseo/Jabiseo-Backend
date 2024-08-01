@@ -10,7 +10,7 @@ public record FindMyInfoResponse(
 ) {
 
     public static FindMyInfoResponse from(Member member) {
-        return new FindMyInfoResponse(member.getId(), member.getNickname(), member.getEmail(), member.getProfileImage());
+        return new FindMyInfoResponse(member.getId().toString(), member.getNickname(), member.getEmail(), member.getProfileImage());
     }
 
 }

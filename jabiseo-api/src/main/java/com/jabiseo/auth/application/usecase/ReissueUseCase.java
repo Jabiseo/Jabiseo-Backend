@@ -22,7 +22,7 @@ public class ReissueUseCase {
     private final RedisCacheRepository redisCacheRepository;
     private final JwtHandler jwtHandler;
 
-    public ReissueResponse execute(ReissueRequest request, String memberId) {
+    public ReissueResponse execute(ReissueRequest request, Long memberId) {
         Member member = memberRepository.getReferenceById(memberId);
 
         jwtHandler.validateRefreshToken(request.refreshToken());

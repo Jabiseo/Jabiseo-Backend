@@ -35,7 +35,7 @@ class FindMyCurrentCertificateUseCaseTest {
     @DisplayName("현재 자격증 조회를 성공하면 현재 자격증을 반환한다.")
     void givenMemberId_whenFindingCurrentCertificate_thenFindCertificateStatus() {
         //given
-        String memberId = "1";
+        Long memberId = 1L;
         Long certificateId = 2L;
         Certificate certificate = createCertificate(certificateId);
         Member member = createMember(memberId);
@@ -46,7 +46,7 @@ class FindMyCurrentCertificateUseCaseTest {
         FindMyCurrentCertificateResponse response = sut.execute(memberId);
 
         //then
-        assertThat(response.memberId()).isEqualTo(memberId);
+        assertThat(response.memberId()).isEqualTo(memberId.toString());
         assertThat(response.certificateId()).isEqualTo(certificateId);
     }
 
@@ -54,7 +54,7 @@ class FindMyCurrentCertificateUseCaseTest {
     @DisplayName("존재하지 않는 회원의 현재 자격증 조회를 시도하면 예외처리한다.")
     void givenNonExistedMemberId_whenFindingCurrentCertificate_thenReturnError() {
         //given
-        String nonExistedMemberId = "1";
+        Long nonExistedMemberId = 1L;
         given(memberRepository.findById(nonExistedMemberId)).willReturn(Optional.empty());
 
         //when & then

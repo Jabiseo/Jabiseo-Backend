@@ -1,6 +1,7 @@
 package com.jabiseo.problem.domain;
 
 import com.jabiseo.member.domain.Member;
+import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -18,8 +19,9 @@ import java.util.UUID;
 public class Bookmark {
 
     @Id
+    @Tsid
     @Column(name = "bookmark_id")
-    private String id;
+    private Long id;
 
     @CreatedDate
     @Column(updatable = false)
@@ -33,15 +35,13 @@ public class Bookmark {
     @JoinColumn(name = "problem_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Problem problem;
 
-    private Bookmark(String id, Member member, Problem problem) {
-        this.id = id;
+    private Bookmark(Member member, Problem problem) {
         this.member = member;
         this.problem = problem;
     }
 
     public static Bookmark of(Member member, Problem problem) {
-        String id = UUID.randomUUID().toString(); //TODO: PK 생성 전략 변경 필요
-        Bookmark bookmark = new Bookmark(id, member, problem);
+        Bookmark bookmark = new Bookmark(member, problem);
         member.addBookmark(bookmark);
         return bookmark;
     }

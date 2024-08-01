@@ -55,7 +55,7 @@ class LoginUseCaseTest {
         //given
         LoginRequest request = new LoginRequest("idToken", "KAKAO");
         OauthMemberInfo memberInfo = new OauthMemberInfo("id", OauthServer.KAKAO, "email@emil.com");
-        Member member = createMember("memberId");
+        Member member = createMember(1L);
         given(memberRepository.findByOauthIdAndOauthServer(memberInfo.getOauthId(), memberInfo.getOauthServer())).willReturn(Optional.empty());
         given(tokenValidatorManager.validate(request.idToken(), OauthServer.valueOf(request.oauthServer()))).willReturn(memberInfo);
         given(memberFactory.createNew(memberInfo)).willReturn(member);
@@ -75,7 +75,7 @@ class LoginUseCaseTest {
         //given
         LoginRequest request = new LoginRequest("idToken", "KAKAO");
         OauthMemberInfo memberInfo = new OauthMemberInfo("id", OauthServer.KAKAO, "email@emil.com");
-        Member member = createMember("memberId");
+        Member member = createMember(1L);
         String access = "access";
         String refresh = "refresh";
         given(memberRepository.findByOauthIdAndOauthServer(memberInfo.getOauthId(), memberInfo.getOauthServer())).willReturn(Optional.of(member));

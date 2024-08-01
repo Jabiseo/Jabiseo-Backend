@@ -14,7 +14,7 @@ public class FindMyInfoUseCase {
 
     private final MemberRepository memberRepository;
 
-    public FindMyInfoResponse execute(String id) {
+    public FindMyInfoResponse execute(Long id) {
         Member member = memberRepository.getReferenceById(id);
         return FindMyInfoResponse.from(member);
     }

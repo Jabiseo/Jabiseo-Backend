@@ -43,7 +43,7 @@ class FindProblemsByIdUseCaseTest {
     @DisplayName("북마크를 통한 문제 세트 조회 테스트를 성공한다.")
     void givenProblemIds_whenFindingProblems_thenFindProblems() {
         //given
-        String memberId = "1";
+        Long memberId = 1L;
         Long certificateId = 2L;
         List<Long> problemIds = List.of(3L, 4L, 5L);
         Member member = createMember(memberId);
@@ -74,7 +74,7 @@ class FindProblemsByIdUseCaseTest {
     @DisplayName("존재하지 않는 문제로 북마크를 통한 문제 세트 조회를 하면 예외처리한다.")
     void givenNonExistedProblemIds_whenFindingProblems_thenReturnError() {
         //given
-        String memberId = "1";
+        Long memberId = 1L;
         Long certificateId = 2L;
         List<Long> problemIds = List.of(3L, 4L, 5L);
         Member member = createMember(memberId);

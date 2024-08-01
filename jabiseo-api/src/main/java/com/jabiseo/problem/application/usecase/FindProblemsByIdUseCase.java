@@ -25,7 +25,7 @@ public class FindProblemsByIdUseCase {
     private final MemberRepository memberRepository;
 
     // TODO: 문제에 북마크 되어 있는지 표시해야 함
-    public FindProblemsResponse execute(String memberId, FindProblemsRequest request) {
+    public FindProblemsResponse execute(Long memberId, FindProblemsRequest request) {
         Member member = memberRepository.getReferenceById(memberId);
         member.validateCurrentCertificate();
         Certificate certificate = member.getCurrentCertificate();
