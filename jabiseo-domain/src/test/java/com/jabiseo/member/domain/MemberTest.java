@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static fixture.CertificateFixture.createCertificate;
 import static fixture.MemberFixture.createMember;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -44,4 +45,18 @@ class MemberTest {
                 .hasFieldOrPropertyWithValue("errorCode", MemberErrorCode.CURRENT_CERTIFICATE_NOT_EXIST);
     }
 
+    @Test
+    @DisplayName("회원의 닉네임을 변경할 수 있다")
+    void nicknameUpdateSuccess(){
+        //given
+        Long memberId = 1L;
+        Member member = createMember(memberId);
+        String newNickname = "newNickname";
+
+        // when
+        member.updateNickname(newNickname);
+
+        //then
+        assertThat(member.getNickname()).isEqualTo(newNickname);
+    }
 }

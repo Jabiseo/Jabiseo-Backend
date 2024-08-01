@@ -91,4 +91,9 @@ public class Member {
             throw new MemberBusinessException(MemberErrorCode.CURRENT_CERTIFICATE_NOT_EXIST);
         }
     }
+
+    public void updateNickname(String nickname){
+        this.nickname = nickname;
+    }
+
 }
