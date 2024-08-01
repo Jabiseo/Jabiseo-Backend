@@ -36,7 +36,7 @@ public class FindProblemsUseCase {
                 .toList();
 
         List<ProblemsDetailResponse> problemsDetailResponses = problemWithBookmarkDtos.stream()
-                .map(ProblemsDetailResponse::fromNonLogin)
+                .map(ProblemsDetailResponse::from)
                 .toList();
 
         CertificateResponse certificateResponse = CertificateResponse.from(certificate);

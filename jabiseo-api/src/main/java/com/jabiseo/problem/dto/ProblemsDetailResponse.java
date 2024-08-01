@@ -29,7 +29,7 @@ public record ProblemsDetailResponse(
         );
     }
 
-    public static ProblemsDetailResponse fromNonLogin(ProblemWithBookmarkDto bookmarkedProblemDto) {
+    public static ProblemsDetailResponse from(ProblemWithBookmarkDto bookmarkedProblemDto) {
         return new ProblemsDetailResponse(
                 bookmarkedProblemDto.getProblemId(),
                 ExamResponse.of(
