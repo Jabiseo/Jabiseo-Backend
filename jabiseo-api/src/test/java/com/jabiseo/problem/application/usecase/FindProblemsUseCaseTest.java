@@ -25,6 +25,7 @@ import static fixture.CertificateFixture.createCertificate;
 import static fixture.ExamFixture.createExam;
 import static fixture.MemberFixture.createMember;
 import static fixture.ProblemFixture.createProblem;
+import static fixture.ProblemWithBookmarkDtoFixture.createProblemWithBookmarkDto;
 import static fixture.SubjectFixture.createSubject;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -67,7 +68,7 @@ class FindProblemsUseCaseTest {
         );
         Member member = createMember(memberId);
         List<ProblemWithBookmarkDto> problemWithBookmarkDtos = problems.stream()
-                .map(this::createProblemWithBookmarkDto)
+                .map(problem -> createProblemWithBookmarkDto(problem, false))
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
@@ -110,7 +111,7 @@ class FindProblemsUseCaseTest {
                 createProblem(problemIds.get(2), certificate, exams.get(1), subjects.get(0))
         );
         List<ProblemWithBookmarkDto> problemWithBookmarkDtos = problems.stream()
-                .map(this::createProblemWithBookmarkDto)
+                .map(problem -> createProblemWithBookmarkDto(problem, false))
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
@@ -150,7 +151,7 @@ class FindProblemsUseCaseTest {
                 createProblem(problemIds.get(2), certificate, exam, subjects.get(0))
         );
         List<ProblemWithBookmarkDto> problemWithBookmarkDtos = problems.stream()
-                .map(this::createProblemWithBookmarkDto)
+                .map(problem -> createProblemWithBookmarkDto(problem, false))
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
@@ -192,7 +193,7 @@ class FindProblemsUseCaseTest {
                 createProblem(problemIds.get(2), certificate, exams.get(1), subjects.get(0))
         );
         List<ProblemWithBookmarkDto> problemWithBookmarkDtos = problems.stream()
-                .map(this::createProblemWithBookmarkDto)
+                .map(problem -> createProblemWithBookmarkDto(problem, false))
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
@@ -227,27 +228,5 @@ class FindProblemsUseCaseTest {
         assertThatThrownBy(() -> sut.execute(memberId, certificateId, List.of(subjectId), examId, count))
                 .isInstanceOf(CertificateBusinessException.class)
                 .hasFieldOrPropertyWithValue("errorCode", CertificateErrorCode.CERTIFICATE_NOT_FOUND);
-    }
-
-
-    private ProblemWithBookmarkDto createProblemWithBookmarkDto(Problem problem) {
-        return new ProblemWithBookmarkDto(
-                problem.getId(),
-                problem.getDescription(),
-                problem.getChoice1(),
-                problem.getChoice2(),
-                problem.getChoice3(),
-                problem.getChoice4(),
-                problem.getAnswerNumber(),
-                problem.getSolution(),
-                false,
-                problem.getExam().getId(),
-                problem.getExam().getDescription(),
-                problem.getExam().getExamYear(),
-                problem.getExam().getYearRound(),
-                problem.getSubject().getId(),
-                problem.getSubject().getName(),
-                problem.getSubject().getSequence()
-        );
     }
 }
