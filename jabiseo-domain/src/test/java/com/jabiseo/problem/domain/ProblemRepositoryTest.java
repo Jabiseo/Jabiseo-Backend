@@ -41,7 +41,7 @@ class ProblemRepositoryTest {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private String memberId;
+    private Long memberId;
     private Member member;
     private List<Long> examIds;
     private List<Long> subjectIds;
@@ -53,8 +53,7 @@ class ProblemRepositoryTest {
     void setUp() {
         //given
 
-        memberId = "memberId";
-        member = createMember(memberId);
+        member = createMember();
         certificate = createCertificate();
         member.updateCurrentCertificate(certificate);
         exams = new ArrayList<>();
@@ -69,6 +68,7 @@ class ProblemRepositoryTest {
 
         examIds = exams.stream().map(Exam::getId).toList();
         subjectIds = subjects.stream().map(Subject::getId).toList();
+        memberId = member.getId();
     }
 
     @Test
@@ -87,6 +87,7 @@ class ProblemRepositoryTest {
         requestProblems.forEach(entityManager::persist);
         bookmarks.forEach(entityManager::persist);
         Pageable pageable = PageRequest.of(0, 10);
+
 
         //when
         Page<Problem> problems = problemRepository.findBookmarkedByExamIdAndSubjectIdIn(

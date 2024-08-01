@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,7 +50,7 @@ class ReissueUseCaseTest {
     @DisplayName("저장된 토큰이 없는 경우 예외를 반환한다")
     void savedTokenIsNullThrownException() {
         //given
-        String memberId = "id";
+        Long memberId = 1L;
         given(memberRepository.getReferenceById(memberId)).willReturn(MemberFixture.createMember(memberId));
         given(redisCacheRepository.findToken(memberId)).willReturn(Optional.empty());
 
@@ -62,7 +63,7 @@ class ReissueUseCaseTest {
     @DisplayName("다른 refreshToken으로 요청하면 예외를 반환한다")
     void otherTokenRequestThrownException() {
         //given
-        String memberId = "id";
+        Long memberId = 1L;
         String otherToken = "tokens";
         given(memberRepository.getReferenceById(memberId)).willReturn(MemberFixture.createMember(memberId));
         given(redisCacheRepository.findToken(memberId)).willReturn(Optional.of(otherToken));
@@ -77,7 +78,7 @@ class ReissueUseCaseTest {
     @DisplayName("정상 요청의 경우 새로운 access Token을 발급한다.")
     void requestSuccessReturnNewAccessToken(){
         //given
-        String memberId = "id";
+        Long memberId = 1L;
         Member member = MemberFixture.createMember(memberId);
         String newAccessToken = "accessToken";
         given(memberRepository.getReferenceById(memberId)).willReturn(member);

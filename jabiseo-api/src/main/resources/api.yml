@@ -41,7 +41,7 @@ management:
         include: "*"
 
 jwt:
-  access-expired-min: 1
+  access-expired-min: 60
 
 ---
 spring:

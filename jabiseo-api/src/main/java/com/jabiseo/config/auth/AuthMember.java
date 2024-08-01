@@ -2,13 +2,13 @@ package com.jabiseo.config.auth;
 
 public class AuthMember {
 
-    String memberId;
+    Long memberId;
 
-    public AuthMember(String memberId) {
+    public AuthMember(Long memberId) {
         this.memberId = memberId;
     }
 
-    public String getMemberId() {
+    public Long getMemberId() {
         return memberId;
     }
 }

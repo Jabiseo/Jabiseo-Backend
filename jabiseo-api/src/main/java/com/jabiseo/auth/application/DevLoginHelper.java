@@ -20,7 +20,7 @@ public class DevLoginHelper {
     private final MemberRepository memberRepository;
     private final RedisCacheRepository redisCacheRepository;
 
-    public LoginResponse login(String memberId) {
+    public LoginResponse login(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberBusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
 

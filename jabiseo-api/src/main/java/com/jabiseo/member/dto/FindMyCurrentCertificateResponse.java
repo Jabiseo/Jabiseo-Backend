@@ -8,10 +8,10 @@ public record FindMyCurrentCertificateResponse(
         Long certificateId
 ) {
     public static FindMyCurrentCertificateResponse of(Member member, Certificate certificate) {
-        return new FindMyCurrentCertificateResponse(member.getId(), certificate.getId());
+        return new FindMyCurrentCertificateResponse(member.getId().toString(), certificate.getId());
     }
 
     public static FindMyCurrentCertificateResponse from(Member member) {
-        return new FindMyCurrentCertificateResponse(member.getId(), null);
+        return new FindMyCurrentCertificateResponse(member.getId().toString(), null);
     }
 }

@@ -20,7 +20,7 @@ public class UpdateMyCurrentCertificateUseCase {
     private final MemberRepository memberRepository;
     private final CertificateRepository certificateRepository;
 
-    public void execute(String memberId, UpdateMyCurrentCertificateRequest request) {
+    public void execute(Long memberId, UpdateMyCurrentCertificateRequest request) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberBusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
         Certificate certificate = certificateRepository.findById(request.certificateId())

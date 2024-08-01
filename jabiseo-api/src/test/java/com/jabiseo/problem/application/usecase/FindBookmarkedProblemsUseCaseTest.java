@@ -48,7 +48,7 @@ class FindBookmarkedProblemsUseCaseTest {
     @DisplayName("examId가 있을 경우 북마크 목록 조회를 성공한다.")
     void givenProblemConditionsContainsExamId_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
         //given
-        String memberId = "1";
+        Long memberId = 1L;
         Long certificateId = 2L;
         Long examId = 3L;
         Long subjectId = 4L;
@@ -81,7 +81,7 @@ class FindBookmarkedProblemsUseCaseTest {
     @DisplayName("examId가 없을 경우 북마크 목록 조회를 성공한다.")
     void givenProblemConditionsExceptExamId_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
         //given
-        String memberId = "1";
+        Long memberId = 1L;
         Long certificateId = 2L;
         Long subjectId = 4L;
         Long problemId1 = 5L;
@@ -112,7 +112,7 @@ class FindBookmarkedProblemsUseCaseTest {
     @DisplayName("현재 자격증이 없는 회원의 북마크 목록 조회를 시도하면 예외처리한다.")
     void givenMemberWithNoCurrentCertificate_whenFindingBookmarkedProblems_thenReturnError() {
         //given
-        String memberId = "1";
+        Long memberId = 1L;
         Long examId = 3L;
         Long subjectId = 4L;
 

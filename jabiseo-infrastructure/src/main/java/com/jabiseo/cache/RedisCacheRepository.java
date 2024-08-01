@@ -31,21 +31,21 @@ public class RedisCacheRepository {
     }
 
 
-    public void saveToken(String key, String value) {
-        operation.set(toMemberTokenKey(key), value);
+    public void saveToken(Long memberId, String value) {
+        operation.set(toMemberTokenKey(memberId), value);
     }
 
-    public Optional<String> findToken(String key) {
-        String token = operation.get(toMemberTokenKey(key));
+    public Optional<String> findToken(Long memberId) {
+        String token = operation.get(toMemberTokenKey(memberId));
         return Optional.ofNullable(token);
     }
 
-    public void deleteToken(String key) {
-        operation.getAndDelete(toMemberTokenKey(key));
+    public void deleteToken(Long memberId) {
+        operation.getAndDelete(toMemberTokenKey(memberId));
     }
 
-    private String toMemberTokenKey(String id) {
-        return MEMBER_TOKEN_PREFIX + id;
+    private String toMemberTokenKey(Long id) {
+        return MEMBER_TOKEN_PREFIX + id.toString();
     }
 
     public void savePublicKey(String key, List<OidcPublicKey> publicKeys) {

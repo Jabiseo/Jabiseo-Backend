@@ -10,7 +10,7 @@ public class LogoutUseCase {
 
     private final RedisCacheRepository redisCacheRepository;
 
-    public void execute(String memberId) {
+    public void execute(Long memberId) {
         redisCacheRepository.deleteToken(memberId);
     }
 

@@ -24,7 +24,7 @@ public class CreateBookmarkUseCase {
 
     private final BookmarkRepository bookmarkRepository;
 
-    public String execute(String memberId, CreateBookmarkRequest request) {
+    public Long execute(Long memberId, CreateBookmarkRequest request) {
         if (bookmarkRepository.existsByMemberIdAndProblemId(memberId, request.problemId())) {
             throw new ProblemBusinessException(ProblemErrorCode.BOOKMARK_ALREADY_EXISTS);
         }

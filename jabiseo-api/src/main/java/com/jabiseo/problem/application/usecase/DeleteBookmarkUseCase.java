@@ -16,7 +16,7 @@ public class DeleteBookmarkUseCase {
 
     private final BookmarkRepository bookmarkRepository;
 
-    public void execute(String memberId, DeleteBookmarkRequest request) {
+    public void execute(Long memberId, DeleteBookmarkRequest request) {
         Bookmark bookmark = bookmarkRepository.findByMemberIdAndProblemId(memberId, request.problemId())
                 .orElseThrow(() -> new ProblemBusinessException(ProblemErrorCode.BOOKMARK_NOT_FOUND));
 

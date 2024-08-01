@@ -5,6 +5,7 @@ import com.jabiseo.auth.dto.LoginResponse;
 import com.jabiseo.common.exception.CommonErrorCode;
 import com.jabiseo.exception.ErrorResponse;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class DevAuthController {
             return ResponseEntity.status(CommonErrorCode.FORBIDDEN.getStatusCode()).body(ErrorResponse.of(CommonErrorCode.FORBIDDEN));
         }
 
-        LoginResponse result = loginHelper.login(memberId);
+        LoginResponse result = loginHelper.login(Long.parseLong(memberId));
         return ResponseEntity.ok(result);
     }
 

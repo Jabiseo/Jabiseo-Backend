@@ -30,7 +30,7 @@ public class AuthenticatedMemberArgumentResolver implements HandlerMethodArgumen
             throw new AuthenticationBusinessException(AuthenticationErrorCode.REQUIRE_LOGIN);
         }
 
-        String memberId = authentication.getPrincipal().toString();
+        Long memberId = Long.parseLong(authentication.getPrincipal().toString());
 
         return new AuthMember(memberId);
     }

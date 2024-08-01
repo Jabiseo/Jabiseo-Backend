@@ -21,7 +21,7 @@ class MemberTest {
     @DisplayName("회원의 현재 자격증이 존재해서 현재 자격증 존재 검사에서 예외가 발생하지 않는다.")
     void givenMember_whenValidateCurrentCertificate_thenDoesNotThrowException() {
         //given
-        String memberId = "1";
+        Long memberId = 1L;
         Long certificateId = 2L;
         Member member = createMember(memberId);
         Certificate certificate = createCertificate(certificateId);
@@ -35,7 +35,7 @@ class MemberTest {
     @DisplayName("회원의 현재 자격증이 존재하지 않아 현재 자격증 존재 검사에서 예외가 발생한다.")
     void givenMemberWithoutCurrentCertificate_whenValidateCurrentCertificate_thenThrowException() {
         //given
-        String memberId = "1";
+        Long memberId = 1L;
         Member member = createMember(memberId);
 
         //when & then

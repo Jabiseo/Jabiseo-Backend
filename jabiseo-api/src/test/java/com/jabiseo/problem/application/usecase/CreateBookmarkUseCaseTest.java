@@ -47,7 +47,7 @@ class CreateBookmarkUseCaseTest {
     @DisplayName("북마크 생성을 성공한다.")
     void givenMemberIdAndProblemId_whenCreatingBookmark_thenCreateBookmark() {
         //given
-        String memberId = "1";
+        Long memberId = 1L;
         Long problemId = 2L;
         Member member = createMember(memberId);
         Problem problem = createProblem(problemId);
@@ -73,7 +73,7 @@ class CreateBookmarkUseCaseTest {
     @DisplayName("이미 북마크한 문제를 북마크하는 경우 예외처리한다.")
     void givenAlreadyExistedMemberIdAndProblemId_whenCreatingBookmark_thenReturnError() {
         //given
-        String memberId = "1";
+        Long memberId = 1L;
         Long problemId = 2L;
         given(bookmarkRepository.existsByMemberIdAndProblemId(memberId, problemId)).willReturn(true);
 
@@ -89,7 +89,7 @@ class CreateBookmarkUseCaseTest {
     @DisplayName("존재하지 않는 문제를 북마크하는 경우 예외처리한다.")
     void givenMemberIdAndNonExistedProblemId_whenCreatingBookmark_thenReturnError() {
         //given
-        String memberId = "1";
+        Long memberId = 1L;
         Long problemId = 2L;
         given(bookmarkRepository.existsByMemberIdAndProblemId(memberId, problemId)).willReturn(false);
         given(problemRepository.findById(problemId)).willReturn(Optional.empty());
