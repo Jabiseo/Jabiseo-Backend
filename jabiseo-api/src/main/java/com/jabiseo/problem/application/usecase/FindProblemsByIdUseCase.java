@@ -35,7 +35,7 @@ public class FindProblemsByIdUseCase {
                 .map(problemId -> problemRepository.findById(problemId)
                         .orElseThrow(() -> new ProblemBusinessException(ProblemErrorCode.PROBLEM_NOT_FOUND)))
                 .peek(problem -> problem.validateProblemInCertificate(certificate))
-                .map(ProblemsDetailResponse::from)
+                .map(ProblemsDetailResponse::fromNonLogin)
                 .toList();
         return FindProblemsResponse.of(certificateResponse, problemsDetailResponses);
     }

@@ -16,16 +16,42 @@ public record ProblemsDetailResponse(
         int answerNumber,
         String solution
 ) {
-    public static ProblemsDetailResponse from(Problem problem) {
+    public static ProblemsDetailResponse fromNonLogin(Problem problem) {
         return new ProblemsDetailResponse(
                 problem.getId(),
                 ExamResponse.from(problem.getExam()),
                 SubjectResponse.from(problem.getSubject()),
-                false, // TODO: 로그인 기능 구현 후 수정
+                false,
                 problem.getDescription(),
                 ChoiceResponse.fromChoices(problem.getChoices()),
                 problem.getAnswerNumber(),
                 problem.getSolution()
+        );
+    }
+
+    public static ProblemsDetailResponse fromNonLogin(ProblemWithBookmarkDto bookmarkedProblemDto) {
+        return new ProblemsDetailResponse(
+                bookmarkedProblemDto.getProblemId(),
+                ExamResponse.of(
+                        bookmarkedProblemDto.getExamId(),
+                        bookmarkedProblemDto.getExamDescription()
+                ),
+                SubjectResponse.of(
+                        bookmarkedProblemDto.getSubjectId(),
+                        bookmarkedProblemDto.getSubjectSequence(),
+                        bookmarkedProblemDto.getSubjectName()
+                ),
+                bookmarkedProblemDto.isBookmark(),
+                bookmarkedProblemDto.getDescription(),
+                ChoiceResponse.fromChoices(List.of(
+                                bookmarkedProblemDto.getChoice1(),
+                                bookmarkedProblemDto.getChoice2(),
+                                bookmarkedProblemDto.getChoice3(),
+                                bookmarkedProblemDto.getChoice4()
+                        )
+                ),
+                bookmarkedProblemDto.getAnswerNumber(),
+                bookmarkedProblemDto.getSolution()
         );
     }
 }
