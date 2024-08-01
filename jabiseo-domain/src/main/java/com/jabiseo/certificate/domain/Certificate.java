@@ -11,7 +11,6 @@ import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Entity
 @Getter
@@ -70,14 +69,14 @@ public class Certificate {
         });
     }
 
-    private void validateExamId(Optional<Long> examId) {
+    private void validateExamId(Long examId) {
         // 자격증에 해당하는 시험이 있는지 검사
-        if (examId.isPresent() && !this.containsExam(examId.get())) {
+        if (examId != null && !this.containsExam(examId)) {
             throw new CertificateBusinessException(CertificateErrorCode.EXAM_NOT_FOUND_IN_CERTIFICATE);
         }
     }
 
-    public void validateExamIdAndSubjectIds(Optional<Long> examId, List<Long> subjectIds) {
+    public void validateExamIdAndSubjectIds(Long examId, List<Long> subjectIds) {
         validateExamId(examId);
         validateSubjectIds(subjectIds);
     }

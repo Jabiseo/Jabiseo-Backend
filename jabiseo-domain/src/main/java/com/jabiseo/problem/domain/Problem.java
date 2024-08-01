@@ -41,11 +41,11 @@ public class Problem {
     @JoinColumn(name = "certificate_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Certificate certificate;
 
-    @ManyToOne(fetch = FetchType.EAGER) // TODO: 문제 조회 시 항상 필요해서 일단 EAGER로 설정. 논의 필요
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exam_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Exam exam;
 
-    @ManyToOne(fetch = FetchType.EAGER) // TODO: 문제 조회 시 항상 필요해서 일단 EAGER로 설정. 논의 필요
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Subject subject;
 

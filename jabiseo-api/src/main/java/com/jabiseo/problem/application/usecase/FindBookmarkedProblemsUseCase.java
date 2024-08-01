@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -27,7 +26,7 @@ public class FindBookmarkedProblemsUseCase {
 
     private final ProblemRepository problemRepository;
 
-    public FindBookmarkedProblemsResponse execute(Long memberId, Optional<Long> examId, List<Long> subjectIds, int page) {
+    public FindBookmarkedProblemsResponse execute(Long memberId, Long examId, List<Long> subjectIds, int page) {
 
         Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
 
@@ -37,9 +36,12 @@ public class FindBookmarkedProblemsUseCase {
         Certificate certificate = member.getCurrentCertificate();
         certificate.validateExamIdAndSubjectIds(examId, subjectIds);
 
-        Page<Problem> problems = examId.map(id ->
-                        problemRepository.findBookmarkedByExamIdAndSubjectIdIn(memberId, id, subjectIds, pageable))
-                .orElseGet(() -> problemRepository.findBookmarkedBySubjectIdIn(memberId, subjectIds, pageable));
+        Page<Problem> problems;
+        if (examId != null) {
+            problems = problemRepository.findBookmarkedByExamIdAndSubjectIdIn(memberId, examId, subjectIds, pageable);
+        } else {
+            problems = problemRepository.findBookmarkedBySubjectIdIn(memberId, subjectIds, pageable);
+        }
 
         return FindBookmarkedProblemsResponse.of(
                 problems.getTotalElements(),
