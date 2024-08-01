@@ -23,12 +23,12 @@ public class DevAuthController {
     private static final String LIMIT_PROFILE = "local";
 
     @GetMapping("/dev/auth")
-    public ResponseEntity<?> devAuth(@RequestParam(value = "member-id") @NotNull Long memberId) {
+    public ResponseEntity<?> devAuth(@RequestParam(value = "member-id") @NotBlank String memberId) {
         if (!isLocalProfiles(environment.getActiveProfiles())) {
             return ResponseEntity.status(CommonErrorCode.FORBIDDEN.getStatusCode()).body(ErrorResponse.of(CommonErrorCode.FORBIDDEN));
         }
 
-        LoginResponse result = loginHelper.login(memberId);
+        LoginResponse result = loginHelper.login(Long.parseLong(memberId));
         return ResponseEntity.ok(result);
     }
 
