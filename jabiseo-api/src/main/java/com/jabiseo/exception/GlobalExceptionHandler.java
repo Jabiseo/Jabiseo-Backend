@@ -63,7 +63,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception e) {
         StringBuilder errorMessage = new StringBuilder();
-        System.out.println();
         log.error(e.getMessage());
         errorMessage.append(e.getMessage())
                 .append(" ")
