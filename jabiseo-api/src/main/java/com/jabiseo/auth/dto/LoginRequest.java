@@ -1,6 +1,6 @@
 package com.jabiseo.auth.dto;
 
-import com.jabiseo.common.EnumValid;
+import com.jabiseo.common.validator.EnumValid;
 import com.jabiseo.member.domain.OauthServer;
 import jakarta.validation.constraints.NotNull;
 

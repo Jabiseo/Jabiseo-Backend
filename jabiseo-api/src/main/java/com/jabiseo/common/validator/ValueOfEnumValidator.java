@@ -1,4 +1,4 @@
-package com.jabiseo.common;
+package com.jabiseo.common.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

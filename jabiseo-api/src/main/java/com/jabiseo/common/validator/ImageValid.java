@@ -1,6 +1,4 @@
-package com.jabiseo.common;
-
-
+package com.jabiseo.common.validator;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -10,20 +8,17 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.ElementType.FIELD;
 
-@Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
+@Target({FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Constraint(validatedBy = ValueOfEnumValidator.class)
-public @interface EnumValid {
-    Class<? extends Enum<?>> enumClass();
+@Constraint(validatedBy = ImageValidator.class)
+public @interface ImageValid {
 
-    String message() default "";
+    String message() default "잘못된 이미지 형식입니다.";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
-    boolean ignoreCase() default false;
 }
