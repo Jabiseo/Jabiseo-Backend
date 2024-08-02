@@ -1,6 +1,6 @@
 package com.jabiseo.common.security;
 
-import com.jabiseo.common.ResponseFactory;
+import com.jabiseo.common.validator.ResponseFactory;
 import com.jabiseo.common.exception.BusinessException;
 import com.jabiseo.common.exception.CommonErrorCode;
 import jakarta.servlet.FilterChain;

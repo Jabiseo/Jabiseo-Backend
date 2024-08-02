@@ -96,4 +96,8 @@ public class Member {
         this.nickname = nickname;
     }
 
+    public void updateProfileImage(String profileImage){
+        this.profileImage = profileImage;
+    }
+
 }

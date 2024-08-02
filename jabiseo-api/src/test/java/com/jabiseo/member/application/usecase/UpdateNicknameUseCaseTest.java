@@ -44,7 +44,7 @@ class UpdateNicknameUseCaseTest {
         given(memberRepository.getReferenceById(member.getId())).willReturn(member);
 
         //when
-        UpdateNicknameResponse result = updateNicknameUseCase.updateNickname(member.getId(), request);
+        UpdateNicknameResponse result = updateNicknameUseCase.execute(member.getId(), request);
 
         //then
         assertThat(result.nickname()).isEqualTo(request.nickname());

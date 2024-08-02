@@ -2,22 +2,28 @@ package com.jabiseo.member.application.usecase;
 
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
-import com.jabiseo.member.dto.UpdateNicknameRequest;
-import com.jabiseo.member.dto.UpdateNicknameResponse;
+import com.jabiseo.member.dto.UpdateProfileImageRequest;
+import com.jabiseo.s3.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UpdateNicknameUseCase {
+public class UpdateProfileImageUseCase {
 
     private final MemberRepository memberRepository;
+    private final S3Uploader s3Uploader;
+    private static final String PROFILE_IMAGE_PATH = "profile/";
 
-    public UpdateNicknameResponse execute(Long memberId, UpdateNicknameRequest request) {
+    public void execute(Long memberId, UpdateProfileImageRequest request) {
         Member member = memberRepository.getReferenceById(memberId);
-        member.updateNickname(request.nickname());
-        return UpdateNicknameResponse.of(member);
+        String profileUrl = s3Uploader.upload(request.image(), PROFILE_IMAGE_PATH);
+        member.updateProfileImage(profileUrl);
     }
+
 }
+
+

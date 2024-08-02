@@ -2,11 +2,8 @@ package com.jabiseo.member.controller;
 
 import com.jabiseo.config.auth.AuthMember;
 import com.jabiseo.config.auth.AuthenticatedMember;
-import com.jabiseo.member.application.usecase.UpdateNicknameUseCase;
+import com.jabiseo.member.application.usecase.*;
 import com.jabiseo.member.dto.*;
-import com.jabiseo.member.application.usecase.FindMyCurrentCertificateUseCase;
-import com.jabiseo.member.application.usecase.FindMyInfoUseCase;
-import com.jabiseo.member.application.usecase.UpdateMyCurrentCertificateUseCase;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +20,7 @@ public class MemberController {
 
     private final UpdateMyCurrentCertificateUseCase updateMyCurrentCertificateUseCase;
     private final UpdateNicknameUseCase updateNicknameUseCase;
+    private final UpdateProfileImageUseCase updateProfileImageUseCase;
 
     @GetMapping
     public ResponseEntity<FindMyInfoResponse> findMyInfo(
@@ -51,10 +49,15 @@ public class MemberController {
 
     @PatchMapping("/nickname")
     public ResponseEntity<UpdateNicknameResponse> updateMyNickname(@AuthenticatedMember AuthMember member, @Valid @RequestBody UpdateNicknameRequest request) {
-        UpdateNicknameResponse result = updateNicknameUseCase.updateNickname(member.getMemberId(), request);
+        UpdateNicknameResponse result = updateNicknameUseCase.execute(member.getMemberId(), request);
         return ResponseEntity.ok(result);
     }
 
+    @PatchMapping("/image")
+    public ResponseEntity<?> updateImage(@AuthenticatedMember AuthMember member, @Valid @ModelAttribute UpdateProfileImageRequest request) {
+        updateProfileImageUseCase.execute(member.getMemberId(), request);
+        return ResponseEntity.ok("ok");
+    }
 
 
 }

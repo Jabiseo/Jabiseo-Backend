@@ -1,7 +1,7 @@
 package com.jabiseo.common.security;
 
 import com.jabiseo.auth.exception.AuthenticationErrorCode;
-import com.jabiseo.common.ResponseFactory;
+import com.jabiseo.common.validator.ResponseFactory;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

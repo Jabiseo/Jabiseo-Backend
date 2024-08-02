@@ -1,4 +1,4 @@
-package com.jabiseo.common;
+package com.jabiseo.common.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jabiseo.common.exception.ErrorCode;
