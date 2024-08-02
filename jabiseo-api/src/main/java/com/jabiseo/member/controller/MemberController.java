@@ -54,9 +54,9 @@ public class MemberController {
     }
 
     @PatchMapping("/image")
-    public ResponseEntity<?> updateImage(@AuthenticatedMember AuthMember member, @Valid @ModelAttribute UpdateProfileImageRequest request) {
-        updateProfileImageUseCase.execute(member.getMemberId(), request);
-        return ResponseEntity.ok("ok");
+    public ResponseEntity<UpdateProfileImageResponse> updateImage(@AuthenticatedMember AuthMember member, @Valid @ModelAttribute UpdateProfileImageRequest request) {
+        UpdateProfileImageResponse result = updateProfileImageUseCase.execute(member.getMemberId(), request);
+        return ResponseEntity.ok(result);
     }
 
 
