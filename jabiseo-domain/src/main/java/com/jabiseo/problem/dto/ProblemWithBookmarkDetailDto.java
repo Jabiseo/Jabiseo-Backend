@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProblemWithBookmarkDto {
+public class ProblemWithBookmarkDetailDto {
     private Long problemId;
     private String description;
     private String choice1;

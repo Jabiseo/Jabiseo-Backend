@@ -15,7 +15,7 @@ public record ProblemsDetailResponse(
         int answerNumber,
         String solution
 ) {
-    public static ProblemsDetailResponse from(ProblemWithBookmarkDto bookmarkedProblemDto) {
+    public static ProblemsDetailResponse from(ProblemWithBookmarkDetailDto bookmarkedProblemDto) {
         return new ProblemsDetailResponse(
                 bookmarkedProblemDto.getProblemId(),
                 ExamResponse.of(

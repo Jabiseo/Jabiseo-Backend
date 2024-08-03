@@ -10,7 +10,7 @@ import com.jabiseo.member.domain.Member;
 import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindProblemsResponse;
-import com.jabiseo.problem.dto.ProblemWithBookmarkDto;
+import com.jabiseo.problem.dto.ProblemWithBookmarkDetailDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +25,7 @@ import static fixture.CertificateFixture.createCertificate;
 import static fixture.ExamFixture.createExam;
 import static fixture.MemberFixture.createMember;
 import static fixture.ProblemFixture.createProblem;
-import static fixture.ProblemWithBookmarkDtoFixture.createProblemWithBookmarkDto;
+import static fixture.ProblemWithBookmarkDetailDtoFixture.createProblemWithBookmarkDetailDto;
 import static fixture.SubjectFixture.createSubject;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -67,15 +67,15 @@ class FindProblemsUseCaseTest {
                 createProblem(problemIds.get(2), certificate, exam, subjects.get(0))
         );
         Member member = createMember(memberId);
-        List<ProblemWithBookmarkDto> problemWithBookmarkDtos = problems.stream()
-                .map(problem -> createProblemWithBookmarkDto(problem, false))
+        List<ProblemWithBookmarkDetailDto> problemWithBookmarkDetailDtos = problems.stream()
+                .map(problem -> createProblemWithBookmarkDetailDto(problem, false))
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
         given(problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(memberId, examId, subjectIds.get(0), count))
-                .willReturn(List.of(problemWithBookmarkDtos.get(0), problemWithBookmarkDtos.get(2)));
+                .willReturn(List.of(problemWithBookmarkDetailDtos.get(0), problemWithBookmarkDetailDtos.get(2)));
         given(problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(memberId, examId, subjectIds.get(1), count))
-                .willReturn(List.of(problemWithBookmarkDtos.get(1)));
+                .willReturn(List.of(problemWithBookmarkDetailDtos.get(1)));
 
         //when
         FindProblemsResponse result = sut.execute(member.getId(), certificateId, subjectIds, examId, count);
@@ -110,15 +110,15 @@ class FindProblemsUseCaseTest {
                 createProblem(problemIds.get(1), certificate, exams.get(1), subjects.get(1)),
                 createProblem(problemIds.get(2), certificate, exams.get(1), subjects.get(0))
         );
-        List<ProblemWithBookmarkDto> problemWithBookmarkDtos = problems.stream()
-                .map(problem -> createProblemWithBookmarkDto(problem, false))
+        List<ProblemWithBookmarkDetailDto> problemWithBookmarkDetailDtos = problems.stream()
+                .map(problem -> createProblemWithBookmarkDetailDto(problem, false))
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
         given(problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(memberId, null, subjectIds.get(0), count))
-                .willReturn(List.of(problemWithBookmarkDtos.get(0), problemWithBookmarkDtos.get(2)));
+                .willReturn(List.of(problemWithBookmarkDetailDtos.get(0), problemWithBookmarkDetailDtos.get(2)));
         given(problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(memberId, null, subjectIds.get(1), count))
-                .willReturn(List.of(problemWithBookmarkDtos.get(1)));
+                .willReturn(List.of(problemWithBookmarkDetailDtos.get(1)));
 
         //when
         FindProblemsResponse result = sut.execute(memberId, certificateId, subjectIds, null, count);
@@ -150,15 +150,15 @@ class FindProblemsUseCaseTest {
                 createProblem(problemIds.get(1), certificate, exam, subjects.get(1)),
                 createProblem(problemIds.get(2), certificate, exam, subjects.get(0))
         );
-        List<ProblemWithBookmarkDto> problemWithBookmarkDtos = problems.stream()
-                .map(problem -> createProblemWithBookmarkDto(problem, false))
+        List<ProblemWithBookmarkDetailDto> problemWithBookmarkDetailDtos = problems.stream()
+                .map(problem -> createProblemWithBookmarkDetailDto(problem, false))
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
         given(problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(0), count))
-                .willReturn(List.of(problemWithBookmarkDtos.get(0), problemWithBookmarkDtos.get(2)));
+                .willReturn(List.of(problemWithBookmarkDetailDtos.get(0), problemWithBookmarkDetailDtos.get(2)));
         given(problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(1), count))
-                .willReturn(List.of(problemWithBookmarkDtos.get(1)));
+                .willReturn(List.of(problemWithBookmarkDetailDtos.get(1)));
 
         //when
         FindProblemsResponse result = sut.execute(null, certificateId, subjectIds, examId, count);
@@ -192,15 +192,15 @@ class FindProblemsUseCaseTest {
                 createProblem(problemIds.get(1), certificate, exams.get(1), subjects.get(1)),
                 createProblem(problemIds.get(2), certificate, exams.get(1), subjects.get(0))
         );
-        List<ProblemWithBookmarkDto> problemWithBookmarkDtos = problems.stream()
-                .map(problem -> createProblemWithBookmarkDto(problem, false))
+        List<ProblemWithBookmarkDetailDto> problemWithBookmarkDetailDtos = problems.stream()
+                .map(problem -> createProblemWithBookmarkDetailDto(problem, false))
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
         given(problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(null, null, subjectIds.get(0), count))
-                .willReturn(List.of(problemWithBookmarkDtos.get(0), problemWithBookmarkDtos.get(2)));
+                .willReturn(List.of(problemWithBookmarkDetailDtos.get(0), problemWithBookmarkDetailDtos.get(2)));
         given(problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(null, null, subjectIds.get(1), count))
-                .willReturn(List.of(problemWithBookmarkDtos.get(1)));
+                .willReturn(List.of(problemWithBookmarkDetailDtos.get(1)));
 
         //when
         FindProblemsResponse result = sut.execute(null, certificateId, subjectIds, null, count);

@@ -1,11 +1,11 @@
 package fixture;
 
 import com.jabiseo.problem.domain.Problem;
-import com.jabiseo.problem.dto.ProblemWithBookmarkDto;
+import com.jabiseo.problem.dto.ProblemWithBookmarkDetailDto;
 
-public class ProblemWithBookmarkDtoFixture {
-    public static ProblemWithBookmarkDto createProblemWithBookmarkDto(Problem problem, boolean isBookmark) {
-        return new ProblemWithBookmarkDto(
+public class ProblemWithBookmarkDetailDtoFixture {
+    public static ProblemWithBookmarkDetailDto createProblemWithBookmarkDetailDto(Problem problem, boolean isBookmark) {
+        return new ProblemWithBookmarkDetailDto(
                 problem.getId(),
                 problem.getDescription(),
                 problem.getChoice1(),

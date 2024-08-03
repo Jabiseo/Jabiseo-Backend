@@ -1,6 +1,6 @@
 package com.jabiseo.problem.domain.querydsl;
 
-import com.jabiseo.problem.dto.ProblemWithBookmarkDto;
+import com.jabiseo.problem.dto.ProblemWithBookmarkDetailDto;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -23,11 +23,11 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<ProblemWithBookmarkDto> findRandomByExamIdAndSubjectIdWithBookmark(Long memberId, Long examId, Long subjectId, int count) {
+    public List<ProblemWithBookmarkDetailDto> findRandomByExamIdAndSubjectIdWithBookmark(Long memberId, Long examId, Long subjectId, int count) {
         return queryFactory
                 .select(
                         Projections.constructor(
-                                ProblemWithBookmarkDto.class,
+                                ProblemWithBookmarkDetailDto.class,
                                 problem.id.as("problemId"),
                                 problem.description,
                                 problem.choice1,
@@ -60,11 +60,11 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
     }
 
     @Override
-    public List<ProblemWithBookmarkDto> findByIdsInWithBookmark(Long memberId, List<Long> problemIds) {
+    public List<ProblemWithBookmarkDetailDto> findByIdsInWithBookmark(Long memberId, List<Long> problemIds) {
         return queryFactory
                 .select(
                         Projections.constructor(
-                                ProblemWithBookmarkDto.class,
+                                ProblemWithBookmarkDetailDto.class,
                                 problem.id.as("problemId"),
                                 problem.description,
                                 problem.choice1,
