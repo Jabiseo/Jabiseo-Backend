@@ -2,7 +2,6 @@ package com.jabiseo.problem.dto;
 
 import com.jabiseo.certificate.dto.ExamResponse;
 import com.jabiseo.certificate.dto.SubjectResponse;
-import com.jabiseo.problem.domain.Problem;
 
 import java.util.List;
 
@@ -16,19 +15,6 @@ public record ProblemsDetailResponse(
         int answerNumber,
         String solution
 ) {
-    public static ProblemsDetailResponse fromNonLogin(Problem problem) {
-        return new ProblemsDetailResponse(
-                problem.getId(),
-                ExamResponse.from(problem.getExam()),
-                SubjectResponse.from(problem.getSubject()),
-                false,
-                problem.getDescription(),
-                ChoiceResponse.fromChoices(problem.getChoices()),
-                problem.getAnswerNumber(),
-                problem.getSolution()
-        );
-    }
-
     public static ProblemsDetailResponse from(ProblemWithBookmarkDto bookmarkedProblemDto) {
         return new ProblemsDetailResponse(
                 bookmarkedProblemDto.getProblemId(),

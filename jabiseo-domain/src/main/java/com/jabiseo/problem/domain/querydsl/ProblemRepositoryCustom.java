@@ -8,4 +8,5 @@ public interface ProblemRepositoryCustom {
 
     List<ProblemWithBookmarkDto> findRandomByExamIdAndSubjectIdWithBookmark(Long memberId, Long examId, Long subjectId, int count);
 
+    List<ProblemWithBookmarkDto> findByIdsInWithBookmark(Long memberId, List<Long> problemIds);
 }

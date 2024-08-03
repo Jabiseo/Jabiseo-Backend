@@ -77,7 +77,6 @@ public class ProblemController {
     @GetMapping("/bookmarked")
     public ResponseEntity<FindBookmarkedProblemsResponse> findBookmarkedProblems(
             @AuthenticatedMember AuthMember member,
-            // TODO: DTO 기반으로 변경
             @RequestParam(name = "exam-id") Long examId,
             @RequestParam(name = "subject-id") List<Long> subjectIds,
             int page

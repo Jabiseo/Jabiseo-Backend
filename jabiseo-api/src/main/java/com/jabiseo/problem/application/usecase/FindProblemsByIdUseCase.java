@@ -24,19 +24,23 @@ public class FindProblemsByIdUseCase {
     private final ProblemRepository problemRepository;
     private final MemberRepository memberRepository;
 
-    // TODO: 문제에 북마크 되어 있는지 표시해야 함
     public FindProblemsResponse execute(Long memberId, FindProblemsRequest request) {
         Member member = memberRepository.getReferenceById(memberId);
         member.validateCurrentCertificate();
         Certificate certificate = member.getCurrentCertificate();
 
         CertificateResponse certificateResponse = CertificateResponse.from(certificate);
-        List<ProblemsDetailResponse> problemsDetailResponses = request.problemIds().stream()
-                .map(problemId -> problemRepository.findById(problemId)
-                        .orElseThrow(() -> new ProblemBusinessException(ProblemErrorCode.PROBLEM_NOT_FOUND)))
-                .peek(problem -> problem.validateProblemInCertificate(certificate))
-                .map(ProblemsDetailResponse::fromNonLogin)
+        List<ProblemsDetailResponse> problemsDetailResponses =
+                problemRepository.findByIdsInWithBookmark(memberId, request.problemIds())
+                .stream()
+                .map(ProblemsDetailResponse::from)
                 .toList();
+
+        //요청 개수와 실제 데이터 개수가 다르면 옳지 않은 문제 ID가 요청되었다는 것
+        if (problemsDetailResponses.size() != request.problemIds().size()) {
+            throw new ProblemBusinessException(ProblemErrorCode.PROBLEM_NOT_FOUND);
+        }
+
         return FindProblemsResponse.of(certificateResponse, problemsDetailResponses);
     }
 }

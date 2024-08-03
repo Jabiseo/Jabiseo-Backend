@@ -59,6 +59,39 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    public List<ProblemWithBookmarkDto> findByIdsInWithBookmark(Long memberId, List<Long> problemIds) {
+        return queryFactory
+                .select(
+                        Projections.constructor(
+                                ProblemWithBookmarkDto.class,
+                                problem.id.as("problemId"),
+                                problem.description,
+                                problem.choice1,
+                                problem.choice2,
+                                problem.choice3,
+                                problem.choice4,
+                                problem.answerNumber,
+                                problem.solution,
+                                Expressions.cases()
+                                        .when(isBookmarkedByMember(memberId, problem.id))
+                                        .then(true)
+                                        .otherwise(false)
+                                        .as("isBookmark"),
+                                exam.id.as("examId"),
+                                exam.description.as("examDescription"),
+                                exam.examYear,
+                                exam.yearRound,
+                                subject.id.as("subjectId"),
+                                subject.name.as("subjectName"),
+                                subject.sequence.as("subjectSequence")
+                        )
+                )
+                .from(problem)
+                .where(problem.id.in(problemIds))
+                .fetch();
+    }
+
     private static BooleanExpression subjectIdEq(Long subjectId) {
         return subjectId != null ? subject.id.eq(subjectId) : null;
     }
