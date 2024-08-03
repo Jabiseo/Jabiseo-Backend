@@ -3,9 +3,9 @@ package com.jabiseo.problem.application.usecase;
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
-import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
+import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,17 +36,13 @@ public class FindBookmarkedProblemsUseCase {
         Certificate certificate = member.getCurrentCertificate();
         certificate.validateExamIdAndSubjectIds(examId, subjectIds);
 
-        Page<Problem> problems;
-        if (examId != null) {
-            problems = problemRepository.findBookmarkedByExamIdAndSubjectIdIn(memberId, examId, subjectIds, pageable);
-        } else {
-            problems = problemRepository.findBookmarkedBySubjectIdIn(memberId, subjectIds, pageable);
-        }
+        Page<ProblemWithBookmarkSummaryDto> dtos =
+                problemRepository.findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(memberId, examId, subjectIds, pageable);
 
         return FindBookmarkedProblemsResponse.of(
-                problems.getTotalElements(),
-                problems.getTotalPages(),
-                problems.getContent()
+                dtos.getTotalElements(),
+                dtos.getTotalPages(),
+                dtos.getContent()
         );
     }
 }

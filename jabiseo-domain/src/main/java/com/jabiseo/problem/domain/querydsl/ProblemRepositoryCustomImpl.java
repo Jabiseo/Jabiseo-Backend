@@ -1,14 +1,19 @@
 package com.jabiseo.problem.domain.querydsl;
 
 import com.jabiseo.problem.dto.ProblemWithBookmarkDetailDto;
+import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryDto;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
@@ -88,42 +93,49 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
                 .fetch();
     }
 
-//    @Override
-//    public List<ProblemWithBookmarkSummaryDto> findSummaryByExamIdAndSubjectIdWithBookmark(Long memberId, Long examId, Long subjectId, Pageable pageable) {
-//        return queryFactory
-//                .select(
-//                        Projections.constructor(
-//                                ProblemWithBookmarkSummaryDto.class,
-//                                problem.id.as("problemId"),
-//                                problem.description,
-//                                problem.choice1,
-//                                problem.choice2,
-//                                problem.choice3,
-//                                problem.choice4,
-//                                problem.answerNumber,
-//                                problem.solution,
-//                                Expressions.cases()
-//                                        .when(isBookmarkedByMember(memberId, problem.id))
-//                                        .then(true)
-//                                        .otherwise(false)
-//                                        .as("isBookmark"),
-//                                exam.id.as("examId"),
-//                                exam.description.as("examDescription"),
-//                                exam.examYear,
-//                                exam.yearRound,
-//                                subject.id.as("subjectId"),
-//                                subject.name.as("subjectName"),
-//                                subject.sequence.as("subjectSequence")
-//                        )
-//                )
-//                .from(problem)
-//                .join(problem.exam, exam)
-//                .join(problem.subject, subject)
-//                .where(examIdEq(examId), subjectIdEq(subjectId))
-//                .offset(pageable.getOffset())
-//                .limit(pageable.getPageSize())
-//                .fetch();
-//    }
+    @Override
+    public Page<ProblemWithBookmarkSummaryDto> findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(Long memberId, Long examId, List<Long> subjectIds, Pageable pageable) {
+        List<ProblemWithBookmarkSummaryDto> content = queryFactory
+                .select(
+                        Projections.constructor(
+                                ProblemWithBookmarkSummaryDto.class,
+                                problem.id.as("problemId"),
+                                problem.description,
+                                Expressions.cases()
+                                        .when(isBookmarkedByMember(memberId, problem.id))
+                                        .then(true)
+                                        .otherwise(false)
+                                        .as("isBookmark"),
+                                exam.id.as("examId"),
+                                exam.description.as("examDescription"),
+                                subject.id.as("subjectId"),
+                                subject.name.as("subjectName"),
+                                subject.sequence.as("subjectSequence")
+                        )
+                )
+                .from(problem)
+                .join(problem.exam, exam)
+                .join(problem.subject, subject)
+                .join(bookmark).on(bookmark.problem.id.eq(problem.id))
+                .where(examIdEq(examId), subjectIdsIn(subjectIds))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> countQuery = queryFactory
+                .select(problem.count())
+                .from(problem)
+                .join(problem.exam, exam)
+                .join(problem.subject, subject)
+                .join(bookmark).on(bookmark.problem.id.eq(problem.id))
+                .where(examIdEq(examId), subjectIdsIn(subjectIds));
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    private Predicate subjectIdsIn(List<Long> subjectIds) {
+        return subjectIds != null ? subject.id.in(subjectIds) : null;
+    }
 
     private static BooleanExpression subjectIdEq(Long subjectId) {
         return subjectId != null ? subject.id.eq(subjectId) : null;
