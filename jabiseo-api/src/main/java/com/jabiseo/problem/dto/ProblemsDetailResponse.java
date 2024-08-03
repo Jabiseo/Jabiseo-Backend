@@ -15,29 +15,29 @@ public record ProblemsDetailResponse(
         int answerNumber,
         String solution
 ) {
-    public static ProblemsDetailResponse from(ProblemWithBookmarkDetailDto bookmarkedProblemDto) {
+    public static ProblemsDetailResponse from(ProblemWithBookmarkDetailDto bookmarkedProblemDetailDto) {
         return new ProblemsDetailResponse(
-                bookmarkedProblemDto.getProblemId(),
+                bookmarkedProblemDetailDto.problemId(),
                 ExamResponse.of(
-                        bookmarkedProblemDto.getExamId(),
-                        bookmarkedProblemDto.getExamDescription()
+                        bookmarkedProblemDetailDto.examId(),
+                        bookmarkedProblemDetailDto.examDescription()
                 ),
                 SubjectResponse.of(
-                        bookmarkedProblemDto.getSubjectId(),
-                        bookmarkedProblemDto.getSubjectSequence(),
-                        bookmarkedProblemDto.getSubjectName()
+                        bookmarkedProblemDetailDto.subjectId(),
+                        bookmarkedProblemDetailDto.subjectSequence(),
+                        bookmarkedProblemDetailDto.subjectName()
                 ),
-                bookmarkedProblemDto.isBookmark(),
-                bookmarkedProblemDto.getDescription(),
+                bookmarkedProblemDetailDto.isBookmark(),
+                bookmarkedProblemDetailDto.description(),
                 ChoiceResponse.fromChoices(List.of(
-                                bookmarkedProblemDto.getChoice1(),
-                                bookmarkedProblemDto.getChoice2(),
-                                bookmarkedProblemDto.getChoice3(),
-                                bookmarkedProblemDto.getChoice4()
+                                bookmarkedProblemDetailDto.choice1(),
+                                bookmarkedProblemDetailDto.choice2(),
+                                bookmarkedProblemDetailDto.choice3(),
+                                bookmarkedProblemDetailDto.choice4()
                         )
                 ),
-                bookmarkedProblemDto.getAnswerNumber(),
-                bookmarkedProblemDto.getSolution()
+                bookmarkedProblemDetailDto.answerNumber(),
+                bookmarkedProblemDetailDto.solution()
         );
     }
 }

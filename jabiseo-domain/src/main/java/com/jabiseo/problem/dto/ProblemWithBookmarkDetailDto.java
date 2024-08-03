@@ -1,29 +1,23 @@
 package com.jabiseo.problem.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+public record ProblemWithBookmarkDetailDto (
+    Long problemId,
+    String description,
+    String choice1,
+    String choice2,
+    String choice3,
+    String choice4,
+    int answerNumber,
+    String solution,
+    boolean isBookmark,
 
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-public class ProblemWithBookmarkDetailDto {
-    private Long problemId;
-    private String description;
-    private String choice1;
-    private String choice2;
-    private String choice3;
-    private String choice4;
-    private int answerNumber;
-    private String solution;
-    private boolean isBookmark;
+    Long examId,
+    String examDescription,
+    int examYear,
+    int yearRound,
 
-    private Long examId;
-    private String examDescription;
-    private int examYear;
-    private int yearRound;
-
-    private Long subjectId;
-    private String subjectName;
-    private int subjectSequence;
+    Long subjectId,
+    String subjectName,
+    int subjectSequence
+) {
 }
