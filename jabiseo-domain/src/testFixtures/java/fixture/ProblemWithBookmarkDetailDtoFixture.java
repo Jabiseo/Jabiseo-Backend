@@ -17,8 +17,6 @@ public class ProblemWithBookmarkDetailDtoFixture {
                 isBookmark,
                 problem.getExam().getId(),
                 problem.getExam().getDescription(),
-                problem.getExam().getExamYear(),
-                problem.getExam().getYearRound(),
                 problem.getSubject().getId(),
                 problem.getSubject().getName(),
                 problem.getSubject().getSequence()

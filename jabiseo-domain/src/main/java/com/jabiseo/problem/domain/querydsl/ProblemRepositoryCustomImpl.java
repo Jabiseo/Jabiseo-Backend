@@ -43,8 +43,6 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
                                         .as("isBookmark"),
                                 exam.id.as("examId"),
                                 exam.description.as("examDescription"),
-                                exam.examYear,
-                                exam.yearRound,
                                 subject.id.as("subjectId"),
                                 subject.name.as("subjectName"),
                                 subject.sequence.as("subjectSequence")
@@ -80,8 +78,6 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
                                         .as("isBookmark"),
                                 exam.id.as("examId"),
                                 exam.description.as("examDescription"),
-                                exam.examYear,
-                                exam.yearRound,
                                 subject.id.as("subjectId"),
                                 subject.name.as("subjectName"),
                                 subject.sequence.as("subjectSequence")
@@ -91,6 +87,43 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
                 .where(problem.id.in(problemIds))
                 .fetch();
     }
+
+//    @Override
+//    public List<ProblemWithBookmarkSummaryDto> findSummaryByExamIdAndSubjectIdWithBookmark(Long memberId, Long examId, Long subjectId, Pageable pageable) {
+//        return queryFactory
+//                .select(
+//                        Projections.constructor(
+//                                ProblemWithBookmarkSummaryDto.class,
+//                                problem.id.as("problemId"),
+//                                problem.description,
+//                                problem.choice1,
+//                                problem.choice2,
+//                                problem.choice3,
+//                                problem.choice4,
+//                                problem.answerNumber,
+//                                problem.solution,
+//                                Expressions.cases()
+//                                        .when(isBookmarkedByMember(memberId, problem.id))
+//                                        .then(true)
+//                                        .otherwise(false)
+//                                        .as("isBookmark"),
+//                                exam.id.as("examId"),
+//                                exam.description.as("examDescription"),
+//                                exam.examYear,
+//                                exam.yearRound,
+//                                subject.id.as("subjectId"),
+//                                subject.name.as("subjectName"),
+//                                subject.sequence.as("subjectSequence")
+//                        )
+//                )
+//                .from(problem)
+//                .join(problem.exam, exam)
+//                .join(problem.subject, subject)
+//                .where(examIdEq(examId), subjectIdEq(subjectId))
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize())
+//                .fetch();
+//    }
 
     private static BooleanExpression subjectIdEq(Long subjectId) {
         return subjectId != null ? subject.id.eq(subjectId) : null;

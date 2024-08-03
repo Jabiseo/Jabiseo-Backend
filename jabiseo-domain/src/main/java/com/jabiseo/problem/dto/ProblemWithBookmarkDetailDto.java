@@ -13,8 +13,6 @@ public record ProblemWithBookmarkDetailDto (
 
     Long examId,
     String examDescription,
-    int examYear,
-    int yearRound,
 
     Long subjectId,
     String subjectName,
