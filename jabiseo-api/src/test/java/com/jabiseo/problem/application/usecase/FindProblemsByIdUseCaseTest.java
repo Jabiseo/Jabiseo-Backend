@@ -62,7 +62,7 @@ class FindProblemsByIdUseCaseTest {
         );
         FindProblemsRequest request = new FindProblemsRequest(problemIds);
         given(memberRepository.getReferenceById(memberId)).willReturn(member);
-        given(problemRepository.findByIdsInWithBookmark(memberId, problemIds)).willReturn(problemWithBookmarkDetailDtos);
+        given(problemRepository.findDetailByIdsInWithBookmark(memberId, problemIds)).willReturn(problemWithBookmarkDetailDtos);
 
         //when
         FindProblemsResponse result = sut.execute(member.getId(), request);
@@ -87,7 +87,7 @@ class FindProblemsByIdUseCaseTest {
         problemIds.forEach(problemId -> createProblem(problemId, certificate));
         FindProblemsRequest request = new FindProblemsRequest(problemIds);
         given(memberRepository.getReferenceById(memberId)).willReturn(member);
-        given(problemRepository.findByIdsInWithBookmark(memberId, problemIds)).willReturn(List.of());
+        given(problemRepository.findDetailByIdsInWithBookmark(memberId, problemIds)).willReturn(List.of());
 
         //when & then
         assertThatThrownBy(() -> sut.execute(member.getId(), request))

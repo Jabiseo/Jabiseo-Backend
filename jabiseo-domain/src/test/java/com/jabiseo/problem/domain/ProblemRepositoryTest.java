@@ -90,7 +90,7 @@ class ProblemRepositoryTest {
     @DisplayName("로그인한 유저가 시험, 과목 조건에 따라 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
     void givenLoginMemberWithExamAndSubjectConditions_whenFindingProblems_thenFindProblems() {
         //when
-        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(
+        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(
                 memberId, examIds.get(0), subjectIds.get(0), count
         );
 
@@ -104,7 +104,7 @@ class ProblemRepositoryTest {
     @DisplayName("로그인한 유저가 시험을 제외한 과목 조건에 따라 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
     void givenLoginMemberWithSubjectConditions_whenFindingProblems_thenFindProblems() {
         //when
-        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(
+        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(
                 memberId, null, subjectIds.get(0), count
         );
 
@@ -118,7 +118,7 @@ class ProblemRepositoryTest {
     @DisplayName("비로그인 유저가 시험, 과목 조건에 따라 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
     void givenNonLoginMemberWithExamAndSubjectConditions_whenFindingProblems_thenFindProblems() {
         //when
-        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(
+        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(
                 null, examIds.get(0), subjectIds.get(0), count
         );
 
@@ -132,7 +132,7 @@ class ProblemRepositoryTest {
     @DisplayName("비로그인 유저가 시험을 제외한 과목 조건에 따라 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
     void givenNonLoginMemberWithSubjectConditions_whenFindingProblems_thenFindProblems() {
         //when
-        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findRandomByExamIdAndSubjectIdWithBookmark(
+        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(
                 null, null, subjectIds.get(0), count
         );
 
@@ -150,7 +150,7 @@ class ProblemRepositoryTest {
         newProblemIds.add(100L);
 
         //when
-        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findByIdsInWithBookmark(
+        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findDetailByIdsInWithBookmark(
                 memberId, newProblemIds
         );
 
@@ -164,7 +164,7 @@ class ProblemRepositoryTest {
     @DisplayName("로그인한 유저가 문제 id로 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
     void givenLoginMemberAndProblemIds_whenFindingProblemsByIds_thenFindProblems() {
         //when
-        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findByIdsInWithBookmark(
+        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findDetailByIdsInWithBookmark(
                 memberId, problemIds
         );
 
@@ -178,7 +178,7 @@ class ProblemRepositoryTest {
     @DisplayName("비로그인 유저가 문제 id로 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
     void givenNonLoginMemberAndProblemIds_whenFindingProblemsByIds_thenFindProblems() {
         //when
-        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findByIdsInWithBookmark(
+        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findDetailByIdsInWithBookmark(
                 null, problemIds
         );
 

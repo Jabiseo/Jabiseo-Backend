@@ -31,7 +31,7 @@ public class FindProblemsByIdUseCase {
 
         CertificateResponse certificateResponse = CertificateResponse.from(certificate);
         List<ProblemsDetailResponse> problemsDetailResponses =
-                problemRepository.findByIdsInWithBookmark(memberId, request.problemIds())
+                problemRepository.findDetailByIdsInWithBookmark(memberId, request.problemIds())
                 .stream()
                 .map(ProblemsDetailResponse::from)
                 .toList();
