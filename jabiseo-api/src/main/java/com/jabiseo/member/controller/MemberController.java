@@ -31,7 +31,7 @@ public class MemberController {
     }
 
     @GetMapping("/certificates")
-    public ResponseEntity<FindMyCurrentCertificateResponse> findMyCertificateStatus(
+    public ResponseEntity<FindMyCurrentCertificateResponse> findMyCurrentCertificate(
             @AuthenticatedMember AuthMember member
     ) {
         FindMyCurrentCertificateResponse result = findMyCurrentCertificateUseCase.execute(member.getMemberId());
@@ -39,7 +39,7 @@ public class MemberController {
     }
 
     @PatchMapping("/certificates")
-    public ResponseEntity<Void> updateMyCertificateStatus(
+    public ResponseEntity<Void> updateMyCurrentCertificate(
             @RequestBody UpdateMyCurrentCertificateRequest request,
             @AuthenticatedMember AuthMember member
     ) {
