@@ -90,13 +90,13 @@ class ProblemRepositoryTest {
     @DisplayName("로그인한 유저가 시험, 과목 조건에 따라 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
     void givenLoginMemberWithExamAndSubjectConditions_whenFindingProblems_thenFindProblems() {
         //when
-        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(
+        List<ProblemWithBookmarkDetailDto> dtos = problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(
                 memberId, examIds.get(0), subjectIds.get(0), count
         );
 
         //then
-        assertThat(problems).hasSize(2);
-        long trueCount = problems.stream().filter(ProblemWithBookmarkDetailDto::isBookmark).count();
+        assertThat(dtos).hasSize(2);
+        long trueCount = dtos.stream().filter(ProblemWithBookmarkDetailDto::isBookmark).count();
         assertThat(trueCount).isEqualTo(1);
     }
 
@@ -104,13 +104,13 @@ class ProblemRepositoryTest {
     @DisplayName("로그인한 유저가 시험을 제외한 과목 조건에 따라 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
     void givenLoginMemberWithSubjectConditions_whenFindingProblems_thenFindProblems() {
         //when
-        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(
+        List<ProblemWithBookmarkDetailDto> dtos = problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(
                 memberId, null, subjectIds.get(0), count
         );
 
         //then
-        assertThat(problems).hasSize(3);
-        long trueCount = problems.stream().filter(ProblemWithBookmarkDetailDto::isBookmark).count();
+        assertThat(dtos).hasSize(3);
+        long trueCount = dtos.stream().filter(ProblemWithBookmarkDetailDto::isBookmark).count();
         assertThat(trueCount).isEqualTo(2);
     }
 
@@ -118,13 +118,13 @@ class ProblemRepositoryTest {
     @DisplayName("비로그인 유저가 시험, 과목 조건에 따라 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
     void givenNonLoginMemberWithExamAndSubjectConditions_whenFindingProblems_thenFindProblems() {
         //when
-        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(
+        List<ProblemWithBookmarkDetailDto> dtos = problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(
                 null, examIds.get(0), subjectIds.get(0), count
         );
 
         //then
-        assertThat(problems).hasSize(2);
-        long trueCount = problems.stream().filter(ProblemWithBookmarkDetailDto::isBookmark).count();
+        assertThat(dtos).hasSize(2);
+        long trueCount = dtos.stream().filter(ProblemWithBookmarkDetailDto::isBookmark).count();
         assertThat(trueCount).isEqualTo(0);
     }
 
@@ -132,13 +132,13 @@ class ProblemRepositoryTest {
     @DisplayName("비로그인 유저가 시험을 제외한 과목 조건에 따라 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
     void givenNonLoginMemberWithSubjectConditions_whenFindingProblems_thenFindProblems() {
         //when
-        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(
+        List<ProblemWithBookmarkDetailDto> dtos = problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(
                 null, null, subjectIds.get(0), count
         );
 
         //then
-        assertThat(problems).hasSize(3);
-        long trueCount = problems.stream().filter(ProblemWithBookmarkDetailDto::isBookmark).count();
+        assertThat(dtos).hasSize(3);
+        long trueCount = dtos.stream().filter(ProblemWithBookmarkDetailDto::isBookmark).count();
         assertThat(trueCount).isEqualTo(0);
     }
 
@@ -150,13 +150,13 @@ class ProblemRepositoryTest {
         newProblemIds.add(100L);
 
         //when
-        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findDetailByIdsInWithBookmark(
+        List<ProblemWithBookmarkDetailDto> dtos = problemRepository.findDetailByIdsInWithBookmark(
                 memberId, newProblemIds
         );
 
         //then
-        assertThat(problems).hasSize(4);
-        long trueCount = problems.stream().filter(ProblemWithBookmarkDetailDto::isBookmark).count();
+        assertThat(dtos).hasSize(4);
+        long trueCount = dtos.stream().filter(ProblemWithBookmarkDetailDto::isBookmark).count();
         assertThat(trueCount).isEqualTo(2);
     }
 
@@ -164,13 +164,13 @@ class ProblemRepositoryTest {
     @DisplayName("로그인한 유저가 문제 id로 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
     void givenLoginMemberAndProblemIds_whenFindingProblemsByIds_thenFindProblems() {
         //when
-        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findDetailByIdsInWithBookmark(
+        List<ProblemWithBookmarkDetailDto> dtos = problemRepository.findDetailByIdsInWithBookmark(
                 memberId, problemIds
         );
 
         //then
-        assertThat(problems).hasSize(4);
-        long trueCount = problems.stream().filter(ProblemWithBookmarkDetailDto::isBookmark).count();
+        assertThat(dtos).hasSize(4);
+        long trueCount = dtos.stream().filter(ProblemWithBookmarkDetailDto::isBookmark).count();
         assertThat(trueCount).isEqualTo(2);
     }
 
@@ -178,13 +178,13 @@ class ProblemRepositoryTest {
     @DisplayName("비로그인 유저가 문제 id로 문제 세트를 조회하는 쿼리가 정상적으로 동작한다.")
     void givenNonLoginMemberAndProblemIds_whenFindingProblemsByIds_thenFindProblems() {
         //when
-        List<ProblemWithBookmarkDetailDto> problems = problemRepository.findDetailByIdsInWithBookmark(
+        List<ProblemWithBookmarkDetailDto> dtos = problemRepository.findDetailByIdsInWithBookmark(
                 null, problemIds
         );
 
         //then
-        assertThat(problems).hasSize(4);
-        long trueCount = problems.stream().filter(ProblemWithBookmarkDetailDto::isBookmark).count();
+        assertThat(dtos).hasSize(4);
+        long trueCount = dtos.stream().filter(ProblemWithBookmarkDetailDto::isBookmark).count();
         assertThat(trueCount).isEqualTo(0);
     }
 

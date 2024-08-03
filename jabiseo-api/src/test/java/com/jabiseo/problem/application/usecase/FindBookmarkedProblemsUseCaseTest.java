@@ -8,7 +8,9 @@ import com.jabiseo.member.exception.MemberErrorCode;
 import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
+import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryDto;
 import com.jabiseo.problem.dto.ProblemsResponse;
+import fixture.ProblemFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +26,7 @@ import java.util.List;
 import static fixture.CertificateFixture.createCertificate;
 import static fixture.ExamFixture.createExam;
 import static fixture.MemberFixture.createMember;
-import static fixture.ProblemFixture.createProblem;
+import static fixture.ProblemWithBookmarkSummaryDtoFixture.createProblemWithBookmarkSummaryDto;
 import static fixture.SubjectFixture.createSubject;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -51,20 +53,21 @@ class FindBookmarkedProblemsUseCaseTest {
         Long certificateId = 2L;
         Long examId = 3L;
         Long subjectId = 4L;
-        Long problemId1 = 5L;
-        Long problemId2 = 6L;
+        List<Long> problemIds = List.of(5L, 6L);
 
         Member member = createMember(memberId);
         Certificate certificate = createCertificate(certificateId);
         member.updateCurrentCertificate(certificate);
         createExam(examId, certificate);
         createSubject(subjectId, certificate);
-        Problem problem1 = createProblem(problemId1);
-        Problem problem2 = createProblem(problemId2);
+        List<Problem> problems = problemIds.stream().map(ProblemFixture::createProblem).toList();
         Pageable pageable = PageRequest.of(0, 10);
         given(memberRepository.getReferenceById(memberId)).willReturn(member);
-        given(problemRepository.findBookmarkedByExamIdAndSubjectIdIn(memberId, examId, List.of(subjectId), pageable))
-                .willReturn(new PageImpl<>(List.of(problem1, problem2), pageable, 2));
+        List<ProblemWithBookmarkSummaryDto> dtos = problems.stream()
+                .map(problem -> createProblemWithBookmarkSummaryDto(problem, true))
+                .toList();
+        given(problemRepository.findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(memberId, examId, List.of(subjectId), pageable))
+                .willReturn(new PageImpl<>(dtos, pageable, 2));
 
         //when
         FindBookmarkedProblemsResponse results = sut.execute(memberId, examId, List.of(subjectId), 0);
@@ -72,8 +75,8 @@ class FindBookmarkedProblemsUseCaseTest {
         //then
         assertThat(results.totalCount()).isEqualTo(2);
         assertThat(results.totalPage()).isEqualTo(1);
-        assertThat(results.problems().get(0)).isEqualTo(ProblemsResponse.from(problem1));
-        assertThat(results.problems().get(1)).isEqualTo(ProblemsResponse.from(problem2));
+        assertThat(results.problems().get(0)).isEqualTo(ProblemsResponse.from(dtos.get(0)));
+        assertThat(results.problems().get(1)).isEqualTo(ProblemsResponse.from(dtos.get(1)));
     }
 
     @Test
@@ -83,19 +86,20 @@ class FindBookmarkedProblemsUseCaseTest {
         Long memberId = 1L;
         Long certificateId = 2L;
         Long subjectId = 4L;
-        Long problemId1 = 5L;
-        Long problemId2 = 6L;
+        List<Long> problemIds = List.of(5L, 6L);
 
         Member member = createMember(memberId);
         Certificate certificate = createCertificate(certificateId);
         member.updateCurrentCertificate(certificate);
         createSubject(subjectId, certificate);
-        Problem problem1 = createProblem(problemId1);
-        Problem problem2 = createProblem(problemId2);
+        List<Problem> problems = problemIds.stream().map(ProblemFixture::createProblem).toList();
         Pageable pageable = PageRequest.of(0, 10);
         given(memberRepository.getReferenceById(memberId)).willReturn(member);
-        given(problemRepository.findBookmarkedBySubjectIdIn(memberId, List.of(subjectId), pageable))
-                .willReturn(new PageImpl<>(List.of(problem1, problem2), pageable, 2));
+        List<ProblemWithBookmarkSummaryDto> dtos = problems.stream()
+                .map(problem -> createProblemWithBookmarkSummaryDto(problem, true))
+                .toList();
+        given(problemRepository.findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(memberId, null, List.of(subjectId), pageable))
+                .willReturn(new PageImpl<>(dtos, pageable, 2));
 
         //when
         FindBookmarkedProblemsResponse results = sut.execute(memberId, null, List.of(subjectId), 0);
@@ -103,8 +107,8 @@ class FindBookmarkedProblemsUseCaseTest {
         //then
         assertThat(results.totalCount()).isEqualTo(2);
         assertThat(results.totalPage()).isEqualTo(1);
-        assertThat(results.problems().get(0)).isEqualTo(ProblemsResponse.from(problem1));
-        assertThat(results.problems().get(1)).isEqualTo(ProblemsResponse.from(problem2));
+        assertThat(results.problems().get(0)).isEqualTo(ProblemsResponse.from(dtos.get(0)));
+        assertThat(results.problems().get(1)).isEqualTo(ProblemsResponse.from(dtos.get(1)));
     }
 
     @Test

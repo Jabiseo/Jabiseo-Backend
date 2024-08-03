@@ -6,6 +6,7 @@ import com.jabiseo.certificate.domain.Subject;
 import com.jabiseo.common.config.JpaConfig;
 import com.jabiseo.common.config.QueryDslConfig;
 import com.jabiseo.member.domain.Member;
+import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryDto;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
@@ -92,12 +93,13 @@ class BookmarkedProblemRepositoryTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         //when
-        Page<Problem> problems = problemRepository.findBookmarkedByExamIdAndSubjectIdIn(
+        Page<ProblemWithBookmarkSummaryDto> dtos = problemRepository.findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(
                 memberId, examIds.get(0), List.of(subjectIds.get(0), subjectIds.get(1)), pageable
         );
 
         //then
-        assertThat(problems).hasSize(2);
+        assertThat(dtos).hasSize(2);
+        dtos.forEach(dto -> assertThat(dto.isBookmark()).isTrue());
     }
 
     @Test
@@ -118,12 +120,13 @@ class BookmarkedProblemRepositoryTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         //when
-        Page<Problem> problems = problemRepository.findBookmarkedBySubjectIdIn(
-                memberId, List.of(subjectIds.get(0), subjectIds.get(1)), pageable
+        Page<ProblemWithBookmarkSummaryDto> dtos = problemRepository.findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(
+                memberId, null, List.of(subjectIds.get(0), subjectIds.get(1)), pageable
         );
 
         //then
-        assertThat(problems).hasSize(3);
+        assertThat(dtos).hasSize(3);
+        dtos.forEach(dto -> assertThat(dto.isBookmark()).isTrue());
     }
 
     @ParameterizedTest
@@ -142,12 +145,13 @@ class BookmarkedProblemRepositoryTest {
         Pageable pageable = PageRequest.of(page, 10);
 
         //when
-        Page<Problem> problems = problemRepository.findBookmarkedBySubjectIdIn(
-                memberId, List.of(subjectIds.get(0), subjectIds.get(0)), pageable
+        Page<ProblemWithBookmarkSummaryDto> dtos = problemRepository.findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(
+                memberId, null, List.of(subjectIds.get(0), subjectIds.get(0)), pageable
         );
 
         //then
-        assertThat(problems).hasSize(pageSize);
+        assertThat(dtos).hasSize(pageSize);
+        dtos.forEach(dto -> assertThat(dto.isBookmark()).isTrue());
     }
 
 }
