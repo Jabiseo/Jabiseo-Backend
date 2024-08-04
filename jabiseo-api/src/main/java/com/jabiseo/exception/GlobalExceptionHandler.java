@@ -74,14 +74,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception e) {
-        StringBuilder errorMessage = new StringBuilder();
         log.error(e.getMessage());
-        errorMessage.append(e.getMessage())
-                .append(" ")
-                .append(CommonErrorCode.INTERNAL_SERVER_ERROR.getMessage());
+        String errorMessage = e.getMessage() +
+                              " " +
+                              CommonErrorCode.INTERNAL_SERVER_ERROR.getMessage();
         return ResponseEntity
                 .status(ErrorCode.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse(errorMessage.toString(), CommonErrorCode.INTERNAL_SERVER_ERROR.getErrorCode()));
+                .body(new ErrorResponse(errorMessage, CommonErrorCode.INTERNAL_SERVER_ERROR.getErrorCode()));
     }
 
 }
