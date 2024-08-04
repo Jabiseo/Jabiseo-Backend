@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        ErrorCode errorCode = CommonErrorCode.INVALID_REQUEST_PARAMETER;
+        ErrorCode errorCode = CommonErrorCode.INVALID_REQUEST_BODY;
         log.error(e.getMessage());
         StringBuilder errors = new StringBuilder();
         e.getBindingResult()
