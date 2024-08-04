@@ -12,7 +12,6 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
-
 @Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -20,6 +19,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<?> handleBusinessException(BusinessException e) {
+        log.info(e.getMessage());
         ErrorCode code = e.getErrorCode();
         return ResponseEntity
                 .status(code.getStatusCode())
@@ -28,6 +28,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PersistenceException.class)
     public ResponseEntity<?> handlePersistenceException(PersistenceException e) {
+        log.info(e.getMessage());
         ErrorCode code = e.getErrorCode();
         return ResponseEntity
                 .status(code.getStatusCode())
@@ -60,8 +61,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.info(e.getMessage());
         ErrorCode errorCode = CommonErrorCode.INVALID_REQUEST_BODY;
-        log.error(e.getMessage());
         StringBuilder errors = new StringBuilder();
         e.getBindingResult()
                 .getFieldErrors()
