@@ -18,6 +18,13 @@ public class SecurityConfig {
     private final JwtExceptionFilter jwtExceptionFilter;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
+    private static final String[] WHITE_LIST = {
+            "/api/auth/login",
+            "/api/certificates",
+            "/api/problems/set",
+            "/api/problems/search/**",
+    };
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // rest API , crsf 사용 X
@@ -30,10 +37,8 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/api/members/**").authenticated()
-                        .requestMatchers("/api/auth/logout").authenticated()
-                        .requestMatchers("/api/auth/withdraw").authenticated()
-                        .requestMatchers("/**").permitAll()
+                        .requestMatchers(WHITE_LIST).permitAll()
+                        .requestMatchers("/**").authenticated()
                 );
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
