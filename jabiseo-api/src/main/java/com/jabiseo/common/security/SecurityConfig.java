@@ -20,7 +20,7 @@ public class SecurityConfig {
 
     private static final String[] WHITE_LIST = {
             "/api/auth/login",
-            "/api/certificates",
+            "/api/certificates/**",
             "/api/problems/set",
             "/api/problems/search/**",
             "/api/dev/auth",
