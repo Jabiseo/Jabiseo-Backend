@@ -6,6 +6,7 @@ import com.jabiseo.member.domain.MemberRepository;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
 import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryDto;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,7 +27,9 @@ public class FindBookmarkedProblemsUseCase {
 
     private final ProblemRepository problemRepository;
 
-    public FindBookmarkedProblemsResponse execute(Long memberId, Long examId, List<Long> subjectIds, int page) {
+    //examId가 null일 경우 전체 시험을 대상으로 조회한다.
+    public FindBookmarkedProblemsResponse execute(Long memberId, @Nullable Long examId,
+                                                  List<Long> subjectIds, int page) {
 
         Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
 

@@ -9,6 +9,7 @@ import com.jabiseo.problem.dto.CertificateResponse;
 import com.jabiseo.problem.dto.FindProblemsResponse;
 import com.jabiseo.problem.dto.ProblemWithBookmarkDetailDto;
 import com.jabiseo.problem.dto.ProblemsDetailResponse;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,10 @@ public class FindProblemsUseCase {
     private final CertificateRepository certificateRepository;
     private final ProblemRepository problemRepository;
 
-    public FindProblemsResponse execute(Long memberId, Long certificateId, List<Long> subjectIds, Long examId, int count) {
+    //memberId가 null일 경우 비회원이므로 bookmark 유무가 모두 false로 응답된다.
+    //examId가 null일 경우 전체 시험을 대상으로 조회한다.
+    public FindProblemsResponse execute(@Nullable Long memberId, Long certificateId,
+                                        @Nullable Long examId, List<Long> subjectIds, int count) {
 
         Certificate certificate = certificateRepository.findById(certificateId)
                 .orElseThrow(() -> new CertificateBusinessException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));

@@ -38,15 +38,15 @@ public class ProblemController {
             @AuthenticatedMember AuthMember member,
             // TODO: Valid에 대한 테스트
             @RequestParam(name = "certificate-id") Long certificateId,
-            @RequestParam(name = "subject-id") List<Long> subjectIds,
             @RequestParam(name = "exam-id", required = false) Long examId,
+            @RequestParam(name = "subject-id") List<Long> subjectIds,
             @RequestParam
             @Min(value = 1, message = "과목 당 문제 수는 0보다 커야 합니다.")
             @Max(value = 20, message = "과목 당 문제 수는 20보다 작거나 같아야 합니다.")
             int count
     ) {
         FindProblemsResponse result =
-                findProblemsUseCase.execute(member.getMemberId(), certificateId, subjectIds, examId, count);
+                findProblemsUseCase.execute(member.getMemberId(), certificateId, examId, subjectIds, count);
         return ResponseEntity.ok(result);
     }
 
