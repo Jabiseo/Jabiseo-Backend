@@ -8,7 +8,7 @@ public record FindBookmarkedProblemsResponse(
         List<ProblemsResponse> problems
 ) {
 
-    public static FindBookmarkedProblemsResponse of(long totalCount, long totalPage, List<ProblemWithBookmarkSummaryDto> dtos) {
+    public static FindBookmarkedProblemsResponse of(long totalCount, long totalPage, List<ProblemWithBookmarkSummaryQueryDto> dtos) {
         return new FindBookmarkedProblemsResponse(
                 totalCount,
                 totalPage,

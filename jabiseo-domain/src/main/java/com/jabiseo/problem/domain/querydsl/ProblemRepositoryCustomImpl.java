@@ -1,7 +1,7 @@
 package com.jabiseo.problem.domain.querydsl;
 
-import com.jabiseo.problem.dto.ProblemWithBookmarkDetailDto;
-import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryDto;
+import com.jabiseo.problem.dto.ProblemWithBookmarkDetailQueryDto;
+import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryQueryDto;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -28,11 +28,11 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<ProblemWithBookmarkDetailDto> findDetailRandomByExamIdAndSubjectIdWithBookmark(Long memberId, Long examId, Long subjectId, int count) {
+    public List<ProblemWithBookmarkDetailQueryDto> findDetailRandomByExamIdAndSubjectIdWithBookmark(Long memberId, Long examId, Long subjectId, int count) {
         return queryFactory
                 .select(
                         Projections.constructor(
-                                ProblemWithBookmarkDetailDto.class,
+                                ProblemWithBookmarkDetailQueryDto.class,
                                 problem.id.as("problemId"),
                                 problem.description,
                                 problem.choice1,
@@ -63,11 +63,11 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
     }
 
     @Override
-    public List<ProblemWithBookmarkDetailDto> findDetailByIdsInWithBookmark(Long memberId, List<Long> problemIds) {
+    public List<ProblemWithBookmarkDetailQueryDto> findDetailByIdsInWithBookmark(Long memberId, List<Long> problemIds) {
         return queryFactory
                 .select(
                         Projections.constructor(
-                                ProblemWithBookmarkDetailDto.class,
+                                ProblemWithBookmarkDetailQueryDto.class,
                                 problem.id.as("problemId"),
                                 problem.description,
                                 problem.choice1,
@@ -94,11 +94,11 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
     }
 
     @Override
-    public Page<ProblemWithBookmarkSummaryDto> findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(Long memberId, Long examId, List<Long> subjectIds, Pageable pageable) {
-        List<ProblemWithBookmarkSummaryDto> content = queryFactory
+    public Page<ProblemWithBookmarkSummaryQueryDto> findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(Long memberId, Long examId, List<Long> subjectIds, Pageable pageable) {
+        List<ProblemWithBookmarkSummaryQueryDto> content = queryFactory
                 .select(
                         Projections.constructor(
-                                ProblemWithBookmarkSummaryDto.class,
+                                ProblemWithBookmarkSummaryQueryDto.class,
                                 problem.id.as("problemId"),
                                 problem.description,
                                 Expressions.cases()

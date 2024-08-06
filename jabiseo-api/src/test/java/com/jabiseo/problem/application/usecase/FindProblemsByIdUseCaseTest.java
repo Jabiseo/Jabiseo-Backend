@@ -7,7 +7,7 @@ import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindProblemsRequest;
 import com.jabiseo.problem.dto.FindProblemsResponse;
-import com.jabiseo.problem.dto.ProblemWithBookmarkDetailDto;
+import com.jabiseo.problem.dto.ProblemWithBookmarkDetailQueryDto;
 import com.jabiseo.problem.exception.ProblemBusinessException;
 import com.jabiseo.problem.exception.ProblemErrorCode;
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +22,7 @@ import java.util.List;
 import static fixture.CertificateFixture.createCertificate;
 import static fixture.MemberFixture.createMember;
 import static fixture.ProblemFixture.createProblem;
-import static fixture.ProblemWithBookmarkDetailDtoFixture.createProblemWithBookmarkDetailDto;
+import static fixture.ProblemWithBookmarkDetailQueryDtoFixture.createProblemWithBookmarkDetailQueryDto;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
@@ -55,14 +55,14 @@ class FindProblemsByIdUseCaseTest {
                 createProblem(problemIds.get(1), certificate),
                 createProblem(problemIds.get(2), certificate)
         );
-        List<ProblemWithBookmarkDetailDto> problemWithBookmarkDetailDtos = List.of(
-                createProblemWithBookmarkDetailDto(problems.get(0), true),
-                createProblemWithBookmarkDetailDto(problems.get(1), true),
-                createProblemWithBookmarkDetailDto(problems.get(2), true)
+        List<ProblemWithBookmarkDetailQueryDto> problemWithBookmarkDetailQueryDtos = List.of(
+                createProblemWithBookmarkDetailQueryDto(problems.get(0), true),
+                createProblemWithBookmarkDetailQueryDto(problems.get(1), true),
+                createProblemWithBookmarkDetailQueryDto(problems.get(2), true)
         );
         FindProblemsRequest request = new FindProblemsRequest(problemIds);
         given(memberRepository.getReferenceById(memberId)).willReturn(member);
-        given(problemRepository.findDetailByIdsInWithBookmark(memberId, problemIds)).willReturn(problemWithBookmarkDetailDtos);
+        given(problemRepository.findDetailByIdsInWithBookmark(memberId, problemIds)).willReturn(problemWithBookmarkDetailQueryDtos);
 
         //when
         FindProblemsResponse result = sut.execute(member.getId(), request);

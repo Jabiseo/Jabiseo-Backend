@@ -1,6 +1,6 @@
 package com.jabiseo.problem.dto;
 
-public record ProblemWithBookmarkDetailDto (
+public record ProblemWithBookmarkDetailQueryDto(
     Long problemId,
     String description,
     String choice1,

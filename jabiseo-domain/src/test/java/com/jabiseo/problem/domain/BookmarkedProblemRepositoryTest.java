@@ -6,7 +6,7 @@ import com.jabiseo.certificate.domain.Subject;
 import com.jabiseo.common.config.JpaConfig;
 import com.jabiseo.common.config.QueryDslConfig;
 import com.jabiseo.member.domain.Member;
-import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryDto;
+import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryQueryDto;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
@@ -93,7 +93,7 @@ class BookmarkedProblemRepositoryTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         //when
-        Page<ProblemWithBookmarkSummaryDto> dtos = problemRepository.findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(
+        Page<ProblemWithBookmarkSummaryQueryDto> dtos = problemRepository.findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(
                 memberId, examIds.get(0), List.of(subjectIds.get(0), subjectIds.get(1)), pageable
         );
 
@@ -120,7 +120,7 @@ class BookmarkedProblemRepositoryTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         //when
-        Page<ProblemWithBookmarkSummaryDto> dtos = problemRepository.findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(
+        Page<ProblemWithBookmarkSummaryQueryDto> dtos = problemRepository.findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(
                 memberId, null, List.of(subjectIds.get(0), subjectIds.get(1)), pageable
         );
 
@@ -145,7 +145,7 @@ class BookmarkedProblemRepositoryTest {
         Pageable pageable = PageRequest.of(page, 10);
 
         //when
-        Page<ProblemWithBookmarkSummaryDto> dtos = problemRepository.findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(
+        Page<ProblemWithBookmarkSummaryQueryDto> dtos = problemRepository.findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(
                 memberId, null, List.of(subjectIds.get(0), subjectIds.get(0)), pageable
         );
 

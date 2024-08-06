@@ -11,7 +11,7 @@ public record ProblemsResponse(
         String description
 ) {
 
-    public static ProblemsResponse from(ProblemWithBookmarkSummaryDto dto) {
+    public static ProblemsResponse from(ProblemWithBookmarkSummaryQueryDto dto) {
         return new ProblemsResponse(
                 dto.problemId(),
                 ExamResponse.of(dto.examId(), dto.examDescription()),

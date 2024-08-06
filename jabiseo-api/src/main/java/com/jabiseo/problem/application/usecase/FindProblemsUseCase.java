@@ -7,7 +7,7 @@ import com.jabiseo.certificate.exception.CertificateErrorCode;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.CertificateResponse;
 import com.jabiseo.problem.dto.FindProblemsResponse;
-import com.jabiseo.problem.dto.ProblemWithBookmarkDetailDto;
+import com.jabiseo.problem.dto.ProblemWithBookmarkDetailQueryDto;
 import com.jabiseo.problem.dto.ProblemsDetailResponse;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -34,12 +34,12 @@ public class FindProblemsUseCase {
         certificate.validateExamIdAndSubjectIds(examId, subjectIds);
 
         // TODO: 과목별로 문제를 가져와서 쿼리를 5번 날리는 로직에서 1번의 쿼리로 변경해야 함. 하지만 최종적으로 과목 순서가 유지되어야 함
-        List<ProblemWithBookmarkDetailDto> problemWithBookmarkDetailDtos = subjectIds.stream()
+        List<ProblemWithBookmarkDetailQueryDto> problemWithBookmarkDetailQueryDtos = subjectIds.stream()
                 .map(subjectId -> problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(memberId, examId, subjectId, count))
                 .flatMap(List::stream)
                 .toList();
 
-        List<ProblemsDetailResponse> problemsDetailResponses = problemWithBookmarkDetailDtos.stream()
+        List<ProblemsDetailResponse> problemsDetailResponses = problemWithBookmarkDetailQueryDtos.stream()
                 .map(ProblemsDetailResponse::from)
                 .toList();
 

@@ -10,7 +10,7 @@ import com.jabiseo.member.domain.Member;
 import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindProblemsResponse;
-import com.jabiseo.problem.dto.ProblemWithBookmarkDetailDto;
+import com.jabiseo.problem.dto.ProblemWithBookmarkDetailQueryDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +25,7 @@ import static fixture.CertificateFixture.createCertificate;
 import static fixture.ExamFixture.createExam;
 import static fixture.MemberFixture.createMember;
 import static fixture.ProblemFixture.createProblem;
-import static fixture.ProblemWithBookmarkDetailDtoFixture.createProblemWithBookmarkDetailDto;
+import static fixture.ProblemWithBookmarkDetailQueryDtoFixture.createProblemWithBookmarkDetailQueryDto;
 import static fixture.SubjectFixture.createSubject;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -67,18 +67,18 @@ class FindProblemsUseCaseTest {
                 createProblem(problemIds.get(2), certificate, exam, subjects.get(0))
         );
         Member member = createMember(memberId);
-        List<ProblemWithBookmarkDetailDto> problemWithBookmarkDetailDtos = problems.stream()
-                .map(problem -> createProblemWithBookmarkDetailDto(problem, false))
+        List<ProblemWithBookmarkDetailQueryDto> problemWithBookmarkDetailQueryDtos = problems.stream()
+                .map(problem -> createProblemWithBookmarkDetailQueryDto(problem, false))
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
         given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(memberId, examId, subjectIds.get(0), count))
-                .willReturn(List.of(problemWithBookmarkDetailDtos.get(0), problemWithBookmarkDetailDtos.get(2)));
+                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2)));
         given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(memberId, examId, subjectIds.get(1), count))
-                .willReturn(List.of(problemWithBookmarkDetailDtos.get(1)));
+                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(1)));
 
         //when
-        FindProblemsResponse result = sut.execute(member.getId(), certificateId, subjectIds, examId, count);
+        FindProblemsResponse result = sut.execute(member.getId(), certificateId, examId, subjectIds, count);
 
         //then
         assertThat(result.certificateInfo().certificateId()).isEqualTo(certificateId);
@@ -110,18 +110,18 @@ class FindProblemsUseCaseTest {
                 createProblem(problemIds.get(1), certificate, exams.get(1), subjects.get(1)),
                 createProblem(problemIds.get(2), certificate, exams.get(1), subjects.get(0))
         );
-        List<ProblemWithBookmarkDetailDto> problemWithBookmarkDetailDtos = problems.stream()
-                .map(problem -> createProblemWithBookmarkDetailDto(problem, false))
+        List<ProblemWithBookmarkDetailQueryDto> problemWithBookmarkDetailQueryDtos = problems.stream()
+                .map(problem -> createProblemWithBookmarkDetailQueryDto(problem, false))
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
         given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(memberId, null, subjectIds.get(0), count))
-                .willReturn(List.of(problemWithBookmarkDetailDtos.get(0), problemWithBookmarkDetailDtos.get(2)));
+                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2)));
         given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(memberId, null, subjectIds.get(1), count))
-                .willReturn(List.of(problemWithBookmarkDetailDtos.get(1)));
+                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(1)));
 
         //when
-        FindProblemsResponse result = sut.execute(memberId, certificateId, subjectIds, null, count);
+        FindProblemsResponse result = sut.execute(memberId, certificateId, null, subjectIds, count);
 
         //then
         assertThat(result.certificateInfo().certificateId()).isEqualTo(certificateId);
@@ -150,18 +150,18 @@ class FindProblemsUseCaseTest {
                 createProblem(problemIds.get(1), certificate, exam, subjects.get(1)),
                 createProblem(problemIds.get(2), certificate, exam, subjects.get(0))
         );
-        List<ProblemWithBookmarkDetailDto> problemWithBookmarkDetailDtos = problems.stream()
-                .map(problem -> createProblemWithBookmarkDetailDto(problem, false))
+        List<ProblemWithBookmarkDetailQueryDto> problemWithBookmarkDetailQueryDtos = problems.stream()
+                .map(problem -> createProblemWithBookmarkDetailQueryDto(problem, false))
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
         given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(0), count))
-                .willReturn(List.of(problemWithBookmarkDetailDtos.get(0), problemWithBookmarkDetailDtos.get(2)));
+                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2)));
         given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(1), count))
-                .willReturn(List.of(problemWithBookmarkDetailDtos.get(1)));
+                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(1)));
 
         //when
-        FindProblemsResponse result = sut.execute(null, certificateId, subjectIds, examId, count);
+        FindProblemsResponse result = sut.execute(null, certificateId, examId, subjectIds, count);
 
         //then
         assertThat(result.certificateInfo().certificateId()).isEqualTo(certificateId);
@@ -192,18 +192,18 @@ class FindProblemsUseCaseTest {
                 createProblem(problemIds.get(1), certificate, exams.get(1), subjects.get(1)),
                 createProblem(problemIds.get(2), certificate, exams.get(1), subjects.get(0))
         );
-        List<ProblemWithBookmarkDetailDto> problemWithBookmarkDetailDtos = problems.stream()
-                .map(problem -> createProblemWithBookmarkDetailDto(problem, false))
+        List<ProblemWithBookmarkDetailQueryDto> problemWithBookmarkDetailQueryDtos = problems.stream()
+                .map(problem -> createProblemWithBookmarkDetailQueryDto(problem, false))
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
         given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(null, null, subjectIds.get(0), count))
-                .willReturn(List.of(problemWithBookmarkDetailDtos.get(0), problemWithBookmarkDetailDtos.get(2)));
+                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2)));
         given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(null, null, subjectIds.get(1), count))
-                .willReturn(List.of(problemWithBookmarkDetailDtos.get(1)));
+                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(1)));
 
         //when
-        FindProblemsResponse result = sut.execute(null, certificateId, subjectIds, null, count);
+        FindProblemsResponse result = sut.execute(null, certificateId, null, subjectIds, count);
 
         //then
         assertThat(result.certificateInfo().certificateId()).isEqualTo(certificateId);
@@ -225,7 +225,7 @@ class FindProblemsUseCaseTest {
         given(certificateRepository.findById(anyLong())).willReturn(Optional.empty());
 
         //when & then
-        assertThatThrownBy(() -> sut.execute(memberId, certificateId, List.of(subjectId), examId, count))
+        assertThatThrownBy(() -> sut.execute(memberId, certificateId, examId, List.of(subjectId), count))
                 .isInstanceOf(CertificateBusinessException.class)
                 .hasFieldOrPropertyWithValue("errorCode", CertificateErrorCode.CERTIFICATE_NOT_FOUND);
     }

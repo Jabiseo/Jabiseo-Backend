@@ -1,6 +1,6 @@
 package com.jabiseo.problem.dto;
 
-public record ProblemWithBookmarkSummaryDto(
+public record ProblemWithBookmarkSummaryQueryDto(
         Long problemId,
         String description,
         boolean isBookmark,

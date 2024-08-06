@@ -5,7 +5,7 @@ import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
-import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryDto;
+import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryQueryDto;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -39,7 +39,7 @@ public class FindBookmarkedProblemsUseCase {
         Certificate certificate = member.getCurrentCertificate();
         certificate.validateExamIdAndSubjectIds(examId, subjectIds);
 
-        Page<ProblemWithBookmarkSummaryDto> dtos =
+        Page<ProblemWithBookmarkSummaryQueryDto> dtos =
                 problemRepository.findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(memberId, examId, subjectIds, pageable);
 
         return FindBookmarkedProblemsResponse.of(

@@ -8,7 +8,7 @@ import com.jabiseo.member.exception.MemberErrorCode;
 import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
-import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryDto;
+import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryQueryDto;
 import com.jabiseo.problem.dto.ProblemsResponse;
 import fixture.ProblemFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +26,7 @@ import java.util.List;
 import static fixture.CertificateFixture.createCertificate;
 import static fixture.ExamFixture.createExam;
 import static fixture.MemberFixture.createMember;
-import static fixture.ProblemWithBookmarkSummaryDtoFixture.createProblemWithBookmarkSummaryDto;
+import static fixture.ProblemWithBookmarkSummaryDtoFixture.createProblemWithBookmarkSummaryQueryDto;
 import static fixture.SubjectFixture.createSubject;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -63,8 +63,8 @@ class FindBookmarkedProblemsUseCaseTest {
         List<Problem> problems = problemIds.stream().map(ProblemFixture::createProblem).toList();
         Pageable pageable = PageRequest.of(0, 10);
         given(memberRepository.getReferenceById(memberId)).willReturn(member);
-        List<ProblemWithBookmarkSummaryDto> dtos = problems.stream()
-                .map(problem -> createProblemWithBookmarkSummaryDto(problem, true))
+        List<ProblemWithBookmarkSummaryQueryDto> dtos = problems.stream()
+                .map(problem -> createProblemWithBookmarkSummaryQueryDto(problem, true))
                 .toList();
         given(problemRepository.findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(memberId, examId, List.of(subjectId), pageable))
                 .willReturn(new PageImpl<>(dtos, pageable, 2));
@@ -95,8 +95,8 @@ class FindBookmarkedProblemsUseCaseTest {
         List<Problem> problems = problemIds.stream().map(ProblemFixture::createProblem).toList();
         Pageable pageable = PageRequest.of(0, 10);
         given(memberRepository.getReferenceById(memberId)).willReturn(member);
-        List<ProblemWithBookmarkSummaryDto> dtos = problems.stream()
-                .map(problem -> createProblemWithBookmarkSummaryDto(problem, true))
+        List<ProblemWithBookmarkSummaryQueryDto> dtos = problems.stream()
+                .map(problem -> createProblemWithBookmarkSummaryQueryDto(problem, true))
                 .toList();
         given(problemRepository.findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(memberId, null, List.of(subjectId), pageable))
                 .willReturn(new PageImpl<>(dtos, pageable, 2));
