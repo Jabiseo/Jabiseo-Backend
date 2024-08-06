@@ -6,15 +6,12 @@ import com.jabiseo.common.exception.ErrorCode;
 import com.jabiseo.database.exception.PersistenceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
@@ -40,10 +37,25 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HandlerMethodValidationException.class)
     public ResponseEntity<?> handleMethodValidationException(HandlerMethodValidationException e) {
         ErrorCode errorCode = CommonErrorCode.INVALID_REQUEST_PARAMETER;
+        String errorMessage;
+        if (e.getDetailMessageArguments() == null || e.getDetailMessageArguments().length == 0) {
+            errorMessage = errorCode.getMessage();
+        } else {
+            errorMessage = e.getDetailMessageArguments()[0].toString();
+        }
+
+        return ResponseEntity
+                .status(errorCode.getStatusCode())
+                .body(new ErrorResponse(errorMessage, errorCode.getErrorCode()));
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<?> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+        ErrorCode errorCode = CommonErrorCode.INVALID_REQUEST_PARAMETER;
         log.error(e.getMessage());
         return ResponseEntity
                 .status(errorCode.getStatusCode())
-                .body(new ErrorResponse(e.getMessage(), errorCode.getErrorCode()));
+                .body(new ErrorResponse(errorCode.getMessage(), errorCode.getErrorCode()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

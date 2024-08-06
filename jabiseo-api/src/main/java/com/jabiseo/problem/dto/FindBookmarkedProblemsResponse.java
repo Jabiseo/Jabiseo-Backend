@@ -1,7 +1,5 @@
 package com.jabiseo.problem.dto;
 
-import com.jabiseo.problem.domain.Problem;
-
 import java.util.List;
 
 public record FindBookmarkedProblemsResponse(
@@ -9,11 +7,12 @@ public record FindBookmarkedProblemsResponse(
         long totalPage,
         List<ProblemsResponse> problems
 ) {
-    public static FindBookmarkedProblemsResponse of(long totalCount, long totalPage, List<Problem> problems) {
+
+    public static FindBookmarkedProblemsResponse of(long totalCount, long totalPage, List<ProblemWithBookmarkSummaryQueryDto> dtos) {
         return new FindBookmarkedProblemsResponse(
                 totalCount,
                 totalPage,
-                problems.stream()
+                dtos.stream()
                         .map(ProblemsResponse::from)
                         .toList()
         );

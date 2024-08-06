@@ -3,9 +3,10 @@ package com.jabiseo.problem.application.usecase;
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
-import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
+import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryQueryDto;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -27,7 +27,9 @@ public class FindBookmarkedProblemsUseCase {
 
     private final ProblemRepository problemRepository;
 
-    public FindBookmarkedProblemsResponse execute(Long memberId, Optional<Long> examId, List<Long> subjectIds, int page) {
+    //examId가 null일 경우 전체 시험을 대상으로 조회한다.
+    public FindBookmarkedProblemsResponse execute(Long memberId, @Nullable Long examId,
+                                                  List<Long> subjectIds, int page) {
 
         Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
 
@@ -37,14 +39,13 @@ public class FindBookmarkedProblemsUseCase {
         Certificate certificate = member.getCurrentCertificate();
         certificate.validateExamIdAndSubjectIds(examId, subjectIds);
 
-        Page<Problem> problems = examId.map(id ->
-                        problemRepository.findBookmarkedByExamIdAndSubjectIdIn(memberId, id, subjectIds, pageable))
-                .orElseGet(() -> problemRepository.findBookmarkedBySubjectIdIn(memberId, subjectIds, pageable));
+        Page<ProblemWithBookmarkSummaryQueryDto> dtos =
+                problemRepository.findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(memberId, examId, subjectIds, pageable);
 
         return FindBookmarkedProblemsResponse.of(
-                problems.getTotalElements(),
-                problems.getTotalPages(),
-                problems.getContent()
+                dtos.getTotalElements(),
+                dtos.getTotalPages(),
+                dtos.getContent()
         );
     }
 }

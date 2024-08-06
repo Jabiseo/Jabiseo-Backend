@@ -2,11 +2,14 @@ package com.jabiseo.problem.controller;
 
 import com.jabiseo.config.auth.AuthMember;
 import com.jabiseo.config.auth.AuthenticatedMember;
-import com.jabiseo.problem.application.usecase.FindProblemsByIdUseCase;
-import com.jabiseo.problem.dto.*;
 import com.jabiseo.problem.application.usecase.CreateReportUseCase;
 import com.jabiseo.problem.application.usecase.FindBookmarkedProblemsUseCase;
+import com.jabiseo.problem.application.usecase.FindProblemsByIdUseCase;
 import com.jabiseo.problem.application.usecase.FindProblemsUseCase;
+import com.jabiseo.problem.dto.CreateReportRequest;
+import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
+import com.jabiseo.problem.dto.FindProblemsRequest;
+import com.jabiseo.problem.dto.FindProblemsResponse;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +19,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,15 +38,15 @@ public class ProblemController {
             @AuthenticatedMember AuthMember member,
             // TODO: Valid에 대한 테스트
             @RequestParam(name = "certificate-id") Long certificateId,
+            @RequestParam(name = "exam-id", required = false) Long examId,
             @RequestParam(name = "subject-id") List<Long> subjectIds,
-            @RequestParam(name = "exam-id", required = false) Optional<Long> examId,
             @RequestParam
             @Min(value = 1, message = "과목 당 문제 수는 0보다 커야 합니다.")
             @Max(value = 20, message = "과목 당 문제 수는 20보다 작거나 같아야 합니다.")
             int count
     ) {
         FindProblemsResponse result =
-                findProblemsUseCase.execute(certificateId, subjectIds, examId, count);
+                findProblemsUseCase.execute(member.getMemberId(), certificateId, examId, subjectIds, count);
         return ResponseEntity.ok(result);
     }
 
@@ -75,8 +77,7 @@ public class ProblemController {
     @GetMapping("/bookmarked")
     public ResponseEntity<FindBookmarkedProblemsResponse> findBookmarkedProblems(
             @AuthenticatedMember AuthMember member,
-            // TODO: DTO 기반으로 변경
-            @RequestParam(name = "exam-id") Optional<Long> examId,
+            @RequestParam(name = "exam-id") Long examId,
             @RequestParam(name = "subject-id") List<Long> subjectIds,
             int page
     ) {

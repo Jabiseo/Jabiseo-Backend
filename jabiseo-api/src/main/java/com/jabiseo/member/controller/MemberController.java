@@ -19,7 +19,9 @@ public class MemberController {
     private final FindMyCurrentCertificateUseCase findMyCurrentCertificateUseCase;
 
     private final UpdateMyCurrentCertificateUseCase updateMyCurrentCertificateUseCase;
+
     private final UpdateNicknameUseCase updateNicknameUseCase;
+
     private final UpdateProfileImageUseCase updateProfileImageUseCase;
 
     @GetMapping
@@ -31,7 +33,7 @@ public class MemberController {
     }
 
     @GetMapping("/certificates")
-    public ResponseEntity<FindMyCurrentCertificateResponse> findMyCertificateStatus(
+    public ResponseEntity<FindMyCurrentCertificateResponse> findMyCurrentCertificate(
             @AuthenticatedMember AuthMember member
     ) {
         FindMyCurrentCertificateResponse result = findMyCurrentCertificateUseCase.execute(member.getMemberId());
@@ -39,7 +41,7 @@ public class MemberController {
     }
 
     @PatchMapping("/certificates")
-    public ResponseEntity<Void> updateMyCertificateStatus(
+    public ResponseEntity<Void> updateMyCurrentCertificate(
             @RequestBody UpdateMyCurrentCertificateRequest request,
             @AuthenticatedMember AuthMember member
     ) {
@@ -48,13 +50,19 @@ public class MemberController {
     }
 
     @PatchMapping("/nickname")
-    public ResponseEntity<UpdateNicknameResponse> updateMyNickname(@AuthenticatedMember AuthMember member, @Valid @RequestBody UpdateNicknameRequest request) {
+    public ResponseEntity<UpdateNicknameResponse> updateMyNickname(
+            @AuthenticatedMember AuthMember member,
+            @Valid @RequestBody UpdateNicknameRequest request
+    ) {
         UpdateNicknameResponse result = updateNicknameUseCase.execute(member.getMemberId(), request);
         return ResponseEntity.ok(result);
     }
 
     @PatchMapping("/image")
-    public ResponseEntity<UpdateProfileImageResponse> updateImage(@AuthenticatedMember AuthMember member, @Valid @ModelAttribute UpdateProfileImageRequest request) {
+    public ResponseEntity<UpdateProfileImageResponse> updateImage(
+            @AuthenticatedMember AuthMember member,
+            @Valid @ModelAttribute UpdateProfileImageRequest request
+    ) {
         UpdateProfileImageResponse result = updateProfileImageUseCase.execute(member.getMemberId(), request);
         return ResponseEntity.ok(result);
     }

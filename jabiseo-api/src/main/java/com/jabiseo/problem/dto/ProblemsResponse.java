@@ -2,7 +2,6 @@ package com.jabiseo.problem.dto;
 
 import com.jabiseo.certificate.dto.ExamResponse;
 import com.jabiseo.certificate.dto.SubjectResponse;
-import com.jabiseo.problem.domain.Problem;
 
 public record ProblemsResponse(
         Long problemId,
@@ -11,13 +10,14 @@ public record ProblemsResponse(
         boolean isBookmark,
         String description
 ) {
-    public static ProblemsResponse from(Problem problem) {
+
+    public static ProblemsResponse from(ProblemWithBookmarkSummaryQueryDto dto) {
         return new ProblemsResponse(
-                problem.getId(),
-                ExamResponse.from(problem.getExam()),
-                SubjectResponse.from(problem.getSubject()),
-                false, // TODO: 로그인 기능 구현 후 수정
-                problem.getDescription()
+                dto.problemId(),
+                ExamResponse.of(dto.examId(), dto.examDescription()),
+                SubjectResponse.of(dto.subjectId(), dto.subjectSequence(), dto.subjectName()),
+                dto.isBookmark(),
+                dto.description()
         );
     }
 }

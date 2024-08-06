@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 
 import static fixture.CertificateFixture.createCertificate;
 import static fixture.ExamFixture.createExam;
@@ -33,7 +32,7 @@ class CertificateTest {
         subjectIdList.forEach(subjectId -> createSubject(subjectId, certificate));
 
         //when & then
-        assertDoesNotThrow(() -> certificate.validateExamIdAndSubjectIds(Optional.of(examId), subjectIdList));
+        assertDoesNotThrow(() -> certificate.validateExamIdAndSubjectIds(examId, subjectIdList));
     }
 
     @Test
@@ -47,7 +46,7 @@ class CertificateTest {
         subjectIdList.forEach(subjectId -> createSubject(subjectId, certificate));
 
         //when & then
-        assertDoesNotThrow(() -> certificate.validateExamIdAndSubjectIds(Optional.empty(), subjectIdList));
+        assertDoesNotThrow(() -> certificate.validateExamIdAndSubjectIds(null, subjectIdList));
     }
 
     @Test
@@ -64,7 +63,7 @@ class CertificateTest {
         subjectIdList.forEach(subjectId -> createSubject(subjectId, certificate));
 
         //when & then
-        assertThatThrownBy(() -> certificate.validateExamIdAndSubjectIds(Optional.of(invalidExamId), subjectIdList))
+        assertThatThrownBy(() -> certificate.validateExamIdAndSubjectIds(invalidExamId, subjectIdList))
                 .isInstanceOf(CertificateBusinessException.class)
                 .hasFieldOrPropertyWithValue("errorCode", CertificateErrorCode.EXAM_NOT_FOUND_IN_CERTIFICATE);
     }
@@ -83,7 +82,7 @@ class CertificateTest {
         subjectIdList.forEach(subjectId -> createSubject(subjectId, certificate));
 
         //when & then
-        assertThatThrownBy(() -> certificate.validateExamIdAndSubjectIds(Optional.of(examId), invalidSubjectIdList))
+        assertThatThrownBy(() -> certificate.validateExamIdAndSubjectIds(examId, invalidSubjectIdList))
                 .isInstanceOf(CertificateBusinessException.class)
                 .hasFieldOrPropertyWithValue("errorCode", CertificateErrorCode.SUBJECT_NOT_FOUND_IN_CERTIFICATE);
     }

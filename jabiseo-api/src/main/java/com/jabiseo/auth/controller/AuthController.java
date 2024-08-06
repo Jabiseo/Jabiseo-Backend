@@ -32,19 +32,26 @@ public class AuthController {
     private final WithdrawUseCase withdrawUseCase;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResponse> login(
+            @Valid @RequestBody LoginRequest loginRequest
+    ) {
         LoginResponse result = loginUseCase.execute(loginRequest);
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<ReissueResponse> reissue(@Valid @RequestBody ReissueRequest request, @AuthenticatedMember AuthMember member) {
+    public ResponseEntity<ReissueResponse> reissue(
+            @Valid @RequestBody ReissueRequest request,
+            @AuthenticatedMember AuthMember member
+    ) {
         ReissueResponse result = reissueUseCase.execute(request, member.getMemberId());
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@AuthenticatedMember AuthMember member) {
+    public ResponseEntity<Void> logout(
+            @AuthenticatedMember AuthMember member
+    ) {
         logoutUseCase.execute(member.getMemberId());
         return ResponseEntity.noContent().build();
     }

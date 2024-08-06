@@ -9,4 +9,8 @@ public record ExamResponse(
     public static ExamResponse from(Exam exam) {
         return new ExamResponse(exam.getId(), exam.getDescription());
     }
+
+    public static ExamResponse of(Long examId, String description) {
+        return new ExamResponse(examId, description);
+    }
 }

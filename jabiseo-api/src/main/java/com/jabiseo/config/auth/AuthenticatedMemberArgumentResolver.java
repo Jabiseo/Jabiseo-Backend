@@ -3,6 +3,7 @@ package com.jabiseo.config.auth;
 import com.jabiseo.auth.exception.AuthenticationBusinessException;
 import com.jabiseo.auth.exception.AuthenticationErrorCode;
 import org.springframework.core.MethodParameter;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -22,7 +23,7 @@ public class AuthenticatedMemberArgumentResolver implements HandlerMethodArgumen
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         Authentication authentication = SecurityContextHolder.getContext()
                 .getAuthentication();
 
@@ -30,8 +31,10 @@ public class AuthenticatedMemberArgumentResolver implements HandlerMethodArgumen
             throw new AuthenticationBusinessException(AuthenticationErrorCode.REQUIRE_LOGIN);
         }
 
-        Long memberId = Long.parseLong(authentication.getPrincipal().toString());
-
-        return new AuthMember(memberId);
+        if (authentication instanceof AnonymousAuthenticationToken) {
+            return new AuthMember(null);
+        } else {
+            return new AuthMember(Long.parseLong(authentication.getPrincipal().toString()));
+        }
     }
 }

@@ -2,7 +2,6 @@ package com.jabiseo.problem.dto;
 
 import com.jabiseo.certificate.dto.ExamResponse;
 import com.jabiseo.certificate.dto.SubjectResponse;
-import com.jabiseo.problem.domain.Problem;
 
 import java.util.List;
 
@@ -16,16 +15,29 @@ public record ProblemsDetailResponse(
         int answerNumber,
         String solution
 ) {
-    public static ProblemsDetailResponse from(Problem problem) {
+    public static ProblemsDetailResponse from(ProblemWithBookmarkDetailQueryDto bookmarkedProblemDetailDto) {
         return new ProblemsDetailResponse(
-                problem.getId(),
-                ExamResponse.from(problem.getExam()),
-                SubjectResponse.from(problem.getSubject()),
-                false, // TODO: 로그인 기능 구현 후 수정
-                problem.getDescription(),
-                ChoiceResponse.fromChoices(problem.getChoices()),
-                problem.getAnswerNumber(),
-                problem.getSolution()
+                bookmarkedProblemDetailDto.problemId(),
+                ExamResponse.of(
+                        bookmarkedProblemDetailDto.examId(),
+                        bookmarkedProblemDetailDto.examDescription()
+                ),
+                SubjectResponse.of(
+                        bookmarkedProblemDetailDto.subjectId(),
+                        bookmarkedProblemDetailDto.subjectSequence(),
+                        bookmarkedProblemDetailDto.subjectName()
+                ),
+                bookmarkedProblemDetailDto.isBookmark(),
+                bookmarkedProblemDetailDto.description(),
+                ChoiceResponse.fromChoices(List.of(
+                                bookmarkedProblemDetailDto.choice1(),
+                                bookmarkedProblemDetailDto.choice2(),
+                                bookmarkedProblemDetailDto.choice3(),
+                                bookmarkedProblemDetailDto.choice4()
+                        )
+                ),
+                bookmarkedProblemDetailDto.answerNumber(),
+                bookmarkedProblemDetailDto.solution()
         );
     }
 }
