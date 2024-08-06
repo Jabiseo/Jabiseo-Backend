@@ -23,6 +23,7 @@ public class SecurityConfig {
             "/api/certificates",
             "/api/problems/set",
             "/api/problems/search/**",
+            "/api/dev/auth",
     };
 
     @Bean
