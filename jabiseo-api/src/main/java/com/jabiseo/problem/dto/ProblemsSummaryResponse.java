@@ -3,7 +3,7 @@ package com.jabiseo.problem.dto;
 import com.jabiseo.certificate.dto.ExamResponse;
 import com.jabiseo.certificate.dto.SubjectResponse;
 
-public record ProblemsResponse(
+public record ProblemsSummaryResponse(
         Long problemId,
         ExamResponse examInfo,
         SubjectResponse subjectInfo,
@@ -11,8 +11,8 @@ public record ProblemsResponse(
         String description
 ) {
 
-    public static ProblemsResponse from(ProblemWithBookmarkSummaryQueryDto dto) {
-        return new ProblemsResponse(
+    public static ProblemsSummaryResponse from(ProblemWithBookmarkSummaryQueryDto dto) {
+        return new ProblemsSummaryResponse(
                 dto.problemId(),
                 ExamResponse.of(dto.examId(), dto.examDescription()),
                 SubjectResponse.of(dto.subjectId(), dto.subjectSequence(), dto.subjectName()),

@@ -9,7 +9,7 @@ import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
 import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryQueryDto;
-import com.jabiseo.problem.dto.ProblemsResponse;
+import com.jabiseo.problem.dto.ProblemsSummaryResponse;
 import fixture.ProblemFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -75,8 +75,8 @@ class FindBookmarkedProblemsUseCaseTest {
         //then
         assertThat(results.totalCount()).isEqualTo(2);
         assertThat(results.totalPage()).isEqualTo(1);
-        assertThat(results.problems().get(0)).isEqualTo(ProblemsResponse.from(dtos.get(0)));
-        assertThat(results.problems().get(1)).isEqualTo(ProblemsResponse.from(dtos.get(1)));
+        assertThat(results.problems().get(0)).isEqualTo(ProblemsSummaryResponse.from(dtos.get(0)));
+        assertThat(results.problems().get(1)).isEqualTo(ProblemsSummaryResponse.from(dtos.get(1)));
     }
 
     @Test
@@ -107,8 +107,8 @@ class FindBookmarkedProblemsUseCaseTest {
         //then
         assertThat(results.totalCount()).isEqualTo(2);
         assertThat(results.totalPage()).isEqualTo(1);
-        assertThat(results.problems().get(0)).isEqualTo(ProblemsResponse.from(dtos.get(0)));
-        assertThat(results.problems().get(1)).isEqualTo(ProblemsResponse.from(dtos.get(1)));
+        assertThat(results.problems().get(0)).isEqualTo(ProblemsSummaryResponse.from(dtos.get(0)));
+        assertThat(results.problems().get(1)).isEqualTo(ProblemsSummaryResponse.from(dtos.get(1)));
     }
 
     @Test

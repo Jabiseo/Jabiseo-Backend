@@ -5,7 +5,6 @@ import com.jabiseo.auth.dto.LoginResponse;
 import com.jabiseo.common.exception.CommonErrorCode;
 import com.jabiseo.exception.ErrorResponse;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,9 @@ public class DevAuthController {
     private static final String LIMIT_PROFILE = "local";
 
     @GetMapping("/dev/auth")
-    public ResponseEntity<?> devAuth(@RequestParam(value = "member-id") @NotBlank String memberId) {
+    public ResponseEntity<?> devAuth(
+            @RequestParam(value = "member-id") @NotBlank String memberId
+    ) {
         if (!isLocalProfiles(environment.getActiveProfiles())) {
             return ResponseEntity.status(CommonErrorCode.FORBIDDEN.getStatusCode()).body(ErrorResponse.of(CommonErrorCode.FORBIDDEN));
         }
