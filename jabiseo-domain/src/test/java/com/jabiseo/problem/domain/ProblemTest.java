@@ -6,10 +6,14 @@ import com.jabiseo.certificate.exception.CertificateErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static fixture.CertificateFixture.createCertificate;
 import static fixture.ProblemFixture.createProblem;
+import static fixture.ProblemFixture.createProblemWithAnswer;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -47,5 +51,19 @@ class ProblemTest {
                 .hasFieldOrPropertyWithValue("errorCode", CertificateErrorCode.PROBLEM_NOT_FOUND_IN_CERTIFICATE);
     }
 
+    @ParameterizedTest
+    @DisplayName("문제를 채점한다.")
+    @CsvSource({"1, false", "2, false", "3, true", "4, false"})
+    void givenProblemAndChoice_whenCheckProblem_thenCheckAnswer(int choice, boolean checkResult) {
+        //given
+        Long certificateId = 1L;
+        Long problemId = 2L;
+
+        Certificate certificate = createCertificate(certificateId);
+        Problem problem = createProblemWithAnswer(problemId, 3, certificate);
+
+        //when & then
+        assertThat(problem.checkAnswer(choice)).isEqualTo(checkResult);
+    }
 
 }

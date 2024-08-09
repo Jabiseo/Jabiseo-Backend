@@ -37,6 +37,24 @@ public class ProblemFixture {
         return createProblem(id, createCertificate(1234L));
     }
 
+    public static Problem createProblemWithAnswer(Long id, int answer, Certificate certificate) {
+        Problem problem = Problem.of(
+                "problem description",
+                "choice1",
+                "choice2",
+                "choice3",
+                "choice4",
+                answer,
+                "problem theory",
+                1,
+                certificate,
+                ExamFixture.createExam(5432L, certificate),
+                createSubject(9876L, certificate)
+        );
+        ReflectionTestUtils.setField(problem, "id", id);
+        return problem;
+    }
+
     public static Problem createProblem(Certificate certificate, Exam exam, Subject subject) {
         return Problem.of(
                 "problem description",
