@@ -79,4 +79,8 @@ public class Problem {
             throw new CertificateBusinessException(CertificateErrorCode.PROBLEM_NOT_FOUND_IN_CERTIFICATE);
         }
     }
+
+    public boolean checkAnswer(int choice) {
+        return this.answerNumber == choice;
+    }
 }
