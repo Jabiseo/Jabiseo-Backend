@@ -64,7 +64,7 @@ class CreateLearningUseCaseTest {
         Long memberId = 1L;
         Long certificateId = 2L;
         Member member = createMember(memberId);
-        given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+        given(memberRepository.getReferenceById(memberId)).willReturn(member);
         CreateLearningRequest request = new CreateLearningRequest(learningTime, "EXAM", certificateId, List.of());
 
         //when & then
@@ -84,7 +84,7 @@ class CreateLearningUseCaseTest {
         Member member = createMember(memberId);
         Certificate certificate = createCertificate(certificateId);
         List<Problem> problems = problemIds.stream().map(problemId -> createProblem(problemId, certificate)).toList();
-        given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+        given(memberRepository.getReferenceById(memberId)).willReturn(member);
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
         given(problemRepository.findAllById(problemIds)).willReturn(List.of());
 
@@ -113,7 +113,7 @@ class CreateLearningUseCaseTest {
         Certificate anotherCertificate = createCertificate(anotherCertificateId);
         List<Problem> problems = problemIds.stream().map(problemId -> createProblem(problemId, anotherCertificate)).toList();
 
-        given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+        given(memberRepository.getReferenceById(memberId)).willReturn(member);
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
         given(problemRepository.findAllById(problemIds)).willReturn(problems);
 
@@ -164,7 +164,7 @@ class CreateLearningUseCaseTest {
         List<Problem> problems = problemIds.stream().map(problemId -> createProblem(problemId, certificate)).toList();
         Learning learning = createLearning(learningId, certificate);
 
-        given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+        given(memberRepository.getReferenceById(memberId)).willReturn(member);
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
         given(problemRepository.findAllById(problemIds)).willReturn(problems);
         given(problemSolvingRepository.saveAll(any())).willReturn(List.of());
