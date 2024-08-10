@@ -29,15 +29,20 @@ public class FindProblemsByIdUseCase {
         member.validateCurrentCertificate();
         Certificate certificate = member.getCurrentCertificate();
 
+        List<Long> problemIds = request.problemIds()
+                .stream()
+                .distinct()
+                .toList();
+
         CertificateResponse certificateResponse = CertificateResponse.from(certificate);
         List<ProblemsDetailResponse> problemsDetailResponses =
-                problemRepository.findDetailByIdsInWithBookmark(memberId, request.problemIds())
+                problemRepository.findDetailByIdsInWithBookmark(memberId, problemIds)
                 .stream()
                 .map(ProblemsDetailResponse::from)
                 .toList();
 
         //요청 개수와 실제 데이터 개수가 다르면 옳지 않은 문제 ID가 요청되었다는 것
-        if (problemsDetailResponses.size() != request.problemIds().size()) {
+        if (problemsDetailResponses.size() != problemIds.size()) {
             throw new ProblemBusinessException(ProblemErrorCode.PROBLEM_NOT_FOUND);
         }
 
