@@ -127,6 +127,29 @@ class CreateLearningUseCaseTest {
     }
 
     @Test
+    @DisplayName("한 문제를 여러 번 풀었다는 결과가 주어지면 예외가 발생한다.")
+    void givenDuplicatedProblem_whenCreateLearning_thenThrowsException() {
+        //given
+        Long learningTime = 100L;
+        Long memberId = 1L;
+        Long certificateId = 2L;
+        List<Long> problemIds = List.of(3L, 3L);
+
+        Certificate certificate = createCertificate(certificateId);
+        List<Problem> problems = problemIds.stream().map(problemId -> createProblem(problemId, certificate)).toList();
+
+        given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
+
+        CreateLearningRequest request = new CreateLearningRequest(learningTime, "EXAM", certificateId,
+                problems.stream().map(problem -> new ProblemResultRequest(problem.getId(), 1)).toList());
+
+        //when
+        assertThatThrownBy(() -> sut.execute(memberId, request))
+                .isInstanceOf(ProblemBusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ProblemErrorCode.DUPLICATED_SOLVING_PROBLEM);
+    }
+
+    @Test
     @DisplayName("문제 풀이 결과가 주어지면 학습 결과 생성에 성공한다.")
     void givenResultOfProblemSolving_whenCreateLearning_thenCreateLearning() {
         //given
