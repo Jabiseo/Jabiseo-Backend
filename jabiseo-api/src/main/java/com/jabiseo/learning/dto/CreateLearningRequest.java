@@ -15,7 +15,7 @@ public record CreateLearningRequest(
         Long learningTime,
 
         @EnumValid(enumClass = LearningMode.class, message = "학습 모드가 올바르지 않습니다.")
-        LearningMode learningMode,
+        String learningMode,
 
         @NotNull(message = "자격증 ID를 입력해야 합니다.")
         Long certificateId,

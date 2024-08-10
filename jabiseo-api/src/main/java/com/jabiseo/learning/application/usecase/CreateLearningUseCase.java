@@ -4,10 +4,7 @@ import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.certificate.domain.CertificateRepository;
 import com.jabiseo.certificate.exception.CertificateBusinessException;
 import com.jabiseo.certificate.exception.CertificateErrorCode;
-import com.jabiseo.learning.domain.Learning;
-import com.jabiseo.learning.domain.LearningRepository;
-import com.jabiseo.learning.domain.ProblemSolving;
-import com.jabiseo.learning.domain.ProblemSolvingRepository;
+import com.jabiseo.learning.domain.*;
 import com.jabiseo.learning.dto.CreateLearningRequest;
 import com.jabiseo.learning.dto.ProblemResultRequest;
 import com.jabiseo.member.domain.Member;
@@ -42,7 +39,7 @@ public class CreateLearningUseCase {
         Certificate certificate = certificateRepository.findById(request.certificateId())
                 .orElseThrow(() -> new CertificateBusinessException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));
 
-        Learning learning = Learning.of(request.learningMode(), request.learningTime(), certificate);
+        Learning learning = Learning.of(LearningMode.valueOf(request.learningMode()), request.learningTime(), certificate);
         learningRepository.save(learning);
 
         //문제들의 id 리스트를 뽑아내 한 번의 쿼리로 찾아옴

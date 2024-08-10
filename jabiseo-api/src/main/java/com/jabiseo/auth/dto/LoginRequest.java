@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 public record LoginRequest(
         @NotNull
         String idToken,
-        @EnumValid(enumClass = OauthServer.class, message = "oauthServer Type이 잘못됐습니다.")
-        String oauthServer) {
+        @EnumValid(enumClass = OauthServer.class, message = "oauthServer Type이 올바르지 않습니다.")
+        String oauthServer
+) {
 }

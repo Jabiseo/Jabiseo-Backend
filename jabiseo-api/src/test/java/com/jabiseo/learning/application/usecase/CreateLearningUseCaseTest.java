@@ -65,7 +65,7 @@ class CreateLearningUseCaseTest {
         Long certificateId = 2L;
         Member member = createMember(memberId);
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-        CreateLearningRequest request = new CreateLearningRequest(learningTime, LearningMode.EXAM, certificateId, List.of());
+        CreateLearningRequest request = new CreateLearningRequest(learningTime, "EXAM", certificateId, List.of());
 
         //when & then
         assertThatThrownBy(() -> sut.execute(memberId, request))
@@ -88,7 +88,7 @@ class CreateLearningUseCaseTest {
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
         given(problemRepository.findAllById(problemIds)).willReturn(List.of());
 
-        CreateLearningRequest request = new CreateLearningRequest(learningTime, LearningMode.EXAM, certificateId,
+        CreateLearningRequest request = new CreateLearningRequest(learningTime, "EXAM", certificateId,
                 problems.stream().map(problem -> new ProblemResultRequest(problem.getId(), 1)).toList());
 
         //when & then
@@ -117,7 +117,7 @@ class CreateLearningUseCaseTest {
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
         given(problemRepository.findAllById(problemIds)).willReturn(problems);
 
-        CreateLearningRequest request = new CreateLearningRequest(learningTime, LearningMode.EXAM, certificateId,
+        CreateLearningRequest request = new CreateLearningRequest(learningTime, "EXAM", certificateId,
                 problems.stream().map(problem -> new ProblemResultRequest(problem.getId(), 1)).toList());
 
         //when & then
@@ -147,7 +147,7 @@ class CreateLearningUseCaseTest {
         given(problemSolvingRepository.saveAll(any())).willReturn(List.of());
         given(learningRepository.save(any())).willReturn(learning);
 
-        CreateLearningRequest request = new CreateLearningRequest(learningTime, LearningMode.EXAM, certificateId,
+        CreateLearningRequest request = new CreateLearningRequest(learningTime, "EXAM", certificateId,
                 problems.stream().map(problem -> new ProblemResultRequest(problem.getId(), 1)).toList());
 
         //when
