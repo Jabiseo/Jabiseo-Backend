@@ -39,6 +39,8 @@ public class CreateLearningUseCase {
         Certificate certificate = certificateRepository.findById(request.certificateId())
                 .orElseThrow(() -> new CertificateBusinessException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));
 
+        validateDuplicatedSolving(request);
+
         Learning learning = Learning.of(LearningMode.valueOf(request.learningMode()), request.learningTime(), certificate);
         learningRepository.save(learning);
 
@@ -53,6 +55,12 @@ public class CreateLearningUseCase {
         problemSolvingRepository.saveAll(problemSolvings);
 
         return learning.getId();
+    }
+
+    private static void validateDuplicatedSolving(CreateLearningRequest request) {
+        if (request.problems().stream().distinct().count() != request.problems().size()) {
+            throw new ProblemBusinessException(ProblemErrorCode.DUPLICATED_SOLVING_PROBLEM);
+        }
     }
 
     private List<Problem> findSolvedProblems(CreateLearningRequest request) {
