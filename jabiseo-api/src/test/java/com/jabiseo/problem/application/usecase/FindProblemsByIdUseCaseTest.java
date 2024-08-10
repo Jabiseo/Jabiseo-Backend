@@ -75,6 +75,41 @@ class FindProblemsByIdUseCaseTest {
     }
 
     @Test
+    @DisplayName("문제 세트 조회 요청 시 문제 ID가 중복되면 중복 제거 후 결과를 반환한다.")
+    void givenDuplicatedProblemIds_whenFindingProblems_thenRemoveDuplicatedProblemIds() {
+        //given
+        Long memberId = 1L;
+        Long certificateId = 2L;
+        List<Long> problemIds = List.of(3L, 4L, 5L);
+        List<Long> requestProblemIds = List.of(3L, 4L, 5L, 5L, 4L);
+        Member member = createMember(memberId);
+        Certificate certificate = createCertificate(certificateId);
+        member.updateCurrentCertificate(certificate);
+        List<Problem> problems = List.of(
+                createProblem(problemIds.get(0), certificate),
+                createProblem(problemIds.get(1), certificate),
+                createProblem(problemIds.get(2), certificate)
+        );
+        List<ProblemWithBookmarkDetailQueryDto> problemWithBookmarkDetailQueryDtos = List.of(
+                createProblemWithBookmarkDetailQueryDto(problems.get(0), true),
+                createProblemWithBookmarkDetailQueryDto(problems.get(1), true),
+                createProblemWithBookmarkDetailQueryDto(problems.get(2), true)
+        );
+        FindProblemsRequest request = new FindProblemsRequest(requestProblemIds);
+        given(memberRepository.getReferenceById(memberId)).willReturn(member);
+        given(problemRepository.findDetailByIdsInWithBookmark(memberId, problemIds)).willReturn(problemWithBookmarkDetailQueryDtos);
+
+        //when
+        FindProblemsResponse result = sut.execute(member.getId(), request);
+
+        //then
+        assertThat(result.certificateInfo().certificateId()).isEqualTo(certificateId);
+        assertThat(result.problems().get(0).problemId()).isEqualTo(problemIds.get(0));
+        assertThat(result.problems().get(1).problemId()).isEqualTo(problemIds.get(1));
+        assertThat(result.problems().get(2).problemId()).isEqualTo(problemIds.get(2));
+    }
+
+    @Test
     @DisplayName("존재하지 않는 문제로 북마크를 통한 문제 세트 조회를 하면 예외처리한다.")
     void givenNonExistedProblemIds_whenFindingProblems_thenReturnError() {
         //given
