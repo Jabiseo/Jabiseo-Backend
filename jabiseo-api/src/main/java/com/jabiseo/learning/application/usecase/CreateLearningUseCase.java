@@ -20,8 +20,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,26 +46,48 @@ public class CreateLearningUseCase {
         learningRepository.save(learning);
 
         //문제들의 id 리스트를 뽑아내 한 번의 쿼리로 찾아옴
+        List<Problem> solvedProblems = findSolvedProblems(request);
+
+        //요청 개수와 실제 데이터 개수가 다르면 옳지 않은 문제 ID가 요청되었다는 것
+        validateSolvedProblems(request, solvedProblems, certificate);
+
+        //ProblemSolving 생성 및 저장
+        List<ProblemSolving> problemSolvings = createProblemSolvings(request, solvedProblems, member, learning);
+        problemSolvingRepository.saveAll(problemSolvings);
+
+        return learning.getId();
+    }
+
+    private List<Problem> findSolvedProblems(CreateLearningRequest request) {
         List<Long> solvedProblemIds = request.problems().stream()
                 .map(ProblemResultRequest::problemId)
                 .toList();
-        List<Problem> solvedProblems = problemRepository.findAllById(solvedProblemIds);
+        return problemRepository.findAllById(solvedProblemIds);
+    }
 
-        //요청 개수와 실제 데이터 개수가 다르면 옳지 않은 문제 ID가 요청되었다는 것
+    private static void validateSolvedProblems(CreateLearningRequest request, List<Problem> solvedProblems, Certificate certificate) {
         if (solvedProblems.size() != request.problems().size()) {
             throw new ProblemBusinessException(ProblemErrorCode.PROBLEM_NOT_FOUND);
         }
         solvedProblems.forEach(problem -> problem.validateProblemInCertificate(certificate));
+    }
 
-        //ProblemSolving 생성 및 저장
-        List<ProblemSolving> problemSolvings = new ArrayList<>();
-        for (int i = 0; i < solvedProblems.size(); i++) {
-            boolean isCorrect = solvedProblems.get(i).checkAnswer(request.problems().get(i).choice());
-            ProblemSolving problemSolving = ProblemSolving.of(member, solvedProblems.get(i), learning, request.problems().get(i).choice(), isCorrect);
-            problemSolvings.add(problemSolving);
-        }
-        problemSolvingRepository.saveAll(problemSolvings);
-
-        return learning.getId();
+    private static List<ProblemSolving> createProblemSolvings(CreateLearningRequest request, List<Problem> solvedProblems, Member member, Learning learning) {
+        // solvedProblems와 request의 choice들을 매핑하기 위해 HashMap 사용
+        Map<Long, Integer> problemIdToChoice = request.problems().stream()
+                .collect(Collectors.toMap(
+                        ProblemResultRequest::problemId,
+                        ProblemResultRequest::choice
+                ));
+        List<ProblemSolving> problemSolvings = solvedProblems.stream()
+                .map(problem -> ProblemSolving.of(
+                        member,
+                        problem,
+                        learning,
+                        problemIdToChoice.get(problem.getId()),
+                        problem.checkAnswer(problemIdToChoice.get(problem.getId()))
+                ))
+                .toList();
+        return problemSolvings;
     }
 }
