@@ -229,4 +229,45 @@ class FindProblemsUseCaseTest {
                 .isInstanceOf(CertificateBusinessException.class)
                 .hasFieldOrPropertyWithValue("errorCode", CertificateErrorCode.CERTIFICATE_NOT_FOUND);
     }
+
+    @Test
+    @DisplayName("문제 세트 조회 시 중복된 과목 ID가 요청되는 경우 중복제거 후 결과를 반환한다.")
+    void givenDuplicatedSubjectIds_whenFindingProblems_thenFindProblems() {
+        //given
+        Long certificateId = 1L;
+        List<Long> subjectIds = List.of(2L, 3L);
+        List<Long> requestSubjectIds = List.of(2L, 3L, 3L, 2L);
+        Long examId = 4L;
+        List<Long> problemIds = List.of(5L, 6L, 7L);
+        int count = 4;
+
+        Certificate certificate = createCertificate(certificateId);
+        List<Subject> subjects = subjectIds.stream()
+                .map(id -> createSubject(id, certificate))
+                .toList();
+        Exam exam = createExam(examId, certificate);
+        List<Problem> problems = List.of(
+                createProblem(problemIds.get(0), certificate, exam, subjects.get(0)),
+                createProblem(problemIds.get(1), certificate, exam, subjects.get(1)),
+                createProblem(problemIds.get(2), certificate, exam, subjects.get(0))
+        );
+        List<ProblemWithBookmarkDetailQueryDto> problemWithBookmarkDetailQueryDtos = problems.stream()
+                .map(problem -> createProblemWithBookmarkDetailQueryDto(problem, false))
+                .toList();
+
+        given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
+        given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(0), count))
+                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2)));
+        given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(1), count))
+                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(1)));
+
+        //when
+        FindProblemsResponse result = sut.execute(null, certificateId, examId, requestSubjectIds, count);
+
+        //then
+        assertThat(result.certificateInfo().certificateId()).isEqualTo(certificateId);
+        assertThat(result.problems().get(0).problemId()).isEqualTo(problemIds.get(0));
+        assertThat(result.problems().get(1).problemId()).isEqualTo(problemIds.get(2));
+        assertThat(result.problems().get(2).problemId()).isEqualTo(problemIds.get(1));
+    }
 }
