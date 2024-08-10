@@ -35,6 +35,6 @@ public class LearningController {
                 .buildAndExpand(learningId)
                 .toUri();
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.created(location).build();
     }
 }
