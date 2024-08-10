@@ -12,8 +12,6 @@ import com.jabiseo.learning.dto.CreateLearningRequest;
 import com.jabiseo.learning.dto.ProblemResultRequest;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
-import com.jabiseo.member.exception.MemberBusinessException;
-import com.jabiseo.member.exception.MemberErrorCode;
 import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.exception.ProblemBusinessException;
@@ -38,8 +36,7 @@ public class CreateLearningUseCase {
 
     public Long execute(Long memberId, CreateLearningRequest request) {
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberBusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member member = memberRepository.getReferenceById(memberId);
 
         Certificate certificate = certificateRepository.findById(request.certificateId())
                 .orElseThrow(() -> new CertificateBusinessException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));
