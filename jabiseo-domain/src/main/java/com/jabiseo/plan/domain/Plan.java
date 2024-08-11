@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -32,7 +33,8 @@ public class Plan {
 
     private LocalDate endAt;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "plan")
+    @BatchSize(size = 100)
     private List<PlanItem> planItems = new ArrayList<>();
 
     public Plan(Certificate certificate, Member member, LocalDate endAt) {

@@ -27,9 +27,12 @@ public class PlanItem {
     @Enumerated(EnumType.STRING)
     private GoalType goalType;
 
-    public PlanItem(Plan plan, ActivityType activityType, GoalType goalType) {
+    private int targetValue;
+
+    public PlanItem(Plan plan, ActivityType activityType, GoalType goalType, int targetValue) {
         this.plan = plan;
         this.activityType = activityType;
         this.goalType = goalType;
+        this.targetValue = targetValue;
     }
 }

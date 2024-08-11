@@ -40,8 +40,8 @@ public class CreatePlanUseCase {
 
     private List<PlanItem> generatePlanItems(CreatePlanRequest request, Plan plan) {
         List<PlanItem> planItems = new ArrayList<>();
-        request.dailyPlan().forEach((p) -> planItems.add(new PlanItem(plan, ActivityType.valueOf(p.activityType()), GoalType.DAILY)));
-        request.weeklyPlan().forEach((p) -> planItems.add(new PlanItem(plan, ActivityType.valueOf(p.activityType()), GoalType.WEEKLY)));
+        request.dailyPlan().forEach((p) -> planItems.add(new PlanItem(plan, ActivityType.valueOf(p.activityType()), GoalType.DAILY, p.targetValue())));
+        request.weeklyPlan().forEach((p) -> planItems.add(new PlanItem(plan, ActivityType.valueOf(p.activityType()), GoalType.WEEKLY, p.targetValue())));
         return planItems;
     }
 
