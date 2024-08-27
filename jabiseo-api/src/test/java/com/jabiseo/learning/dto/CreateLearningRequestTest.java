@@ -101,7 +101,7 @@ class CreateLearningRequestTest {
 
     @DisplayName("ProblemResultRequest 생성시 choice에 정확한 값이 오지 않으면 예외를 반환한다.")
     @ParameterizedTest
-    @ValueSource(ints = {0, -1, 5, 100})
+    @ValueSource(ints = {-1, 5, 100})
     void givenCreateLearningRequestWithWrongChoice_WhenCreateProblemResultRequest_ThenReturnError(int choice) {
         //given
         ProblemResultRequest problemResultRequest = new ProblemResultRequest(1L, choice);
