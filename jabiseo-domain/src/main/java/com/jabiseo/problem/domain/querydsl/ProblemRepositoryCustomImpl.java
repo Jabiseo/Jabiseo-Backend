@@ -133,6 +133,64 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
+    @Override
+    public ProblemWithBookmarkDetailQueryDto findDetailByIdWithBookmark(Long memberId, Long problemId) {
+        return queryFactory
+                .select(
+                        Projections.constructor(
+                                ProblemWithBookmarkDetailQueryDto.class,
+                                problem.id.as("problemId"),
+                                problem.description,
+                                problem.choice1,
+                                problem.choice2,
+                                problem.choice3,
+                                problem.choice4,
+                                problem.answerNumber,
+                                problem.solution,
+                                Expressions.cases()
+                                        .when(isBookmarkedByMember(memberId, problem.id))
+                                        .then(true)
+                                        .otherwise(false)
+                                        .as("isBookmark"),
+                                exam.id.as("examId"),
+                                exam.description.as("examDescription"),
+                                subject.id.as("subjectId"),
+                                subject.name.as("subjectName"),
+                                subject.sequence.as("subjectSequence")
+                        )
+                )
+                .from(problem)
+                .where(problem.id.eq(problemId))
+                .fetchOne();
+    }
+
+    @Override
+    public List<ProblemWithBookmarkSummaryQueryDto> findSummaryByIdsInWithBookmark(Long memberId, List<Long> problemIds) {
+        return queryFactory
+                .select(
+                        Projections.constructor(
+                                ProblemWithBookmarkSummaryQueryDto.class,
+                                problem.id.as("problemId"),
+                                problem.description,
+                                Expressions.cases()
+                                        .when(isBookmarkedByMember(memberId, problem.id))
+                                        .then(true)
+                                        .otherwise(false)
+                                        .as("isBookmark"),
+                                exam.id.as("examId"),
+                                exam.description.as("examDescription"),
+                                subject.id.as("subjectId"),
+                                subject.name.as("subjectName"),
+                                subject.sequence.as("subjectSequence")
+                        )
+                )
+                .from(problem)
+                .join(problem.exam, exam)
+                .join(problem.subject, subject)
+                .where(problem.id.in(problemIds))
+                .fetch();
+    }
+
     private Predicate subjectIdsIn(List<Long> subjectIds) {
         return subjectIds != null ? subject.id.in(subjectIds) : null;
     }

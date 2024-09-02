@@ -2,14 +2,8 @@ package com.jabiseo.problem.controller;
 
 import com.jabiseo.config.auth.AuthMember;
 import com.jabiseo.config.auth.AuthenticatedMember;
-import com.jabiseo.problem.application.usecase.CreateReportUseCase;
-import com.jabiseo.problem.application.usecase.FindBookmarkedProblemsUseCase;
-import com.jabiseo.problem.application.usecase.FindProblemsByIdUseCase;
-import com.jabiseo.problem.application.usecase.FindProblemsUseCase;
-import com.jabiseo.problem.dto.CreateReportRequest;
-import com.jabiseo.problem.dto.FindBookmarkedProblemsResponse;
-import com.jabiseo.problem.dto.FindProblemsRequest;
-import com.jabiseo.problem.dto.FindProblemsResponse;
+import com.jabiseo.problem.application.usecase.*;
+import com.jabiseo.problem.dto.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -33,10 +27,13 @@ public class ProblemController {
 
     private final FindBookmarkedProblemsUseCase findBookmarkedProblemsUseCase;
 
+    private final FindProblemDetailUseCase findProblemDetailUseCase;
+
+//    private final FindSimilarProblemsUseCase findSimilarProblemsUseCase;
+
     @GetMapping("/set")
     public ResponseEntity<FindProblemsResponse> findProblems(
             @AuthenticatedMember AuthMember member,
-            // TODO: Valid에 대한 테스트
             @RequestParam(name = "certificate-id") Long certificateId,
             @RequestParam(name = "exam-id", required = false) Long examId,
             @RequestParam(name = "subject-id") List<Long> subjectIds,
@@ -84,4 +81,22 @@ public class ProblemController {
         FindBookmarkedProblemsResponse result = findBookmarkedProblemsUseCase.execute(member.getMemberId(), examId, subjectIds, page);
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/{problem-id}")
+    public ResponseEntity<FindProblemDetailResponse> findProblemDetail(
+            @AuthenticatedMember AuthMember member,
+            @PathVariable(name = "problem-id") Long problemId
+    ) {
+        FindProblemDetailResponse result = findProblemDetailUseCase.execute(member.getMemberId(), problemId);
+        return ResponseEntity.ok(result);
+    }
+
+//    @GetMapping("/{problem-id}/similar")
+//    public ResponseEntity<List<FindSimilarProblemResponse>> findSimilarProblems(
+//            @AuthenticatedMember AuthMember member,
+//            @PathVariable(name = "problem-id") Long problemId
+//    ) {
+//        List<FindSimilarProblemResponse> result = findSimilarProblemsUseCase.execute(member.getMemberId(), problemId);
+//        return ResponseEntity.ok(result);
+//    }
 }

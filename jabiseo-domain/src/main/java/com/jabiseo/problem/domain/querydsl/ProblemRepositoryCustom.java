@@ -13,5 +13,9 @@ public interface ProblemRepositoryCustom {
 
     List<ProblemWithBookmarkDetailQueryDto> findDetailByIdsInWithBookmark(Long memberId, List<Long> problemIds);
 
+    ProblemWithBookmarkDetailQueryDto findDetailByIdWithBookmark(Long memberId, Long problemId);
+
     Page<ProblemWithBookmarkSummaryQueryDto> findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(Long memberId, Long examId, List<Long> subjectIds, Pageable pageable);
+
+    List<ProblemWithBookmarkSummaryQueryDto> findSummaryByIdsInWithBookmark(Long memberId, List<Long> problemIds);
 }

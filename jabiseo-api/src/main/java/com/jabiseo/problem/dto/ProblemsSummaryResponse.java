@@ -10,7 +10,6 @@ public record ProblemsSummaryResponse(
         boolean isBookmark,
         String description
 ) {
-
     public static ProblemsSummaryResponse from(ProblemWithBookmarkSummaryQueryDto dto) {
         return new ProblemsSummaryResponse(
                 dto.problemId(),

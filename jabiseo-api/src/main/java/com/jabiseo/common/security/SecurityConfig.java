@@ -9,9 +9,14 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.RegexRequestMatcher;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
 
 @Configuration
 @RequiredArgsConstructor
+@Transactional
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -24,6 +29,10 @@ public class SecurityConfig {
             "/api/problems/set",
             "/api/problems/search/**",
             "/api/dev/auth",
+    };
+
+    private static final String[] REGEX_WHITE_LIST = {
+            "/api/problems/\\d+"
     };
 
     @Bean
@@ -39,6 +48,11 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(WHITE_LIST).permitAll()
+                        .requestMatchers(
+                                Arrays.stream(REGEX_WHITE_LIST)
+                                        .map(RegexRequestMatcher::regexMatcher)
+                                        .toArray(RegexRequestMatcher[]::new)
+                        ).permitAll()
                         .requestMatchers("/**").authenticated()
                 );
 
