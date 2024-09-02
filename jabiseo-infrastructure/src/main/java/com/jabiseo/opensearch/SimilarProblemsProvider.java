@@ -53,8 +53,10 @@ public class SimilarProblemsProvider {
 
     private GetResponse<JsonData> getProblemFromOpenSearch(Long problemId) {
         try {
-            return openSearchClient.get(GetRequest.of(getReq ->
-                    getReq.index(INDEX_NAME).id(String.valueOf(problemId))
+            return openSearchClient.get(GetRequest.of(getReq -> getReq
+                    .index(INDEX_NAME)
+                    .id(String.valueOf(problemId))
+                    .sourceIncludes(VECTOR_NAME)
             ), JsonData.class);
         } catch (IOException e) {
             throw new NetworkApiException(NetworkApiErrorCode.OPENSEARCH_API_FAIL);
