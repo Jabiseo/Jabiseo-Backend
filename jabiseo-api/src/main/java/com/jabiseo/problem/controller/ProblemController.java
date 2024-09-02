@@ -29,7 +29,7 @@ public class ProblemController {
 
     private final FindProblemDetailUseCase findProblemDetailUseCase;
 
-//    private final FindSimilarProblemsUseCase findSimilarProblemsUseCase;
+    private final FindSimilarProblemsUseCase findSimilarProblemsUseCase;
 
     @GetMapping("/set")
     public ResponseEntity<FindProblemsResponse> findProblems(
@@ -91,12 +91,12 @@ public class ProblemController {
         return ResponseEntity.ok(result);
     }
 
-//    @GetMapping("/{problem-id}/similar")
-//    public ResponseEntity<List<FindSimilarProblemResponse>> findSimilarProblems(
-//            @AuthenticatedMember AuthMember member,
-//            @PathVariable(name = "problem-id") Long problemId
-//    ) {
-//        List<FindSimilarProblemResponse> result = findSimilarProblemsUseCase.execute(member.getMemberId(), problemId);
-//        return ResponseEntity.ok(result);
-//    }
+    @GetMapping("/{problem-id}/similar")
+    public ResponseEntity<List<FindSimilarProblemResponse>> findSimilarProblems(
+            @AuthenticatedMember AuthMember member,
+            @PathVariable(name = "problem-id") Long problemId
+    ) {
+        List<FindSimilarProblemResponse> result = findSimilarProblemsUseCase.execute(member.getMemberId(), problemId);
+        return ResponseEntity.ok(result);
+    }
 }
