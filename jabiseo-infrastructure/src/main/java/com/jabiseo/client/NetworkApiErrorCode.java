@@ -9,7 +9,10 @@ public enum NetworkApiErrorCode implements ErrorCode {
     KAKAO_JWK_API_FAIL("카카오 kauth jwk 연결 실패", "NETWORK_002", ErrorCode.INTERNAL_SERVER_ERROR),
     GOOGLE_OPENAI_CONFIG_API_FAIL("구글 openai 연결 실패", "NETWORK_003", ErrorCode.INTERNAL_SERVER_ERROR),
     GOOGLE_JWK_API_FAIL("구글 jwk 연결 실패", "NETWORK_004", ErrorCode.INTERNAL_SERVER_ERROR),
-    S3_UPLOAD_FAIL("s3 upload 실패", "NETWORK_005", ErrorCode.INTERNAL_SERVER_ERROR);
+    S3_UPLOAD_FAIL("s3 upload 실패", "NETWORK_005", ErrorCode.INTERNAL_SERVER_ERROR),
+    OPENSEARCH_API_FAIL("opensearch 연결 실패", "NETWORK_006", ErrorCode.INTERNAL_SERVER_ERROR),
+    ;
+
     private final String message;
     private final String errorCode;
     private final int statusCode;

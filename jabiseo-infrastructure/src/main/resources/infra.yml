@@ -25,6 +25,11 @@ cloud:
 cloudfront:
   url: ${CLOUD_FRONT_URL}
 
+opensearch:
+    url: ${OPENSEARCH_URL}
+    username: ${OPENSEARCH_USERNAME}
+    password: ${OPENSEARCH_PASSWORD}
+
 ---
 spring:
   config:
