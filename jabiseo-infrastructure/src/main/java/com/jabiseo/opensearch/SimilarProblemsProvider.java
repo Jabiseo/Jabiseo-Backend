@@ -24,12 +24,14 @@ import java.util.stream.IntStream;
 public class SimilarProblemsProvider {
 
     private static final String INDEX_NAME = "jabiseo_problems";
+    private static final String VECTOR_NAME = "problem_vector";
     private static final int KNN_K = 3;
 
     private final SimilarProblemIdCacheRepository similarProblemIdCacheRepository;
     private final OpenSearchClient openSearchClient;
 
     public List<Long> getSimilarProblems(Long problemId, int similarProblemsSize) {
+        // 캐시에 저장된 유사 문제 ID가 있으면 반환, 없으면 opensearch에서 검색 후 캐시에 저장
         return similarProblemIdCacheRepository.findById(problemId)
                 .orElseGet(() -> fetchAndCacheSimilarProblems(problemId, similarProblemsSize))
                 .getSimilarProblemIds();
@@ -39,16 +41,14 @@ public class SimilarProblemsProvider {
         float[] vector = fetchProblemVector(problemId);
         List<Long> similarProblemIds = searchSimilarProblems(vector, similarProblemsSize);
 
-        // Save to cache and return
+        // 캐시에 저장 후 반환
         SimilarProblemIdCache cache = new SimilarProblemIdCache(problemId, similarProblemIds);
         return similarProblemIdCacheRepository.save(cache);
     }
 
     private float[] fetchProblemVector(Long problemId) {
         GetResponse<JsonData> getResponse = getProblemFromOpenSearch(problemId);
-        double[] doubleVector = parseVectorFromResponse(getResponse);
-
-        return convertToFloatArray(doubleVector);
+        return parseVectorFromResponse(getResponse);
     }
 
     private GetResponse<JsonData> getProblemFromOpenSearch(Long problemId) {
@@ -61,22 +61,22 @@ public class SimilarProblemsProvider {
         }
     }
 
-    private double[] parseVectorFromResponse(GetResponse<JsonData> getResponse) {
-        return getResponse.source()
+    private float[] parseVectorFromResponse(GetResponse<JsonData> getResponse) {
+        //opensearch 검색의 입력이 float[]이므로 float[]로 변환
+        List<Float> problemVector = getResponse.source()
                 .toJson()
                 .asJsonObject()
-                .get("problem_vector")
+                .get(VECTOR_NAME)
                 .asJsonArray()
                 .stream()
                 .map(JsonNumber.class::cast)
-                .mapToDouble(JsonNumber::doubleValue)
-                .toArray();
-    }
+                .map(jsonNumber -> (float) jsonNumber.doubleValue())
+                .toList();
 
-    private float[] convertToFloatArray(double[] doubleVector) {
-        float[] vector = new float[doubleVector.length];
-        IntStream.range(0, doubleVector.length)
-                .forEach(i -> vector[i] = (float) doubleVector[i]);
+        //Float[] -> float[] 변환
+        float[] vector = new float[problemVector.size()];
+        IntStream.range(0, problemVector.size()).forEach(i -> vector[i] = problemVector.get(i));
+
         return vector;
     }
 
@@ -87,6 +87,7 @@ public class SimilarProblemsProvider {
     }
 
     private SearchRequest createSearchRequest(float[] vector, int similarProblemsSize) {
+        // opensearch에 검색할 요청 생성
         return SearchRequest.of(searchRequest ->
                 searchRequest.index(INDEX_NAME)
                         .size(similarProblemsSize + 1)
@@ -95,7 +96,7 @@ public class SimilarProblemsProvider {
                                 .filter(filter -> filter.includes("")))
                         .query(query -> query
                                 .knn(knn -> knn
-                                        .field("problem_vector")
+                                        .field(VECTOR_NAME)
                                         .vector(vector)
                                         .k(KNN_K)
                                 )
@@ -104,6 +105,7 @@ public class SimilarProblemsProvider {
     }
 
     private SearchResponse<JsonData> executeSearch(SearchRequest searchRequest) {
+        // opensearch에 검색
         try {
             return openSearchClient.search(searchRequest, JsonData.class);
         } catch (IOException e) {
@@ -112,6 +114,7 @@ public class SimilarProblemsProvider {
     }
 
     private List<Long> extractSimilarProblemIds(SearchResponse<JsonData> searchResponse) {
+        // 검색 결과에서 유사 문제 ID 추출
         return searchResponse.hits().hits().stream()
                 .map(Hit::id)
                 .map(Long::parseLong)
