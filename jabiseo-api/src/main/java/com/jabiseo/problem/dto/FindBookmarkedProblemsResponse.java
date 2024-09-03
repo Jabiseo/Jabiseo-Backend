@@ -5,7 +5,7 @@ import java.util.List;
 public record FindBookmarkedProblemsResponse(
         long totalCount,
         long totalPage,
-        List<ProblemsResponse> problems
+        List<ProblemsSummaryResponse> problems
 ) {
 
     public static FindBookmarkedProblemsResponse of(long totalCount, long totalPage, List<ProblemWithBookmarkSummaryQueryDto> dtos) {
@@ -13,7 +13,7 @@ public record FindBookmarkedProblemsResponse(
                 totalCount,
                 totalPage,
                 dtos.stream()
-                        .map(ProblemsResponse::from)
+                        .map(ProblemsSummaryResponse::from)
                         .toList()
         );
     }
