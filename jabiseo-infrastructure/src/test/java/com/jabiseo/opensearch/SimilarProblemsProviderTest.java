@@ -41,13 +41,14 @@ class SimilarProblemsProviderTest {
     @DisplayName("redis 캐시에 유사 문제 id가 저장되어 있는 경우 Opensearch와 통신하지 않는다.")
     void givenCachedProblemId_whenFindSimilarProblemIds_thenDontConnectWithOpenSearch() throws Exception {
         //given
-        Long problemId = 1L;
+        Long certificateId = 1L; //정보처리기사
+        Long problemId = 2L;
         int similarProblemsSize = 3;
         given(similarProblemIdCacheRepository.findById(problemId))
                 .willReturn(Optional.of(new SimilarProblemIdCache(problemId, List.of(2L, 3L, 4L))));
 
         //when
-        sut.getSimilarProblems(problemId, similarProblemsSize);
+        sut.getSimilarProblems(problemId, certificateId, similarProblemsSize);
 
         //then
         verify(openSearchClient, never()).get((GetRequest) any(), any());
@@ -58,14 +59,15 @@ class SimilarProblemsProviderTest {
     @DisplayName("opensearch에 문제 벡터 조회 시 오류가 발생하면 NetworkApiException을 던진다.")
     void givenErrorInOpenSearchConnection_whenFindSimilarProblems_thenThrowNetworkApiException() throws Exception {
         //given
-        Long problemId = 1L;
+        Long certificateId = 1L; //정보처리기사
+        Long problemId = 2L;
         int similarProblemsSize = 3;
 
         given(similarProblemIdCacheRepository.findById(problemId)).willReturn(Optional.empty());
         given(openSearchClient.get((GetRequest) any(), any())).willThrow(new IOException());
 
         //when & then
-        assertThatThrownBy(() -> sut.getSimilarProblems(problemId, similarProblemsSize))
+        assertThatThrownBy(() -> sut.getSimilarProblems(problemId, certificateId, similarProblemsSize))
                 .isInstanceOf(NetworkApiException.class)
                 .hasFieldOrPropertyWithValue("errorCode", NetworkApiErrorCode.OPENSEARCH_API_FAIL);
     }
