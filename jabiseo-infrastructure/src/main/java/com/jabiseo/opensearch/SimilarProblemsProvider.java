@@ -23,38 +23,40 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class SimilarProblemsProvider {
 
-    private static final String INDEX_NAME = "jabiseo_problems";
     private static final String VECTOR_NAME = "problem_vector";
     private static final int KNN_K = 3;
 
     private final SimilarProblemIdCacheRepository similarProblemIdCacheRepository;
     private final OpenSearchClient openSearchClient;
 
-    public List<Long> getSimilarProblems(Long problemId, int similarProblemsSize) {
+    public List<Long> getSimilarProblems(Long problemId, Long certificateId, int similarProblemsSize) {
         // 캐시에 저장된 유사 문제 ID가 있으면 반환, 없으면 opensearch에서 검색 후 캐시에 저장
         return similarProblemIdCacheRepository.findById(problemId)
-                .orElseGet(() -> fetchAndCacheSimilarProblems(problemId, similarProblemsSize))
+                .orElseGet(() -> fetchAndCacheSimilarProblems(problemId, certificateId, similarProblemsSize))
                 .getSimilarProblemIds();
     }
 
-    private SimilarProblemIdCache fetchAndCacheSimilarProblems(Long problemId, int similarProblemsSize) {
-        float[] vector = fetchProblemVector(problemId);
-        List<Long> similarProblemIds = searchSimilarProblems(vector, similarProblemsSize);
+    private SimilarProblemIdCache fetchAndCacheSimilarProblems(Long problemId, Long certificateId, int similarProblemsSize) {
+        // 자격증에 해당하는 인덱스 이름
+        String indexName = CertificateIndex.findByCertificateId(certificateId).getIndexName();
+
+        float[] vector = fetchProblemVector(problemId, indexName);
+        List<Long> similarProblemIds = searchSimilarProblems(vector, indexName, similarProblemsSize);
 
         // 캐시에 저장 후 반환
         SimilarProblemIdCache cache = new SimilarProblemIdCache(problemId, similarProblemIds);
         return similarProblemIdCacheRepository.save(cache);
     }
 
-    private float[] fetchProblemVector(Long problemId) {
-        GetResponse<JsonData> getResponse = getProblemFromOpenSearch(problemId);
+    private float[] fetchProblemVector(Long problemId, String indexName) {
+        GetResponse<JsonData> getResponse = getProblemFromOpenSearch(problemId, indexName);
         return parseVectorFromResponse(getResponse);
     }
 
-    private GetResponse<JsonData> getProblemFromOpenSearch(Long problemId) {
+    private GetResponse<JsonData> getProblemFromOpenSearch(Long problemId, String indexName) {
         try {
             return openSearchClient.get(GetRequest.of(getReq -> getReq
-                    .index(INDEX_NAME)
+                    .index(indexName)
                     .id(String.valueOf(problemId))
                     .sourceIncludes(VECTOR_NAME)
             ), JsonData.class);
@@ -82,16 +84,16 @@ public class SimilarProblemsProvider {
         return vector;
     }
 
-    private List<Long> searchSimilarProblems(float[] vector, int similarProblemsSize) {
-        SearchRequest searchRequest = createSearchRequest(vector, similarProblemsSize);
+    private List<Long> searchSimilarProblems(float[] vector, String indexName, int similarProblemsSize) {
+        SearchRequest searchRequest = createSearchRequest(vector, indexName, similarProblemsSize);
         SearchResponse<JsonData> searchResponse = executeSearch(searchRequest);
         return extractSimilarProblemIds(searchResponse);
     }
 
-    private SearchRequest createSearchRequest(float[] vector, int similarProblemsSize) {
+    private SearchRequest createSearchRequest(float[] vector, String indexName, int similarProblemsSize) {
         // opensearch에 검색할 요청 생성
         return SearchRequest.of(searchRequest ->
-                searchRequest.index(INDEX_NAME)
+                searchRequest.index(indexName)
                         .size(similarProblemsSize + 1)
                         .source(source -> source
                                 // id만 필요하므로 나머지 필드는 제외
