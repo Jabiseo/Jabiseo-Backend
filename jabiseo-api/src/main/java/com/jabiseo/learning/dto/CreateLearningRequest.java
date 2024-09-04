@@ -2,6 +2,7 @@ package com.jabiseo.learning.dto;
 
 import com.jabiseo.common.validator.EnumValid;
 import com.jabiseo.learning.domain.LearningMode;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -20,6 +21,7 @@ public record CreateLearningRequest(
         @NotNull(message = "자격증 ID를 입력해야 합니다.")
         Long certificateId,
 
+        @Valid
         @NotEmpty(message = "문제를 풀어야 합니다.")
         List<ProblemResultRequest> problems
 ) {
