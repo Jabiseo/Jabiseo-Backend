@@ -29,7 +29,7 @@ public class SimilarProblemsProvider {
     private final SimilarProblemIdCacheRepository similarProblemIdCacheRepository;
     private final OpenSearchClient openSearchClient;
 
-    public List<Long> getSimilarProblems(Long problemId, Long certificateId, int similarProblemsSize) {
+    public List<Long> findSimilarProblems(Long problemId, Long certificateId, int similarProblemsSize) {
         // 캐시에 저장된 유사 문제 ID가 있으면 반환, 없으면 opensearch에서 검색 후 캐시에 저장
         return similarProblemIdCacheRepository.findById(problemId)
                 .orElseGet(() -> fetchAndCacheSimilarProblems(problemId, certificateId, similarProblemsSize))
@@ -40,7 +40,7 @@ public class SimilarProblemsProvider {
         // 자격증에 해당하는 인덱스 이름
         String indexName = CertificateIndex.findByCertificateId(certificateId).getIndexName();
 
-        float[] vector = fetchProblemVector(problemId, indexName);
+        List<Float> vector = fetchProblemVector(problemId, indexName);
         List<Long> similarProblemIds = searchSimilarProblems(vector, indexName, similarProblemsSize);
 
         // 캐시에 저장 후 반환
@@ -48,7 +48,7 @@ public class SimilarProblemsProvider {
         return similarProblemIdCacheRepository.save(cache);
     }
 
-    private float[] fetchProblemVector(Long problemId, String indexName) {
+    private List<Float> fetchProblemVector(Long problemId, String indexName) {
         GetResponse<JsonData> getResponse = getProblemFromOpenSearch(problemId, indexName);
         return parseVectorFromResponse(getResponse);
     }
@@ -65,9 +65,8 @@ public class SimilarProblemsProvider {
         }
     }
 
-    private float[] parseVectorFromResponse(GetResponse<JsonData> getResponse) {
-        //opensearch 검색의 입력이 float[]이므로 float[]로 변환
-        List<Float> problemVector = getResponse.source()
+    private List<Float> parseVectorFromResponse(GetResponse<JsonData> getResponse) {
+        return getResponse.source()
                 .toJson()
                 .asJsonObject()
                 .get(VECTOR_NAME)
@@ -77,20 +76,15 @@ public class SimilarProblemsProvider {
                 .map(jsonNumber -> (float) jsonNumber.doubleValue())
                 .toList();
 
-        //Float[] -> float[] 변환
-        float[] vector = new float[problemVector.size()];
-        IntStream.range(0, problemVector.size()).forEach(i -> vector[i] = problemVector.get(i));
-
-        return vector;
     }
 
-    private List<Long> searchSimilarProblems(float[] vector, String indexName, int similarProblemsSize) {
+    private List<Long> searchSimilarProblems(List<Float> vector, String indexName, int similarProblemsSize) {
         SearchRequest searchRequest = createSearchRequest(vector, indexName, similarProblemsSize);
         SearchResponse<JsonData> searchResponse = executeSearch(searchRequest);
         return extractSimilarProblemIds(searchResponse);
     }
 
-    private SearchRequest createSearchRequest(float[] vector, String indexName, int similarProblemsSize) {
+    private SearchRequest createSearchRequest(List<Float> vector, String indexName, int similarProblemsSize) {
         // opensearch에 검색할 요청 생성
         return SearchRequest.of(searchRequest ->
                 searchRequest.index(indexName)
@@ -101,7 +95,7 @@ public class SimilarProblemsProvider {
                         .query(query -> query
                                 .knn(knn -> knn
                                         .field(VECTOR_NAME)
-                                        .vector(vector)
+                                        .vector(convertToArray(vector))
                                         .k(KNN_K)
                                 )
                         )
@@ -125,5 +119,11 @@ public class SimilarProblemsProvider {
                 .skip(1) // 첫 번쨰 원소는 원래 문제 자체이므로 스킵
                 .limit(KNN_K)
                 .toList();
+    }
+
+    private static float[] convertToArray(List<Float> list) {
+        float[] array = new float[list.size()];
+        IntStream.range(0, list.size()).forEach(i -> array[i] = list.get(i));
+        return array;
     }
 }

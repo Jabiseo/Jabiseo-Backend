@@ -54,7 +54,7 @@ class FindSimilarProblemsUseCaseTest {
                         ))
                         .toList();
 
-        given(similarProblemsProvider.getSimilarProblems(problemId, certificateId, 3)).willReturn(similarProblemIds);
+        given(similarProblemsProvider.findSimilarProblems(problemId, certificateId, 3)).willReturn(similarProblemIds);
         given(problemRepository.findById(problemId)).willReturn(Optional.of(problem));
         given(problemRepository.findSummaryByIdsInWithBookmark(memberId, similarProblemIds)).willReturn(problemWithBookmarkSummaryQueryDtos);
 

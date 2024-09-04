@@ -48,7 +48,7 @@ class SimilarProblemsProviderTest {
                 .willReturn(Optional.of(new SimilarProblemIdCache(problemId, List.of(2L, 3L, 4L))));
 
         //when
-        sut.getSimilarProblems(problemId, certificateId, similarProblemsSize);
+        sut.findSimilarProblems(problemId, certificateId, similarProblemsSize);
 
         //then
         verify(openSearchClient, never()).get((GetRequest) any(), any());
@@ -67,7 +67,7 @@ class SimilarProblemsProviderTest {
         given(openSearchClient.get((GetRequest) any(), any())).willThrow(new IOException());
 
         //when & then
-        assertThatThrownBy(() -> sut.getSimilarProblems(problemId, certificateId, similarProblemsSize))
+        assertThatThrownBy(() -> sut.findSimilarProblems(problemId, certificateId, similarProblemsSize))
                 .isInstanceOf(NetworkApiException.class)
                 .hasFieldOrPropertyWithValue("errorCode", NetworkApiErrorCode.OPENSEARCH_API_FAIL);
     }

@@ -30,7 +30,7 @@ public class FindSimilarProblemsUseCase {
                 .orElseThrow(() -> new ProblemBusinessException(ProblemErrorCode.PROBLEM_NOT_FOUND));
         Long certificateId = problem.getCertificate().getId();
 
-        List<Long> similarProblemIds = similarProblemsProvider.getSimilarProblems(problemId, certificateId, SIMILAR_PROBLEM_SIZE);
+        List<Long> similarProblemIds = similarProblemsProvider.findSimilarProblems(problemId, certificateId, SIMILAR_PROBLEM_SIZE);
         List<ProblemWithBookmarkSummaryQueryDto> dtos = problemRepository.findSummaryByIdsInWithBookmark(memberId, similarProblemIds);
 
         return dtos.stream()
