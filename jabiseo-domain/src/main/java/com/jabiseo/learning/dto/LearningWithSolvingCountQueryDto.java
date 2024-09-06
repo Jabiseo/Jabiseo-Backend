@@ -1,5 +1,6 @@
 package com.jabiseo.learning.dto;
 
+import com.jabiseo.learning.domain.Learning;
 import com.jabiseo.learning.domain.LearningMode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,4 +18,8 @@ public class LearningWithSolvingCountQueryDto {
     private LocalDateTime createdAt;
     private Long solvingCount;
 
+
+    public static LearningWithSolvingCountQueryDto from(Learning learning, long count){
+        return new LearningWithSolvingCountQueryDto(learning.getMode(), learning.getLearningTime(), learning.getCreatedAt(), count);
+    }
 }

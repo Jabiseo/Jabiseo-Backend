@@ -9,6 +9,7 @@ import com.jabiseo.learning.dto.CreateLearningRequest;
 import com.jabiseo.learning.dto.ProblemResultRequest;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
+import com.jabiseo.plan.domain.PlanProgressService;
 import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.exception.ProblemBusinessException;
@@ -31,6 +32,7 @@ public class CreateLearningUseCase {
     private final ProblemRepository problemRepository;
     private final LearningRepository learningRepository;
     private final ProblemSolvingRepository problemSolvingRepository;
+    private final PlanProgressService planProgressService;
 
     public Long execute(Long memberId, CreateLearningRequest request) {
 
@@ -53,7 +55,7 @@ public class CreateLearningUseCase {
         //ProblemSolving 생성 및 저장
         List<ProblemSolving> problemSolvings = createProblemSolvings(request, solvedProblems, member, learning);
         problemSolvingRepository.saveAll(problemSolvings);
-
+        planProgressService.updateProgress(learning, problemSolvings.size());
         return learning.getId();
     }
 

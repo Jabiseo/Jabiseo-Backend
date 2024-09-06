@@ -1,6 +1,7 @@
 package com.jabiseo.plan.domain;
 
 
+import com.jabiseo.learning.domain.Learning;
 import com.jabiseo.learning.domain.LearningMode;
 import com.jabiseo.learning.domain.LearningRepository;
 import com.jabiseo.learning.dto.LearningWithSolvingCountQueryDto;
@@ -9,8 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -19,6 +22,7 @@ import java.util.stream.Collectors;
 public class PlanProgressService {
 
     private final WeeklyDefineStrategy weeklyDefineStrategy;
+    private final PlanRepository planRepository;
     private final PlanProgressRepository planProgressRepository;
     private final LearningRepository learningRepository;
 
@@ -30,19 +34,64 @@ public class PlanProgressService {
         return planProgressRepository.findAllByPlanAndProgressDateBetweenOrderByProgressDate(plan, startQueryDate, endQueryDate);
     }
 
+    public void updateProgress(Learning learning, long count) {
+        Member member = learning.getMember();
+        Optional<Plan> plans = planRepository.findFirstByCertificateAndMember(member.getCurrentCertificate(), member);
+
+        if (plans.isEmpty()) {
+            return;
+        }
+
+        List<PlanItem> planItems = plans.get().getPlanItems();
+        List<PlanProgress> planProgress = getPlanProgress(planItems, LearningWithSolvingCountQueryDto.from(learning, count));
+        planProgressRepository.saveAll(planProgress);
+    }
+
+
     public void createCurrentPlanProgress(Member member, List<PlanItem> planItems) {
         WeekPeriod currentWeekPeriod = weeklyDefineStrategy.getCurrentWeekPeriod(LocalDate.now());
 
-        List<PlanProgress> daily = planItems.stream().filter(p -> p.getGoalType().equals(GoalType.DAILY))
-                .map(planItem -> planItem.toPlanProgress(LocalDate.now()))
-                .toList();
 
-        List<PlanProgress> weekly = planItems.stream().filter(p -> p.getGoalType().equals(GoalType.WEEKLY))
-                .map(planItem -> planItem.toPlanProgress(currentWeekPeriod.getEnd()))
-                .toList();
+        List<PlanProgress> daily = itemToDailyPlanProgress(planItems);
+
+        List<PlanProgress> weekly = itemToWeeklyPlanProgress(planItems, currentWeekPeriod.getEnd());
 
         learningCalculateAndSave(member, daily, LocalDate.now(), LocalDate.now());
         learningCalculateAndSave(member, weekly, currentWeekPeriod.getStart(), currentWeekPeriod.getEnd());
+    }
+
+    private List<PlanProgress> getPlanProgress(List<PlanItem> planItems, LearningWithSolvingCountQueryDto dto) {
+        WeekPeriod currentWeekPeriod = weeklyDefineStrategy.getCurrentWeekPeriod(LocalDate.now());
+
+        List<PlanProgress> dailyProgress = planProgressRepository.findAllByProgressDateBetweenAndGoalType(LocalDate.now(), LocalDate.now(), GoalType.DAILY);
+        if (dailyProgress.isEmpty()) {
+            dailyProgress = itemToDailyPlanProgress(planItems);
+        }
+
+        List<PlanProgress> weeklyProgress = planProgressRepository.findAllByProgressDateBetweenAndGoalType(currentWeekPeriod.getStart(), currentWeekPeriod.getEnd(), GoalType.WEEKLY);
+        if (weeklyProgress.isEmpty()) {
+            weeklyProgress = itemToWeeklyPlanProgress(planItems, currentWeekPeriod.getEnd());
+        }
+
+        List<PlanProgress> result = new ArrayList<>();
+        result.addAll(calculateProgress(dailyProgress, List.of(dto)));
+        result.addAll(calculateProgress(weeklyProgress, List.of(dto)));
+        return result;
+    }
+
+
+    private List<PlanProgress> itemToDailyPlanProgress(List<PlanItem> planItems) {
+        return planItems.stream()
+                .filter(p -> p.getGoalType().equals(GoalType.DAILY))
+                .map(planItem -> planItem.toPlanProgress(LocalDate.now()))
+                .toList();
+    }
+
+    private List<PlanProgress> itemToWeeklyPlanProgress(List<PlanItem> planItems, LocalDate date) {
+        return planItems.stream()
+                .filter(p -> p.getGoalType().equals(GoalType.WEEKLY))
+                .map(planItem -> planItem.toPlanProgress(date))
+                .toList();
     }
 
     private void learningCalculateAndSave(Member member, List<PlanProgress> progress, LocalDate start, LocalDate end) {
