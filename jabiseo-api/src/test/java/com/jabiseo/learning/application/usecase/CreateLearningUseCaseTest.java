@@ -9,6 +9,7 @@ import com.jabiseo.learning.dto.CreateLearningRequest;
 import com.jabiseo.learning.dto.ProblemResultRequest;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
+import com.jabiseo.plan.domain.PlanProgressService;
 import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.exception.ProblemBusinessException;
@@ -32,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,6 +57,9 @@ class CreateLearningUseCaseTest {
 
     @Mock
     ProblemSolvingRepository problemSolvingRepository;
+
+    @Mock
+    PlanProgressService planProgressService;
 
     @Test
     @DisplayName("존재하지 않는 자격증으로 학습 결과 제출 시 예외가 발생한다.")
