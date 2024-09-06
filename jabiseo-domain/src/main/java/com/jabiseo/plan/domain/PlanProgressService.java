@@ -22,6 +22,14 @@ public class PlanProgressService {
     private final PlanProgressRepository planProgressRepository;
     private final LearningRepository learningRepository;
 
+    public List<PlanProgress> findByYearMonth(Plan plan, int year, int month) {
+        List<WeekPeriod> periodPerWeek = weeklyDefineStrategy.getPeriodPerWeek(year, month);
+        LocalDate startQueryDate = periodPerWeek.get(0).getStart();
+        LocalDate endQueryDate = periodPerWeek.get(periodPerWeek.size() - 1).getEnd();
+
+        return planProgressRepository.findAllByPlanAndProgressDateBetweenOrderByProgressDate(plan, startQueryDate, endQueryDate);
+    }
+
     public void createCurrentPlanProgress(Member member, List<PlanItem> planItems) {
         WeekPeriod currentWeekPeriod = weeklyDefineStrategy.getCurrentWeekPeriod(LocalDate.now());
 
@@ -44,7 +52,7 @@ public class PlanProgressService {
         }
 
         List<LearningWithSolvingCountQueryDto> queryResult = learningRepository.findLearningWithSolvingCount(member, member.getCurrentCertificate(), start, end);
-        if(queryResult.isEmpty()) {
+        if (queryResult.isEmpty()) {
             return;
         }
 
