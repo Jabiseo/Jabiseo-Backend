@@ -4,7 +4,7 @@ import com.jabiseo.plan.domain.ActivityType;
 import com.jabiseo.plan.domain.PlanItem;
 
 public record PlanItemResponse(
-        Long planItemsId,
+        Long planItemId,
         ActivityType activityType,
         int targetValue
 ) {

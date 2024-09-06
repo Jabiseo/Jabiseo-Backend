@@ -8,13 +8,17 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Plan {
 
@@ -36,6 +40,11 @@ public class Plan {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "plan")
     @BatchSize(size = 100)
     private List<PlanItem> planItems = new ArrayList<>();
+
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
 
     public Plan(Certificate certificate, Member member, LocalDate endAt) {
         this.certificate = certificate;

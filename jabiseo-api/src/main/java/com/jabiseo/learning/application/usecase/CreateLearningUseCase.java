@@ -41,7 +41,7 @@ public class CreateLearningUseCase {
 
         validateDuplicatedSolving(request);
 
-        Learning learning = Learning.of(LearningMode.valueOf(request.learningMode()), request.learningTime(), certificate);
+        Learning learning = Learning.of(LearningMode.valueOf(request.learningMode()), request.learningTime(), certificate, member);
         learningRepository.save(learning);
 
         //문제들의 id 리스트를 뽑아내 한 번의 쿼리로 찾아옴

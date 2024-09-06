@@ -11,7 +11,6 @@ import com.jabiseo.plan.dto.PlanItemResponse;
 import com.jabiseo.plan.exception.PlanBusinessException;
 import com.jabiseo.plan.exception.PlanErrorCode;
 import com.jabiseo.problem.dto.CertificateResponse;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
