@@ -167,7 +167,7 @@ class CreateLearningUseCaseTest {
         Member member = createMember(memberId);
         Certificate certificate = createCertificate(certificateId);
         List<Problem> problems = problemIds.stream().map(problemId -> createProblem(problemId, certificate)).toList();
-        Learning learning = createLearning(learningId, certificate);
+        Learning learning = createLearning(learningId, member, certificate);
 
         given(memberRepository.getReferenceById(memberId)).willReturn(member);
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));

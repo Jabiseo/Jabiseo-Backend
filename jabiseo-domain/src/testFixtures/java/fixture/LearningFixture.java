@@ -8,8 +8,14 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 public class LearningFixture {
 
+    public static Learning createLearning(Long id, Member member, Certificate certificate) {
+        Learning learning = Learning.of(LearningMode.EXAM, 123L, member, certificate);
+        ReflectionTestUtils.setField(learning, "id", id);
+        return learning;
+    }
+
     public static Learning createLearning(Long id, Certificate certificate) {
-        Learning learning = Learning.of(LearningMode.EXAM, 123L, certificate, MemberFixture.createMember());
+        Learning learning = Learning.of(LearningMode.EXAM, 123L, MemberFixture.createMember(), certificate);
         ReflectionTestUtils.setField(learning, "id", id);
         return learning;
     }
