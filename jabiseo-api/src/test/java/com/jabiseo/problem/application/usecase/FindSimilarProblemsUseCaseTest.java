@@ -1,7 +1,7 @@
 package com.jabiseo.problem.application.usecase;
 
 import com.jabiseo.certificate.domain.Certificate;
-import com.jabiseo.opensearch.SimilarProblemsProviderImpl;
+import com.jabiseo.opensearch.OpenSearchSimilarProblemsProvider;
 import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindSimilarProblemResponse;
@@ -32,7 +32,7 @@ class FindSimilarProblemsUseCaseTest {
     ProblemRepository problemRepository;
 
     @Mock
-    SimilarProblemsProviderImpl similarProblemsProviderImpl;
+    OpenSearchSimilarProblemsProvider openSearchSimilarProblemsProvider;
 
     @Test
     @DisplayName("유사 문제 조회를 성공한다.")
@@ -54,7 +54,7 @@ class FindSimilarProblemsUseCaseTest {
                         ))
                         .toList();
 
-        given(similarProblemsProviderImpl.findSimilarProblems(problemId, certificateId, 3)).willReturn(similarProblemIds);
+        given(openSearchSimilarProblemsProvider.findSimilarProblemIds(problemId, certificateId, 3)).willReturn(similarProblemIds);
         given(problemRepository.findById(problemId)).willReturn(Optional.of(problem));
         given(problemRepository.findSummaryByIdsInWithBookmark(memberId, similarProblemIds)).willReturn(problemWithBookmarkSummaryQueryDtos);
 
