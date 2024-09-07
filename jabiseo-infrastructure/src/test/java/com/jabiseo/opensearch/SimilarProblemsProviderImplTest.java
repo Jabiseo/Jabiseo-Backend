@@ -26,10 +26,10 @@ import static org.mockito.Mockito.verify;
 
 @DisplayName("유사 문제 기능 테스트")
 @ExtendWith(MockitoExtension.class)
-class SimilarProblemsProviderTest {
+class SimilarProblemsProviderImplTest {
 
     @InjectMocks
-    SimilarProblemsProvider sut;
+    SimilarProblemsProviderImpl sut;
 
     @Mock
     SimilarProblemIdCacheRepository similarProblemIdCacheRepository;
