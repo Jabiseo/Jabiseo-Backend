@@ -58,10 +58,16 @@ public class AnalysisService {
                     List<Float> problemVector = problemIdToVector.get(problemSolving.getProblem().getId());
                     double weight = calculateWeight(problemSolving.getLearning().getCreatedAt());
                     return problemVector.stream()
-                            .map(value -> (float) (value * weight))
+                            .map(value -> {
+                                // 문제를 맞췄을 경우 -1을 곱하여 가중치를 적용
+                                if (problemSolving.isCorrect())
+                                    return (float) (-1 * value * weight);
+                                else
+                                    return (float) (value * weight);
+                            })
                             .toList();
                 })
-//                .parallel() TODO: 병렬 처리하는 것이 더 효율적인지 테스트 필요
+                //.parallel() TODO: 병렬 처리하는 것이 더 효율적인지 테스트 필요
                 .reduce((vector1, vector2) ->
                         IntStream.range(0, vector1.size())
                                 .mapToObj(i -> vector1.get(i) + vector2.get(i))
