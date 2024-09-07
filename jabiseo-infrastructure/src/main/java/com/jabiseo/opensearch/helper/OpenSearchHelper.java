@@ -8,15 +8,14 @@ import org.opensearch.client.json.JsonData;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.FieldValue;
 import org.opensearch.client.opensearch._types.query_dsl.TermQuery;
-import org.opensearch.client.opensearch.core.GetRequest;
-import org.opensearch.client.opensearch.core.GetResponse;
-import org.opensearch.client.opensearch.core.SearchRequest;
-import org.opensearch.client.opensearch.core.SearchResponse;
+import org.opensearch.client.opensearch.core.*;
 import org.opensearch.client.opensearch.core.search.Hit;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Component
@@ -29,7 +28,13 @@ public class OpenSearchHelper {
 
     public List<Float> fetchVector(Long id, String indexName, String vectorName) {
         GetResponse<JsonData> getResponse = fetchFromOpenSearch(id, indexName, vectorName);
-        return parseVectorFromResponse(getResponse, vectorName);
+        return parseVectorFromGetResponse(getResponse, vectorName);
+    }
+
+    // 여러 벡터를 한 번에 가져오는 경우 mget을 사용해 한 번의 통신으로 가져온다.
+    public Map<Long, List<Float>> fetchVectors(List<Long> ids, String indexName, String vectorName) {
+        MgetResponse<JsonData> mgetResponse = fetchFromOpenSearch(ids, indexName, vectorName);
+        return parseVectorsFromMgetResponse(vectorName, mgetResponse);
     }
 
     private GetResponse<JsonData> fetchFromOpenSearch(Long id, String indexName, String vectorName) {
@@ -44,7 +49,22 @@ public class OpenSearchHelper {
         }
     }
 
-    private List<Float> parseVectorFromResponse(GetResponse<JsonData> getResponse, String vectorName) {
+    private MgetResponse<JsonData> fetchFromOpenSearch(List<Long> ids, String indexName, String vectorName) {
+        try {
+            return openSearchClient.mget(MgetRequest.of(request -> request
+                    .index(indexName)
+                    .ids(ids.stream().map(String::valueOf).toList())
+                    .sourceIncludes(vectorName)
+            ), JsonData.class);
+        } catch (IOException e) {
+            throw new NetworkApiException(NetworkApiErrorCode.OPEN_SEARCH_API_FAIL);
+        }
+    }
+
+    private List<Float> parseVectorFromGetResponse(GetResponse<JsonData> getResponse, String vectorName) {
+        if (!getResponse.found()) {
+            throw new NetworkApiException(NetworkApiErrorCode.OPEN_SEARCH_API_FAIL);
+        }
         return getResponse.source()
                 .toJson()
                 .asJsonObject()
@@ -54,6 +74,22 @@ public class OpenSearchHelper {
                 .map(JsonNumber.class::cast)
                 .map(jsonNumber -> (float) jsonNumber.doubleValue())
                 .toList();
+    }
+
+    private static Map<Long, List<Float>> parseVectorsFromMgetResponse(String vectorName, MgetResponse<JsonData> mgetResponse) {
+        return mgetResponse.docs().stream()
+                .peek(hit -> {
+                    if (!hit.result().found()) {
+                        throw new NetworkApiException(NetworkApiErrorCode.OPEN_SEARCH_API_FAIL);
+                    }
+                })
+                .collect(Collectors.toMap(
+                        hit -> Long.parseLong(hit.result().id()),
+                        hit -> hit.result().source().toJson().asJsonObject().get(vectorName).asJsonArray().stream()
+                                .map(JsonNumber.class::cast)
+                                .map(jsonNumber -> (float) jsonNumber.doubleValue())
+                                .toList()
+                ));
     }
 
     public List<Long> searchSimilarIds(List<Float> vector, String indexName, String vectorName, int targetSize) {

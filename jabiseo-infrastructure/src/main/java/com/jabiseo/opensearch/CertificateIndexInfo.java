@@ -1,6 +1,6 @@
 package com.jabiseo.opensearch;
 
-import com.jabiseo.certificate.exception.CertificateBusinessException;
+import com.jabiseo.analysis.exception.AnalysisBusinessException;
 import com.jabiseo.common.exception.CommonErrorCode;
 import lombok.Getter;
 
@@ -35,6 +35,6 @@ enum CertificateIndexInfo {
         return Arrays.stream(CertificateIndexInfo.values())
                 .filter(certificate -> Objects.equals(certificate.certificateId, certificateId))
                 .findFirst()
-                .orElseThrow(() -> new CertificateBusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR));
+                .orElseThrow(() -> new AnalysisBusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR));
     }
 }
