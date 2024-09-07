@@ -1,5 +1,7 @@
 package com.jabiseo.opensearch;
 
+import com.jabiseo.analysis.exception.AnalysisBusinessException;
+import com.jabiseo.analysis.exception.AnalysisErrorCode;
 import com.jabiseo.opensearch.helper.OpenSearchHelper;
 import com.jabiseo.opensearch.redis.SimilarProblemIdCache;
 import com.jabiseo.opensearch.redis.SimilarProblemIdCacheRepository;
@@ -29,7 +31,7 @@ public class SimilarProblemsProviderImpl implements SimilarProblemsProvider {
         String indexName = certificateIndexInfo.getProblemIndexName();
         String vectorName = certificateIndexInfo.getProblemVectorName();
 
-        List<Float> problemVector = openSearchHelper.fetchVector(problemId, indexName, vectorName);
+        List<Float> problemVector = fetchVector(problemId, indexName, vectorName);
         // N+1개의 유사 문제 ID를 가져온 후 첫 번째는 자기 자신이므로 제외
         List<Long> similarProblemIds =
                 openSearchHelper.searchSimilarIds(problemVector, indexName, vectorName, similarProblemsCount + 1)
@@ -38,6 +40,14 @@ public class SimilarProblemsProviderImpl implements SimilarProblemsProvider {
         // 캐시에 저장 후 반환
         SimilarProblemIdCache cache = new SimilarProblemIdCache(problemId, similarProblemIds);
         return similarProblemIdCacheRepository.save(cache);
+    }
+
+    private List<Float> fetchVector(Long problemId, String indexName, String vectorName) {
+        try {
+            return openSearchHelper.fetchVector(problemId, indexName, vectorName);
+        } catch (Exception e) {
+            throw new AnalysisBusinessException(AnalysisErrorCode.CANNOT_FIND_VECTOR);
+        }
     }
 
 }

@@ -40,7 +40,7 @@ public class OpenSearchHelper {
                     .sourceIncludes(vectorName)
             ), JsonData.class);
         } catch (IOException e) {
-            throw new NetworkApiException(NetworkApiErrorCode.OPENSEARCH_API_FAIL);
+            throw new NetworkApiException(NetworkApiErrorCode.OPEN_SEARCH_API_FAIL);
         }
     }
 
@@ -135,8 +135,8 @@ public class OpenSearchHelper {
                                         .vector(convertToArray(vector))
                                         .k(KNN_K)
                                         .filter(TermQuery.of(term -> term
-                                                .field(filterName)
-                                                .value(FieldValue.of(filterValue)))
+                                                        .field(filterName)
+                                                        .value(FieldValue.of(filterValue)))
                                                 ._toQuery()
                                         )
                                 )
@@ -148,7 +148,7 @@ public class OpenSearchHelper {
         try {
             return openSearchClient.search(searchRequest, JsonData.class);
         } catch (IOException e) {
-            throw new NetworkApiException(NetworkApiErrorCode.OPENSEARCH_API_FAIL);
+            throw new NetworkApiException(NetworkApiErrorCode.OPEN_SEARCH_API_FAIL);
         }
     }
 
@@ -161,7 +161,7 @@ public class OpenSearchHelper {
                     .limit(size)
                     .toList();
         } catch (Exception e) {
-            throw new NetworkApiException(NetworkApiErrorCode.OPENSEARCH_API_FAIL);
+            throw new NetworkApiException(NetworkApiErrorCode.OPEN_SEARCH_API_FAIL);
         }
     }
 
@@ -169,7 +169,7 @@ public class OpenSearchHelper {
         try {
             return searchResponse.hits().hits();
         } catch (Exception e) {
-            throw new NetworkApiException(NetworkApiErrorCode.OPENSEARCH_API_FAIL);
+            throw new NetworkApiException(NetworkApiErrorCode.OPEN_SEARCH_API_FAIL);
         }
     }
 
