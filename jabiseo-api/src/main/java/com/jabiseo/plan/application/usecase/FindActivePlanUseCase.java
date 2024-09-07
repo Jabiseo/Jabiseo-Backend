@@ -36,7 +36,7 @@ public class FindActivePlanUseCase {
         List<PlanItem> planItems = plan.getPlanItems();
 
         return ActivePlanResponse.builder()
-                .planId(plan.getId())
+                .planId(String.valueOf(plan.getId()))
                 .certificate(CertificateResponse.from(plan.getCertificate()))
                 .endAt(plan.getEndAt())
                 .weeklyPlanItems(planItems.stream().filter((p -> p.getGoalType().equals(GoalType.WEEKLY))).map(PlanItemResponse::from).toList())

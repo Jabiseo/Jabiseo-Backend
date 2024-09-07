@@ -14,7 +14,7 @@ import java.util.List;
 
 public record CreatePlanRequest(
         @NotNull @Future
-        LocalDate endDay,
+        LocalDate endAt,
 
         @NotNull @Valid
         List<PlanItemRequest> dailyPlan,

@@ -9,7 +9,7 @@ import java.util.List;
 
 @Builder
 public record ActivePlanResponse(
-        Long planId,
+        String planId,
         CertificateResponse certificate,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
         LocalDate endAt,
