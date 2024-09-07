@@ -62,16 +62,16 @@ public class OpenSearchHelper {
         return extractIds(searchResponse, targetSize);
     }
 
-    public List<Hit<JsonData>> searchSimilarItems(List<Float> vector, String indexName, String vectorName) {
+    public List<OpenSearchResultDto> searchSimilarItems(List<Float> vector, String indexName, String vectorName) {
         SearchRequest searchRequest = createKnnSearchRequest(vector, indexName, vectorName);
         SearchResponse<JsonData> searchResponse = executeSearch(searchRequest);
-        return extractHit(searchResponse);
+        return extractResult(searchResponse);
     }
 
-    public List<Hit<JsonData>> searchSimilarItems(List<Float> vector, String indexName, String vectorName, int targetSize) {
+    public List<OpenSearchResultDto> searchSimilarItems(List<Float> vector, String indexName, String vectorName, int targetSize) {
         SearchRequest searchRequest = createKnnSearchRequest(vector, indexName, vectorName, targetSize);
         SearchResponse<JsonData> searchResponse = executeSearch(searchRequest);
-        return extractHit(searchResponse);
+        return extractResult(searchResponse);
     }
 
     public List<Long> searchSimilarIdsWithFiltering(List<Float> vector, String indexName, String vectorName, int targetSize, String filterName, Long filterValue) {
@@ -165,9 +165,15 @@ public class OpenSearchHelper {
         }
     }
 
-    private List<Hit<JsonData>> extractHit(SearchResponse<JsonData> searchResponse) {
+    private List<OpenSearchResultDto> extractResult(SearchResponse<JsonData> searchResponse) {
         try {
-            return searchResponse.hits().hits();
+            return searchResponse.hits().hits().stream()
+                    .map(hit -> OpenSearchResultDto.of(
+                            hit.id(),
+                            hit.score(),
+                            hit.source().toJson().asJsonObject()
+                    ))
+                    .toList();
         } catch (Exception e) {
             throw new NetworkApiException(NetworkApiErrorCode.OPEN_SEARCH_API_FAIL);
         }

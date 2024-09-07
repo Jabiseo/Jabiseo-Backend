@@ -13,7 +13,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class SimilarProblemsProviderImpl implements SimilarProblemsProvider {
+public class OpenSearchSimilarProblemsProvider implements SimilarProblemsProvider {
 
     private final OpenSearchHelper openSearchHelper;
     private final SimilarProblemIdCacheRepository similarProblemIdCacheRepository;
