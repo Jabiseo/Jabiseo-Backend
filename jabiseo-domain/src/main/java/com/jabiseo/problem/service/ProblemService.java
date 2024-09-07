@@ -2,8 +2,8 @@ package com.jabiseo.problem.service;
 
 import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
+import com.jabiseo.problem.dto.ProblemWithBookmarkDetailQueryDto;
 import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryQueryDto;
-import com.jabiseo.problem.dto.ProblemsDetailResponse;
 import com.jabiseo.problem.exception.ProblemBusinessException;
 import com.jabiseo.problem.exception.ProblemErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -30,10 +30,7 @@ public class ProblemService {
         return problemRepository.findSummaryByIdsInWithBookmark(memberId, similarProblemIds);
     }
 
-    public List<ProblemsDetailResponse> findProblemsById(Long memberId, List<Long> problemIds) {
-        return problemRepository.findDetailByIdsInWithBookmark(memberId, problemIds)
-                        .stream()
-                        .map(ProblemsDetailResponse::from)
-                        .toList();
+    public List<ProblemWithBookmarkDetailQueryDto> findProblemsById(Long memberId, List<Long> problemIds) {
+        return problemRepository.findDetailByIdsInWithBookmark(memberId, problemIds);
     }
 }
