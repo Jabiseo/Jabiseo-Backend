@@ -16,7 +16,7 @@ public class SimilarProblemsProviderImpl implements SimilarProblemsProvider {
     private final OpenSearchHelper openSearchHelper;
     private final SimilarProblemIdCacheRepository similarProblemIdCacheRepository;
 
-    public List<Long> findSimilarProblems(Long problemId, Long certificateId, int similarProblemsCount) {
+    public List<Long> findSimilarProblemIds(Long problemId, Long certificateId, int similarProblemsCount) {
         // 캐시에 저장된 유사 문제 ID가 있으면 반환, 없으면 opensearch에서 검색 후 캐시에 저장
         return similarProblemIdCacheRepository.findById(problemId)
                 .orElseGet(() -> fetchAndCacheSimilarProblems(problemId, certificateId, similarProblemsCount))

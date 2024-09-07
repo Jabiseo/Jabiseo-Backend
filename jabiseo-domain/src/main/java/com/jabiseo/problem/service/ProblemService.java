@@ -26,7 +26,7 @@ public class ProblemService {
     }
 
     public List<ProblemWithBookmarkSummaryQueryDto> findSimilarProblems(Long memberId, Long problemId, Long certificateId) {
-        List<Long> similarProblemIds = similarProblemsProvider.findSimilarProblems(problemId, certificateId, SIMILAR_PROBLEM_COUNT);
+        List<Long> similarProblemIds = similarProblemsProvider.findSimilarProblemIds(problemId, certificateId, SIMILAR_PROBLEM_COUNT);
         return problemRepository.findSummaryByIdsInWithBookmark(memberId, similarProblemIds);
     }
 
