@@ -7,5 +7,5 @@ public interface WeeklyDefineStrategy {
 
     List<WeekPeriod> getPeriodPerWeek(int year, int month);
 
-    WeekPeriod getCurrentWeekPeriod(LocalDate now);
+    WeekPeriod getWeekPeriod(LocalDate date);
 }

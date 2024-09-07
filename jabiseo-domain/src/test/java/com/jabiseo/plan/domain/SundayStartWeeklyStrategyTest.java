@@ -24,7 +24,7 @@ class SundayStartWeeklyStrategyTest {
     @ParameterizedTest
     @DisplayName("입력 날짜를 기준으로 주간 정의의 시작, 종료 값을 리턴한다")
     @ValueSource(strings = {"2024-09-01", "2024-09-09", "2024-09-17", "2024-09-25", "2024-10-03", "2024-10-11", "2024-10-12"})
-    void getCurrentWeekPeriod(LocalDate now) throws Exception {
+    void getWeekPeriod(LocalDate now) throws Exception {
         //given
         DayOfWeek dayOfWeek = now.getDayOfWeek();
 
@@ -33,7 +33,7 @@ class SundayStartWeeklyStrategyTest {
         LocalDate endOfWeek = startOfWeek.plusDays(6);
 
         //when
-        WeekPeriod currentWeekPeriod = weeklyDefineStrategy.getCurrentWeekPeriod(now);
+        WeekPeriod currentWeekPeriod = weeklyDefineStrategy.getWeekPeriod(now);
 
         //then
         assertThat(currentWeekPeriod.getStart()).isEqualTo(startOfWeek);

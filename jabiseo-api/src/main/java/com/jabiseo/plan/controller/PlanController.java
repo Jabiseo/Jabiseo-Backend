@@ -4,7 +4,7 @@ import com.jabiseo.config.auth.AuthMember;
 import com.jabiseo.config.auth.AuthenticatedMember;
 import com.jabiseo.plan.application.usecase.CreatePlanUseCase;
 import com.jabiseo.plan.application.usecase.FindActivePlanUseCase;
-import com.jabiseo.plan.application.usecase.PlanCalenderSearchUseCase;
+import com.jabiseo.plan.application.usecase.SearchPlanCalenderUseCase;
 import com.jabiseo.plan.dto.ActivePlanResponse;
 import com.jabiseo.plan.dto.CreatePlanRequest;
 import com.jabiseo.plan.dto.calender.PlanCalenderSearchResponse;
@@ -23,7 +23,7 @@ public class PlanController {
 
     private final CreatePlanUseCase createPlanUseCase;
     private final FindActivePlanUseCase findActivePlanUseCase;
-    private final PlanCalenderSearchUseCase planCalenderSearchUseCase;
+    private final SearchPlanCalenderUseCase searchPlanCalenderUseCase;
 
     @PostMapping
     public ResponseEntity<Void> create(@Valid @RequestBody CreatePlanRequest request, @AuthenticatedMember AuthMember member) {
@@ -49,7 +49,7 @@ public class PlanController {
                                                                       @PathVariable("id") Long planId,
                                                                       @RequestParam(name = "year") int year,
                                                                       @RequestParam(name = "month") int month) {
-        PlanCalenderSearchResponse result = planCalenderSearchUseCase.execute(planId, year, month);
+        PlanCalenderSearchResponse result = searchPlanCalenderUseCase.execute(member.getMemberId(), planId, year, month);
         return ResponseEntity.ok(result);
     }
 }

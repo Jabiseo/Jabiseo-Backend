@@ -6,7 +6,6 @@ import com.jabiseo.learning.dto.LearningWithSolvingCountQueryDto;
 import com.jabiseo.member.domain.Member;
 import fixture.MemberFixture;
 import fixture.PlanItemFixture;
-import fixture.PlanProgressFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -62,7 +61,7 @@ class PlanProgressServiceTest {
         List<LearningWithSolvingCountQueryDto> queryDtos = Arrays.asList(new LearningWithSolvingCountQueryDto(LearningMode.EXAM, 10L, LocalDateTime.now(), 10L));
         WeekPeriod currentWeekPeriod = new WeekPeriod(LocalDate.now().withDayOfMonth(1), LocalDate.now().plusDays(6));
 
-        given(weeklyDefineStrategy.getCurrentWeekPeriod(LocalDate.now())).willReturn(currentWeekPeriod);
+        given(weeklyDefineStrategy.getWeekPeriod(LocalDate.now())).willReturn(currentWeekPeriod);
         given(learningRepository.findLearningWithSolvingCount(member, member.getCurrentCertificate(),
                 LocalDate.now(), LocalDate.now())).willReturn(queryDtos);
         given(learningRepository.findLearningWithSolvingCount(member, member.getCurrentCertificate(),
@@ -85,7 +84,7 @@ class PlanProgressServiceTest {
         );
         List<LearningWithSolvingCountQueryDto> queryDtos = Arrays.asList(new LearningWithSolvingCountQueryDto(LearningMode.EXAM, 10L, LocalDateTime.now(), 10L));
 
-        given(weeklyDefineStrategy.getCurrentWeekPeriod(LocalDate.now())).willReturn(new WeekPeriod(LocalDate.now(), LocalDate.now().plusDays(1)));
+        given(weeklyDefineStrategy.getWeekPeriod(LocalDate.now())).willReturn(new WeekPeriod(LocalDate.now(), LocalDate.now().plusDays(1)));
         given(learningRepository.findLearningWithSolvingCount(member, member.getCurrentCertificate(),
                 LocalDate.now(), LocalDate.now())).willReturn(queryDtos);
 

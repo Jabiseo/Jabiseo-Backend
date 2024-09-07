@@ -53,9 +53,9 @@ public class SundayStartWeeklyStrategy implements WeeklyDefineStrategy{
     }
 
     @Override
-    public WeekPeriod getCurrentWeekPeriod(LocalDate now) {
-        LocalDate start = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
-        LocalDate end = now.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+    public WeekPeriod getWeekPeriod(LocalDate date) {
+        LocalDate start = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        LocalDate end = date.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
         return new WeekPeriod(start, end);
     }
 }

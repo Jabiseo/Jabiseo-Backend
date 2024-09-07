@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public record CreatePlanRequest(
-        @Future
+        @NotNull @Future
         LocalDate endDay,
 
         @NotNull @Valid

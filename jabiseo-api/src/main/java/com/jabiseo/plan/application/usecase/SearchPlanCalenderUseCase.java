@@ -1,39 +1,47 @@
 package com.jabiseo.plan.application.usecase;
 
+import com.jabiseo.common.exception.BusinessException;
+import com.jabiseo.common.exception.CommonErrorCode;
 import com.jabiseo.plan.domain.*;
 import com.jabiseo.plan.dto.calender.PlanCalenderSearchResponse;
 import com.jabiseo.plan.dto.calender.PlanProgressDateResponse;
 import com.jabiseo.plan.dto.calender.PlanProgressResponse;
+import com.jabiseo.plan.exception.PlanBusinessException;
+import com.jabiseo.plan.exception.PlanErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional(readOnly = true)
-public class PlanCalenderSearchUseCase {
+public class SearchPlanCalenderUseCase {
 
     private final PlanProgressService planProgressService;
     private final PlanRepository planRepository;
     private final WeeklyDefineStrategy weeklyDefineStrategy;
 
-    public PlanCalenderSearchResponse execute(Long planId, int year, int month) {
-        Plan plan = planRepository.getReferenceById(planId);
-        List<PlanProgress> progress = planProgressService.findByYearMonth(plan, year, month);
+    public PlanCalenderSearchResponse execute(Long memberId, Long planId, int year, int month) {
+        Plan plan = planRepository.findById(planId)
+                        .orElseThrow(()-> new PlanBusinessException(PlanErrorCode.NOT_FOUND_PLAN));
+        plan.checkOwner(memberId);
 
-        List<WeekPeriod> periodPerWeek = weeklyDefineStrategy.getPeriodPerWeek(year, month);
-        List<PlanProgressDateResponse> daily = dailyProgressCovert(progress);
-        List<PlanProgressDateResponse> weekly = weeklyProgressCovert(progress, periodPerWeek);
+        List<PlanProgress> progressList = planProgressService.findByYearMonth(plan, year, month);
 
-        return new PlanCalenderSearchResponse(year, month, daily, weekly);
+        List<WeekPeriod> periodPerWeekList = weeklyDefineStrategy.getPeriodPerWeek(year, month);
+        List<PlanProgressDateResponse> dailyList = dailyProgressCovert(progressList);
+        List<PlanProgressDateResponse> weeklyList = weeklyProgressCovert(progressList, periodPerWeekList);
+
+        return new PlanCalenderSearchResponse(year, month, dailyList, weeklyList);
     }
 
     private List<PlanProgressDateResponse> weeklyProgressCovert(List<PlanProgress> progressList, List<WeekPeriod> weekPeriods) {
@@ -47,19 +55,18 @@ public class PlanCalenderSearchUseCase {
                             .stream()
                             .map((v) -> new PlanProgressResponse(v.getActivityType(), v.getCompletedValue(), v.getTargetValue()))
                             .toList();
-                    return PlanProgressDateResponse.ofWeek(findIndexWeek(weekPeriods, entry.getKey()) + 1, list);
+                    return PlanProgressDateResponse.ofWeek(findIndexWeek(weekPeriods, entry.getKey()), list);
                 }).toList();
     }
 
     private static int findIndexWeek(List<WeekPeriod> weekPeriods, LocalDate date) {
-        OptionalInt index = IntStream.range(0, weekPeriods.size())
+        return IntStream.range(1, weekPeriods.size()+1)
                 .filter(i -> {
-                    WeekPeriod period = weekPeriods.get(i);
+                    WeekPeriod period = weekPeriods.get(i-1);
                     return !date.isBefore(period.getStart()) && !date.isAfter(period.getEnd());
                 })
-                .findFirst();
-
-        return index.orElse(-1);
+                .findFirst()
+                .orElseThrow(()-> new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR));
     }
 
     private List<PlanProgressDateResponse> dailyProgressCovert(List<PlanProgress> progressList) {
@@ -67,7 +74,7 @@ public class PlanCalenderSearchUseCase {
                 .collect(Collectors.groupingBy(PlanProgress::getProgressDate, Collectors.toList()));
 
         return map.entrySet().stream()
-                .sorted()
+                .sorted(Map.Entry.comparingByKey())
                 .map(entry -> {
                     List<PlanProgressResponse> list = entry.getValue()
                             .stream()

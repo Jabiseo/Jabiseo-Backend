@@ -2,6 +2,8 @@ package com.jabiseo.plan.domain;
 
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.member.domain.Member;
+import com.jabiseo.plan.exception.PlanBusinessException;
+import com.jabiseo.plan.exception.PlanErrorCode;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -54,5 +56,11 @@ public class Plan {
 
     public static Plan create(Member member, LocalDate endAt){
         return new Plan(member.getCurrentCertificate(), member, endAt);
+    }
+
+    public void checkOwner(Long memberId) {
+        if(!memberId.equals(this.member.getId())){
+            throw new PlanBusinessException(PlanErrorCode.IS_NOT_OWNER);
+        }
     }
 }

@@ -48,8 +48,9 @@ public class PlanProgressService {
     }
 
 
+    // 플랜 생성 시, 설정된 플랜 기간 중에 학습한 기록이 있다면 반영한다
     public void createCurrentPlanProgress(Member member, List<PlanItem> planItems) {
-        WeekPeriod currentWeekPeriod = weeklyDefineStrategy.getCurrentWeekPeriod(LocalDate.now());
+        WeekPeriod currentWeekPeriod = weeklyDefineStrategy.getWeekPeriod(LocalDate.now());
 
 
         List<PlanProgress> daily = itemToDailyPlanProgress(planItems);
@@ -61,7 +62,7 @@ public class PlanProgressService {
     }
 
     private List<PlanProgress> getPlanProgress(List<PlanItem> planItems, LearningWithSolvingCountQueryDto dto) {
-        WeekPeriod currentWeekPeriod = weeklyDefineStrategy.getCurrentWeekPeriod(LocalDate.now());
+        WeekPeriod currentWeekPeriod = weeklyDefineStrategy.getWeekPeriod(LocalDate.now());
 
         List<PlanProgress> dailyProgress = planProgressRepository.findAllByProgressDateBetweenAndGoalType(LocalDate.now(), LocalDate.now(), GoalType.DAILY);
         if (dailyProgress.isEmpty()) {
@@ -95,16 +96,18 @@ public class PlanProgressService {
     }
 
     private void learningCalculateAndSave(Member member, List<PlanProgress> progress, LocalDate start, LocalDate end) {
-        // 없으면 진행하지 않는다.
+        // PlanProgress 로 전환할 PlanItem 이 없는 경우 PlanProgress 를 생성하지 않는다
         if (progress.isEmpty()) {
             return;
         }
 
         List<LearningWithSolvingCountQueryDto> queryResult = learningRepository.findLearningWithSolvingCount(member, member.getCurrentCertificate(), start, end);
+        // 해당하는 기간(start, end) 에 학습를 하지 않았으면 PlanProgress 를 생성하지 않는다
         if (queryResult.isEmpty()) {
             return;
         }
 
+        // 플랜 생성 전, 해당 기간에 학습을 진행했으므로 PlanProgress 를 생성한다
         List<PlanProgress> planProgresses = calculateProgress(progress, queryResult);
         planProgressRepository.saveAll(planProgresses);
     }
@@ -123,13 +126,11 @@ public class PlanProgressService {
             if (learning.getMode().equals(LearningMode.EXAM) && map.containsKey(ActivityType.EXAM)) {
                 PlanProgress planProgress = map.get(ActivityType.EXAM);
                 planProgress.addCompletedValue(1L);
-                map.put(ActivityType.EXAM, planProgress);
             }
 
             if (learning.getMode().equals(LearningMode.STUDY) && map.containsKey(ActivityType.STUDY)) {
                 PlanProgress planProgress = map.get(ActivityType.STUDY);
                 planProgress.addCompletedValue(1L);
-                map.put(ActivityType.STUDY, planProgress);
             }
 
             if (map.containsKey(ActivityType.PROBLEM)) {
