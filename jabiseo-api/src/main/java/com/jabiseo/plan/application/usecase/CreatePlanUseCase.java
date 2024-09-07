@@ -25,7 +25,7 @@ public class CreatePlanUseCase {
         member.validateCurrentCertificate();
         planService.checkInProgressPlan(member, LocalDate.now());
 
-        Plan plan = Plan.create(member, request.endDay());
+        Plan plan = Plan.create(member, request.endAt());
         List<PlanItem> planItems = request.toPlanItems(plan);
 
         Plan savedPlan = planService.savePlanAndItems(plan, planItems);
