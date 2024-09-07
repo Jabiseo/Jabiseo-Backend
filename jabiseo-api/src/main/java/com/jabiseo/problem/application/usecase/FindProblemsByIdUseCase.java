@@ -10,6 +10,7 @@ import com.jabiseo.problem.dto.FindProblemsResponse;
 import com.jabiseo.problem.dto.ProblemsDetailResponse;
 import com.jabiseo.problem.exception.ProblemBusinessException;
 import com.jabiseo.problem.exception.ProblemErrorCode;
+import com.jabiseo.problem.service.ProblemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,23 +22,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FindProblemsByIdUseCase {
 
-    private final ProblemRepository problemRepository;
     private final MemberRepository memberRepository;
+    private final ProblemService problemService;
 
     public FindProblemsResponse execute(Long memberId, FindProblemsRequest request) {
         Member member = memberRepository.getReferenceById(memberId);
         member.validateCurrentCertificate();
         Certificate certificate = member.getCurrentCertificate();
-
         List<Long> problemIds = request.problemIds()
                 .stream()
                 .distinct()
                 .toList();
 
         CertificateResponse certificateResponse = CertificateResponse.from(certificate);
-        List<ProblemsDetailResponse> problemsDetailResponses =
-                problemRepository.findDetailByIdsInWithBookmark(memberId, problemIds)
-                .stream()
+        List<ProblemsDetailResponse> problemsDetailResponses = problemService.findProblemsById(memberId, problemIds).stream()
                 .map(ProblemsDetailResponse::from)
                 .toList();
 
