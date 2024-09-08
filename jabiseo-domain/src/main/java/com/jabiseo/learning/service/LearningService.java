@@ -84,6 +84,6 @@ public class LearningService {
     }
 
     private int calculateRate(Integer numerator, int denominator) {
-        return (int) ((double) numerator / denominator * 100);
+        return (int) Math.round(((double) numerator / denominator * 100));
     }
 }

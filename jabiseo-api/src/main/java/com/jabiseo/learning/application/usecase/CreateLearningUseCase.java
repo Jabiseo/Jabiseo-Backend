@@ -86,7 +86,7 @@ public class CreateLearningUseCase {
                         ProblemResultRequest::problemId,
                         ProblemResultRequest::choice
                 ));
-        List<ProblemSolving> problemSolvings = solvedProblems.stream()
+        return solvedProblems.stream()
                 .map(problem -> ProblemSolving.of(
                         member,
                         problem,
@@ -95,6 +95,5 @@ public class CreateLearningUseCase {
                         problem.checkAnswer(problemIdToChoice.get(problem.getId()))
                 ))
                 .toList();
-        return problemSolvings;
     }
 }
