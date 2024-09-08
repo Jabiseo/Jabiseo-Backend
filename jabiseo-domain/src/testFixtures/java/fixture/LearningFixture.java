@@ -22,7 +22,7 @@ public class LearningFixture {
         return learning;
     }
 
-    public static Learning createLearning(Long id, Certificate certificate, LocalDateTime createdAt) throws Exception {
+    public static Learning createLearning(Long id, Certificate certificate, LocalDateTime createdAt) {
         Learning learning = Learning.of(LearningMode.EXAM, 123L, MemberFixture.createMember(), certificate);
         ReflectionTestUtils.setField(learning, "id", id);
         ReflectionTestUtils.setField(learning, "createdAt", createdAt);

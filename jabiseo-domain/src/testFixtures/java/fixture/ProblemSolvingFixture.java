@@ -1,5 +1,6 @@
 package fixture;
 
+import com.jabiseo.learning.domain.Learning;
 import com.jabiseo.learning.domain.ProblemSolving;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.problem.domain.Problem;
@@ -19,6 +20,18 @@ public class ProblemSolvingFixture {
                 createLearning(12345L, createCertificate(), LocalDateTime.now()),
                 4,
                 true
+        );
+        ReflectionTestUtils.setField(problemSolving, "id", id);
+        return problemSolving;
+    }
+
+    public static ProblemSolving createProblemSolving(Long id, Member member, Problem problem, Learning learning, boolean isCorrect) {
+        ProblemSolving problemSolving = ProblemSolving.of(
+                member,
+                problem,
+                learning,
+                3,
+                isCorrect
         );
         ReflectionTestUtils.setField(problemSolving, "id", id);
         return problemSolving;
