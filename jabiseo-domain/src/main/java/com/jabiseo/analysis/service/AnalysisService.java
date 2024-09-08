@@ -76,7 +76,7 @@ public class AnalysisService {
                             .map(value -> (float) (value * weight))
                             .toList();
                 })
-                //.parallel() TODO: 병렬 처리하는 것이 더 효율적인지 테스트 필요
+                .parallel()
                 .reduce((vector1, vector2) ->
                         IntStream.range(0, vector1.size())
                                 .mapToObj(i -> vector1.get(i) + vector2.get(i))
