@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 
 import static fixture.CertificateFixture.createCertificate;
 import static fixture.LearningFixture.createLearning;
+import static fixture.MemberFixture.createMember;
+import static fixture.ProblemFixture.createProblem;
 
 public class ProblemSolvingFixture {
 
@@ -29,6 +31,18 @@ public class ProblemSolvingFixture {
         ProblemSolving problemSolving = ProblemSolving.of(
                 member,
                 problem,
+                learning,
+                3,
+                isCorrect
+        );
+        ReflectionTestUtils.setField(problemSolving, "id", id);
+        return problemSolving;
+    }
+
+    public static ProblemSolving createProblemSolving(Long id, Learning learning, boolean isCorrect) {
+        ProblemSolving problemSolving = ProblemSolving.of(
+                createMember(),
+                createProblem(1234L),
                 learning,
                 3,
                 isCorrect

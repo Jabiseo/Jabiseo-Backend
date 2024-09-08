@@ -29,4 +29,10 @@ public class LearningFixture {
         return learning;
     }
 
+    public static Learning createLearning(Long id, Certificate certificate, LearningMode mode) {
+        Learning learning = Learning.of(mode, 123L, MemberFixture.createMember(), certificate);
+        ReflectionTestUtils.setField(learning, "id", id);
+        return learning;
+    }
+
 }
