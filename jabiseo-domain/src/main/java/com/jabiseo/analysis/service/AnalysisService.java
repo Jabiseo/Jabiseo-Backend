@@ -71,15 +71,9 @@ public class AnalysisService {
         return problemSolvings.stream()
                 .map(problemSolving -> {
                     List<Float> problemVector = problemIdToVector.get(problemSolving.getProblem().getId());
-                    double weight = calculateWeight(problemSolving.getLearning().getCreatedAt());
+                    double weight = calculateWeight(problemSolving.getLearning().getCreatedAt(), problemSolving.isCorrect());
                     return problemVector.stream()
-                            .map(value -> {
-                                // 문제를 맞췄을 경우 -1을 곱하여 가중치를 적용
-                                if (problemSolving.isCorrect())
-                                    return (float) (-1 * value * weight);
-                                else
-                                    return (float) (value * weight);
-                            })
+                            .map(value -> (float) (value * weight))
                             .toList();
                 })
                 //.parallel() TODO: 병렬 처리하는 것이 더 효율적인지 테스트 필요
@@ -91,10 +85,15 @@ public class AnalysisService {
                 .orElseThrow(() -> new AnalysisBusinessException(AnalysisErrorCode.CANNOT_CALCULATE_VULNERABILITY));
     }
 
-    private double calculateWeight(LocalDateTime createdAt) {
+    private double calculateWeight(LocalDateTime createdAt, boolean isCorrect) {
         long daysBetween = createdAt.until(LocalDateTime.now(), DAYS);
         // 시간 차이에 반비례한 가중치 계산. N일 차이가 날 경우 1/(N+1)의 가중치를 부여한다.
-        return 1.0 / (daysBetween + 1);
+        // 맞은 문제는 가중치에 -1을 곱한다.
+        if (isCorrect) {
+            return -1.0 / (daysBetween + 1);
+        } else {
+            return 1.0 / (daysBetween + 1);
+        }
     }
 
 }
