@@ -4,12 +4,12 @@ import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
 import com.jabiseo.problem.domain.Problem;
-import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindProblemsRequest;
 import com.jabiseo.problem.dto.FindProblemsResponse;
 import com.jabiseo.problem.dto.ProblemWithBookmarkDetailQueryDto;
 import com.jabiseo.problem.exception.ProblemBusinessException;
 import com.jabiseo.problem.exception.ProblemErrorCode;
+import com.jabiseo.problem.service.ProblemService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +35,7 @@ class FindProblemsByIdUseCaseTest {
     FindProblemsByIdUseCase sut;
 
     @Mock
-    ProblemRepository problemRepository;
+    ProblemService problemService;
 
     @Mock
     MemberRepository memberRepository;
@@ -62,7 +62,7 @@ class FindProblemsByIdUseCaseTest {
         );
         FindProblemsRequest request = new FindProblemsRequest(problemIds);
         given(memberRepository.getReferenceById(memberId)).willReturn(member);
-        given(problemRepository.findDetailByIdsInWithBookmark(memberId, problemIds)).willReturn(problemWithBookmarkDetailQueryDtos);
+        given(problemService.findProblemsById(memberId, problemIds)).willReturn(problemWithBookmarkDetailQueryDtos);
 
         //when
         FindProblemsResponse result = sut.execute(member.getId(), request);
@@ -97,7 +97,7 @@ class FindProblemsByIdUseCaseTest {
         );
         FindProblemsRequest request = new FindProblemsRequest(requestProblemIds);
         given(memberRepository.getReferenceById(memberId)).willReturn(member);
-        given(problemRepository.findDetailByIdsInWithBookmark(memberId, problemIds)).willReturn(problemWithBookmarkDetailQueryDtos);
+        given(problemService.findProblemsById(memberId, problemIds)).willReturn(problemWithBookmarkDetailQueryDtos);
 
         //when
         FindProblemsResponse result = sut.execute(member.getId(), request);
@@ -122,7 +122,7 @@ class FindProblemsByIdUseCaseTest {
         problemIds.forEach(problemId -> createProblem(problemId, certificate));
         FindProblemsRequest request = new FindProblemsRequest(problemIds);
         given(memberRepository.getReferenceById(memberId)).willReturn(member);
-        given(problemRepository.findDetailByIdsInWithBookmark(memberId, problemIds)).willReturn(List.of());
+        given(problemService.findProblemsById(memberId, problemIds)).willReturn(List.of());
 
         //when & then
         assertThatThrownBy(() -> sut.execute(member.getId(), request))

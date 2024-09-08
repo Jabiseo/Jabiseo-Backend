@@ -1,11 +1,10 @@
 package com.jabiseo.problem.application.usecase;
 
 import com.jabiseo.certificate.domain.Certificate;
-import com.jabiseo.opensearch.OpenSearchSimilarProblemsProvider;
 import com.jabiseo.problem.domain.Problem;
-import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindSimilarProblemResponse;
 import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryQueryDto;
+import com.jabiseo.problem.service.ProblemService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 
 import static fixture.CertificateFixture.createCertificate;
 import static fixture.ProblemFixture.createProblem;
@@ -29,10 +27,7 @@ class FindSimilarProblemsUseCaseTest {
     FindSimilarProblemsUseCase sut;
 
     @Mock
-    ProblemRepository problemRepository;
-
-    @Mock
-    OpenSearchSimilarProblemsProvider openSearchSimilarProblemsProvider;
+    ProblemService problemService;
 
     @Test
     @DisplayName("유사 문제 조회를 성공한다.")
@@ -54,9 +49,8 @@ class FindSimilarProblemsUseCaseTest {
                         ))
                         .toList();
 
-        given(openSearchSimilarProblemsProvider.findSimilarProblemIds(problemId, certificateId, 3)).willReturn(similarProblemIds);
-        given(problemRepository.findById(problemId)).willReturn(Optional.of(problem));
-        given(problemRepository.findSummaryByIdsInWithBookmark(memberId, similarProblemIds)).willReturn(problemWithBookmarkSummaryQueryDtos);
+        given(problemService.getById(problemId)).willReturn(problem);
+        given(problemService.findSimilarProblems(memberId, problemId, certificateId)).willReturn(problemWithBookmarkSummaryQueryDtos);
 
         //when
         List<FindSimilarProblemResponse> result = sut.execute(memberId, problemId);
