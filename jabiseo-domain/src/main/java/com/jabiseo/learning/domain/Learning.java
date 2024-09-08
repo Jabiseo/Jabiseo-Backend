@@ -55,4 +55,8 @@ public class Learning {
     public static Learning of(LearningMode mode, Long learningTime, Member member, Certificate certificate) {
         return new Learning(mode, learningTime, member, certificate);
     }
+
+    public void addProblemSolving(ProblemSolving problemSolving) {
+        problemSolvings.add(problemSolving);
+    }
 }
