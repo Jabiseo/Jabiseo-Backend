@@ -15,7 +15,7 @@ import static fixture.ProblemFixture.createProblem;
 
 public class ProblemSolvingFixture {
 
-    public static ProblemSolving createProblemSolving(Long id, Member member, Problem problem) throws Exception {
+    public static ProblemSolving createProblemSolving(Long id, Member member, Problem problem) {
         ProblemSolving problemSolving = ProblemSolving.of(
                 member,
                 problem,

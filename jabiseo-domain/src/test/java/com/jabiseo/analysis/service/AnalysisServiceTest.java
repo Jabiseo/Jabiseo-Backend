@@ -3,7 +3,6 @@ package com.jabiseo.analysis.service;
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.learning.domain.Learning;
 import com.jabiseo.learning.domain.ProblemSolving;
-import com.jabiseo.learning.domain.ProblemSolvingRepository;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.problem.domain.Problem;
 import fixture.ProblemFixture;
@@ -14,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -28,11 +26,6 @@ import static fixture.MemberFixture.createMember;
 import static fixture.ProblemFixture.createProblem;
 import static fixture.ProblemSolvingFixture.createProblemSolving;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @DisplayName("분석 서비스 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -40,12 +33,6 @@ class AnalysisServiceTest {
 
     @InjectMocks
     AnalysisService sut;
-
-    @Mock
-    ProblemSolvingRepository problemSolvingRepository;
-
-    @Mock
-    VulnerabilityProvider vulnerabilityProvider;
 
     private Member member;
 
@@ -59,34 +46,10 @@ class AnalysisServiceTest {
         this.certificate = createCertificate(certificateId);
     }
 
-    @Test
-    @DisplayName("[findVulnerableVector 테스트] 같은 문제를 여러 번 풀었어도, 해당 문제에 대해 OpenSearch 통신은 한 번 한다.")
-    void givenDuplicatedProblemId_whenFindVulnerableVector_thenExecuteClientOnce() throws Exception {
-        //given
-        Long duplicateProblemId = 3L;
-        Problem duplicateProblem = createProblem(duplicateProblemId);
-        List<ProblemSolving> problemSolvings = List.of(
-                createProblemSolving(3L, member, duplicateProblem),
-                createProblemSolving(4L, member, duplicateProblem),
-                createProblemSolving(5L, member, duplicateProblem)
-        );
-
-        given(problemSolvingRepository.findByMemberAndLearning_CertificateAndLearning_CreatedAtAfter(eq(member), eq(certificate), any()))
-                .willReturn(problemSolvings);
-        given(vulnerabilityProvider.findVectorsOfProblems(any(), any()))
-                .willReturn(Map.of(duplicateProblemId, List.of(1.0f, 2.0f, 3.0f)));
-
-        //when
-        sut.findVulnerableVector(member, certificate);
-
-        //then
-        verify(vulnerabilityProvider, times(1)).findVectorsOfProblems(any(), any());
-    }
-
     @ParameterizedTest
     @CsvSource(value = {"0:true:-1.0", "0:false:1.0", "1:true:-0.5", "364:false:0.002739726", "126:true:-0.007874016"}, delimiter = ':')
-    @DisplayName("[findVulnerableVector 가중치 테스트] N일 차이가 날 경우 1/(N+1)의 가중치를 부여한다. 맞은 경우 가중치는 음수이다.")
-    void givenDifferentCreatedAt_whenFindVulnerableVector_thenApplyWeight(int dateDifference, boolean isCorrect, double result) throws Exception {
+    @DisplayName("[calculateVulnerableVector 가중치 테스트] N일 차이가 날 경우 1/(N+1)의 가중치를 부여한다. 맞은 경우 가중치는 음수이다.")
+    void givenDifferentCreatedAt_whenFindVulnerableVector_thenApplyWeight(int dateDifference, boolean isCorrect, double result) {
         //given
         Long problemId = 3L;
         Problem problem = createProblem(problemId);
@@ -96,14 +59,10 @@ class AnalysisServiceTest {
                 createProblemSolving(5L, member, problem, learning, isCorrect)
         );
         List<Float> problemVector = List.of(1.0f, 2.0f, 3.0f);
-
-        given(problemSolvingRepository.findByMemberAndLearning_CertificateAndLearning_CreatedAtAfter(eq(member), eq(certificate), any()))
-                .willReturn(problemSolvings);
-        given(vulnerabilityProvider.findVectorsOfProblems(any(), any()))
-                .willReturn(Map.of(problemId, problemVector));
+        Map<Long, List<Float>> problemIdToVector = Map.of(problemId, problemVector);
 
         //when
-        List<Float> vulnerableVector = sut.findVulnerableVector(member, certificate);
+        List<Float> vulnerableVector = sut.calculateVulnerableVector(problemSolvings, problemIdToVector);
 
         //then
         IntStream.range(0, problemVector.size())
@@ -115,8 +74,8 @@ class AnalysisServiceTest {
     }
 
     @Test
-    @DisplayName("[findVulnerableVector 테스트] 풀었던 문제들의 가중치를 곱하여 더한 후 반환한다.")
-    void givenProblemSolvings_whenCalculateVulnerableVector_thenSumWeightedVectors() throws Exception {
+    @DisplayName("[calculateVulnerableVector 테스트] 풀었던 문제들의 가중치를 곱하여 더한 후 반환한다.")
+    void givenProblemSolvings_whenCalculateVulnerableVector_thenSumWeightedVectors() {
         //given
         List<Long> problemIds = List.of(1L, 2L, 3L);
         List<Problem> problems = problemIds.stream()
@@ -139,21 +98,11 @@ class AnalysisServiceTest {
                 problemIds.get(2), List.of(7.0f, 8.0f, 9.0f)
         );
 
-        given(problemSolvingRepository.findByMemberAndLearning_CertificateAndLearning_CreatedAtAfter(eq(member), eq(certificate), any()))
-                .willReturn(problemSolvings);
-        given(vulnerabilityProvider.findVectorsOfProblems(any(), any()))
-                .willReturn(
-                        Map.of(problemIds.get(0), problemIdToVector.get(problemIds.get(0)),
-                                problemIds.get(1), problemIdToVector.get(problemIds.get(1)),
-                                problemIds.get(2), problemIdToVector.get(problemIds.get(2))
-                        )
-                );
-
         //when
-        List<Float> vulnerableVector = sut.findVulnerableVector(member, certificate);
+        List<Float> vulnerableVector = sut.calculateVulnerableVector(problemSolvings, problemIdToVector);
 
         //then
-        List<Float> expected = List.of(-1.0f + 1.0f - 1.3333333f, -2.0f + 2.5f + -2.6666667f, -3.0f + 3.0f - 3.0f);
+        List<Float> expected = List.of(-1.0f + 1.0f - 1.3333333f, -2.0f + 2.5f - 2.6666667f, -3.0f + 3.0f - 3.0f);
         assertThat(vulnerableVector).isEqualTo(expected);
     }
 }

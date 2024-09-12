@@ -51,8 +51,7 @@ public class AnalysisService {
         return vulnerabilityProvider.findVulnerableProblems(vulnerableVector, certificate.getId(), DEFAULT_VULNERABLE_PROBLEM_COUNT);
     }
 
-    // 테스트를 위해 package-private로 변경
-    List<Float> findVulnerableVector(Member member, Certificate certificate) {
+    private List<Float> findVulnerableVector(Member member, Certificate certificate) {
         LocalDateTime oneYearAgo = LocalDateTime.now().minusYears(YEARS_OF_ANALYSIS);
         // TODO: 어떤 쿼리가 더 효율적인지 테스트 필요
         List<ProblemSolving> problemSolvings = problemSolvingRepository.findByMemberAndLearning_CertificateAndLearning_CreatedAtAfter(member, certificate, oneYearAgo);
@@ -66,7 +65,8 @@ public class AnalysisService {
         return calculateVulnerableVector(problemSolvings, problemIdToVector);
     }
 
-    private List<Float> calculateVulnerableVector(List<ProblemSolving> problemSolvings, Map<Long, List<Float>> problemIdToVector) {
+    // 테스트를 위해 package-private로 변경
+    List<Float> calculateVulnerableVector(List<ProblemSolving> problemSolvings, Map<Long, List<Float>> problemIdToVector) {
         // 풀었던 문제들의 벡터를 가중치를 곱하여 더한 후 반환
         return problemSolvings.stream()
                 .map(problemSolving -> {
