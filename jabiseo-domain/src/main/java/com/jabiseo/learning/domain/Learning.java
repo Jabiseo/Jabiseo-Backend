@@ -22,7 +22,7 @@ public class Learning {
 
     @Id
     @Tsid
-    @Column(name = "learning-id")
+    @Column(name = "learning_id")
     private Long id;
 
     @Enumerated(EnumType.STRING)
@@ -35,11 +35,11 @@ public class Learning {
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member-id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "certificate-id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "certificate_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Certificate certificate;
 
     @OneToMany(mappedBy = "learning")
