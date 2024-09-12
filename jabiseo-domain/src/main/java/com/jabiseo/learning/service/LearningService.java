@@ -4,7 +4,7 @@ import com.jabiseo.learning.domain.Learning;
 import com.jabiseo.learning.domain.LearningMode;
 import com.jabiseo.learning.domain.LearningRepository;
 import com.jabiseo.learning.domain.ProblemSolving;
-import com.jabiseo.learning.dto.TodayLearningResponse;
+import com.jabiseo.learning.dto.TodayLearningDto;
 import com.jabiseo.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class LearningService {
 
     private final LearningRepository learningRepository;
 
-    public TodayLearningResponse findTodayLearning(Member member) {
+    public TodayLearningDto findTodayLearning(Member member) {
         LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
         LocalDateTime endOfDay = startOfDay.plusDays(1).minusSeconds(1);
 
@@ -50,7 +50,7 @@ public class LearningService {
                 problemSolvingCountMap.getOrDefault(LearningMode.EXAM, 1)
         );
 
-        return TodayLearningResponse.of(
+        return TodayLearningDto.of(
                 learningCountMap.getOrDefault(LearningMode.STUDY, 0),
                 studyModeCorrectRate,
                 learningCountMap.getOrDefault(LearningMode.EXAM, 0),

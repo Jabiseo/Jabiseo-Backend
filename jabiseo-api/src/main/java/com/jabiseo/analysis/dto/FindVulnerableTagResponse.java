@@ -5,11 +5,11 @@ public record FindVulnerableTagResponse(
     String tagName,
     int vulnerableRate
 ) {
-    public static FindVulnerableTagResponse from(VulnerableTagResponse vulnerableTagResponse) {
+    public static FindVulnerableTagResponse from(VulnerableTagDto vulnerableTagDto) {
         return new FindVulnerableTagResponse(
-            vulnerableTagResponse.tagId(),
-            vulnerableTagResponse.tagName(),
-            vulnerableTagResponse.vulnerableRate()
+            vulnerableTagDto.tagId(),
+            vulnerableTagDto.tagName(),
+            vulnerableTagDto.vulnerableRate()
         );
     }
 }

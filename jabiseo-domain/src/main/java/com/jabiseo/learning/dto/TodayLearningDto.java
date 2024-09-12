@@ -1,18 +1,18 @@
 package com.jabiseo.learning.dto;
 
-public record TodayLearningResponse(
+public record TodayLearningDto(
     int studyModeCount,
     int studyModeCorrectRate,
     int examModeCount,
     int examModeCorrectRate
 ) {
-    public static TodayLearningResponse of(
+    public static TodayLearningDto of(
         int studyModeCount,
         int studyModeCorrectRate,
         int examModeCount,
         int examModeCorrectRate
     ) {
-        return new TodayLearningResponse(
+        return new TodayLearningDto(
             studyModeCount,
             studyModeCorrectRate,
             examModeCount,

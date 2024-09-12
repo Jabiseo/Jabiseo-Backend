@@ -5,11 +5,11 @@ public record FindVulnerableSubjectResponse(
     String subjectName,
     int vulnerabilityScore
 ) {
-    public static FindVulnerableSubjectResponse from(VulnerableSubjectResponse vulnerableSubjectResponse) {
+    public static FindVulnerableSubjectResponse from(VulnerableSubjectDto vulnerableSubjectDto) {
         return new FindVulnerableSubjectResponse(
-            vulnerableSubjectResponse.subjectId(),
-            vulnerableSubjectResponse.subjectName(),
-            vulnerableSubjectResponse.vulnerableRate()
+            vulnerableSubjectDto.subjectId(),
+            vulnerableSubjectDto.subjectName(),
+            vulnerableSubjectDto.vulnerableRate()
         );
     }
 }

@@ -1,7 +1,7 @@
 package com.jabiseo.analysis.application.usecase;
 
 import com.jabiseo.analysis.dto.FindTodayLearningResponse;
-import com.jabiseo.learning.dto.TodayLearningResponse;
+import com.jabiseo.learning.dto.TodayLearningDto;
 import com.jabiseo.learning.service.LearningService;
 import com.jabiseo.member.domain.Member;
 import com.jabiseo.member.domain.MemberRepository;
@@ -22,9 +22,9 @@ public class FindTodayLearningUseCase {
         Member member = memberRepository.getReferenceById(memberId);
         member.validateCurrentCertificate();
 
-        TodayLearningResponse todayLearningResponse = learningService.findTodayLearning(member);
+        TodayLearningDto todayLearningDto = learningService.findTodayLearning(member);
 
-        return FindTodayLearningResponse.from(todayLearningResponse);
+        return FindTodayLearningResponse.from(todayLearningDto);
     }
 
 }

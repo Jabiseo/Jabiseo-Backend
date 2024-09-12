@@ -1,7 +1,7 @@
 package com.jabiseo.analysis.service;
 
-import com.jabiseo.analysis.dto.VulnerableSubjectResponse;
-import com.jabiseo.analysis.dto.VulnerableTagResponse;
+import com.jabiseo.analysis.dto.VulnerableSubjectDto;
+import com.jabiseo.analysis.dto.VulnerableTagDto;
 import com.jabiseo.analysis.exception.AnalysisBusinessException;
 import com.jabiseo.analysis.exception.AnalysisErrorCode;
 import com.jabiseo.certificate.domain.Certificate;
@@ -31,12 +31,12 @@ public class AnalysisService {
     private final ProblemSolvingRepository problemSolvingRepository;
     private final VulnerabilityProvider vulnerabilityProvider;
 
-    public List<VulnerableSubjectResponse> findVulnerableSubjects(Member member, Certificate certificate) {
+    public List<VulnerableSubjectDto> findVulnerableSubjects(Member member, Certificate certificate) {
         List<Float> vulnerableVector = findVulnerableVector(member, certificate);
         return vulnerabilityProvider.findVulnerableSubjects(vulnerableVector, certificate.getId());
     }
 
-    public List<VulnerableTagResponse> findVulnerableTags(Member member, Certificate certificate) {
+    public List<VulnerableTagDto> findVulnerableTags(Member member, Certificate certificate) {
         List<Float> vulnerableVector = findVulnerableVector(member, certificate);
         return vulnerabilityProvider.findVulnerableTags(vulnerableVector, certificate.getId(), DEFAULT_TAG_COUNT);
     }

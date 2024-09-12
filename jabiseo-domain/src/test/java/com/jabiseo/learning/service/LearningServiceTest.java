@@ -4,7 +4,7 @@ import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.learning.domain.Learning;
 import com.jabiseo.learning.domain.LearningMode;
 import com.jabiseo.learning.domain.LearningRepository;
-import com.jabiseo.learning.dto.TodayLearningResponse;
+import com.jabiseo.learning.dto.TodayLearningDto;
 import com.jabiseo.member.domain.Member;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -54,13 +54,13 @@ class LearningServiceTest {
         given(learningRepository.findByMemberAndCreatedAtBetweenWithProblemSolvings(eq(member), any(), any())).willReturn(List.of());
 
         // when
-        TodayLearningResponse todayLearningResponse = sut.findTodayLearning(member);
+        TodayLearningDto todayLearningDto = sut.findTodayLearning(member);
 
         // then
-        assertThat(todayLearningResponse.studyModeCount()).isZero();
-        assertThat(todayLearningResponse.studyModeCorrectRate()).isZero();
-        assertThat(todayLearningResponse.examModeCount()).isZero();
-        assertThat(todayLearningResponse.examModeCorrectRate()).isZero();
+        assertThat(todayLearningDto.studyModeCount()).isZero();
+        assertThat(todayLearningDto.studyModeCorrectRate()).isZero();
+        assertThat(todayLearningDto.examModeCount()).isZero();
+        assertThat(todayLearningDto.examModeCorrectRate()).isZero();
     }
 
     @Test
@@ -81,13 +81,13 @@ class LearningServiceTest {
                 .willReturn(learnings);
 
         // when
-        TodayLearningResponse todayLearningResponse = sut.findTodayLearning(member);
+        TodayLearningDto todayLearningDto = sut.findTodayLearning(member);
 
         // then
-        assertThat(todayLearningResponse.studyModeCount()).isEqualTo(3);
-        assertThat(todayLearningResponse.studyModeCorrectRate()).isEqualTo(43); // 3/7 correct
-        assertThat(todayLearningResponse.examModeCount()).isZero();
-        assertThat(todayLearningResponse.examModeCorrectRate()).isZero();
+        assertThat(todayLearningDto.studyModeCount()).isEqualTo(3);
+        assertThat(todayLearningDto.studyModeCorrectRate()).isEqualTo(43); // 3/7 correct
+        assertThat(todayLearningDto.examModeCount()).isZero();
+        assertThat(todayLearningDto.examModeCorrectRate()).isZero();
     }
 
     @Test
@@ -108,13 +108,13 @@ class LearningServiceTest {
                 .willReturn(learnings);
 
         // when
-        TodayLearningResponse todayLearningResponse = sut.findTodayLearning(member);
+        TodayLearningDto todayLearningDto = sut.findTodayLearning(member);
 
         // then
-        assertThat(todayLearningResponse.studyModeCount()).isZero();
-        assertThat(todayLearningResponse.studyModeCorrectRate()).isZero();
-        assertThat(todayLearningResponse.examModeCount()).isEqualTo(4);
-        assertThat(todayLearningResponse.examModeCorrectRate()).isEqualTo(86); // 6/7 correct
+        assertThat(todayLearningDto.studyModeCount()).isZero();
+        assertThat(todayLearningDto.studyModeCorrectRate()).isZero();
+        assertThat(todayLearningDto.examModeCount()).isEqualTo(4);
+        assertThat(todayLearningDto.examModeCorrectRate()).isEqualTo(86); // 6/7 correct
     }
 
     @Test
@@ -135,12 +135,12 @@ class LearningServiceTest {
                 .willReturn(learnings);
 
         // when
-        TodayLearningResponse todayLearningResponse = sut.findTodayLearning(member);
+        TodayLearningDto todayLearningDto = sut.findTodayLearning(member);
 
         // then
-        assertThat(todayLearningResponse.studyModeCount()).isEqualTo(2);
-        assertThat(todayLearningResponse.studyModeCorrectRate()).isEqualTo(75); // 3/4 correct
-        assertThat(todayLearningResponse.examModeCount()).isEqualTo(2);
-        assertThat(todayLearningResponse.examModeCorrectRate()).isEqualTo(67); // 2/3 correct
+        assertThat(todayLearningDto.studyModeCount()).isEqualTo(2);
+        assertThat(todayLearningDto.studyModeCorrectRate()).isEqualTo(75); // 3/4 correct
+        assertThat(todayLearningDto.examModeCount()).isEqualTo(2);
+        assertThat(todayLearningDto.examModeCorrectRate()).isEqualTo(67); // 2/3 correct
     }
 }

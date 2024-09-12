@@ -1,6 +1,6 @@
 package com.jabiseo.analysis.dto;
 
-import com.jabiseo.learning.dto.TodayLearningResponse;
+import com.jabiseo.learning.dto.TodayLearningDto;
 
 public record FindTodayLearningResponse(
     int studyModeCount,
@@ -8,12 +8,12 @@ public record FindTodayLearningResponse(
     int examModeCount,
     int examModeCorrectRate
 ) {
-    public static FindTodayLearningResponse from(TodayLearningResponse todayLearningResponse) {
+    public static FindTodayLearningResponse from(TodayLearningDto todayLearningDto) {
         return new FindTodayLearningResponse(
-            todayLearningResponse.studyModeCount(),
-            todayLearningResponse.studyModeCorrectRate(),
-            todayLearningResponse.examModeCount(),
-            todayLearningResponse.examModeCorrectRate()
+            todayLearningDto.studyModeCount(),
+            todayLearningDto.studyModeCorrectRate(),
+            todayLearningDto.examModeCount(),
+            todayLearningDto.examModeCorrectRate()
         );
     }
 }
