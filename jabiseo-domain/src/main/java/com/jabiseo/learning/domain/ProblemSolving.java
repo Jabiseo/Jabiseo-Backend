@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "problem_solving")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProblemSolving {
@@ -44,6 +43,8 @@ public class ProblemSolving {
     }
 
     public static ProblemSolving of(Member member, Problem problem, Learning learning, int selectedChoice, boolean isCorrect) {
-        return new ProblemSolving(member, problem, learning, selectedChoice, isCorrect);
+        ProblemSolving problemSolving = new ProblemSolving(member, problem, learning, selectedChoice, isCorrect);
+        learning.addProblemSolving(problemSolving);
+        return problemSolving;
     }
 }

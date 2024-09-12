@@ -1,5 +1,6 @@
 package com.jabiseo.problem.controller;
 
+import com.jabiseo.problem.application.usecase.FindVulnerableProblemsOfSubjectUseCase;
 import com.jabiseo.config.auth.AuthMember;
 import com.jabiseo.config.auth.AuthenticatedMember;
 import com.jabiseo.problem.application.usecase.*;
@@ -30,6 +31,10 @@ public class ProblemController {
     private final FindProblemDetailUseCase findProblemDetailUseCase;
 
     private final FindSimilarProblemsUseCase findSimilarProblemsUseCase;
+
+    private final FindVulnerableProblemsOfSubjectUseCase findVulnerableProblemsOfSubjectUseCase;
+
+    private final FindRecommendedProblemsUseCase findRecommendedProblemsUseCase;
 
     @GetMapping("/set")
     public ResponseEntity<FindProblemsResponse> findProblems(
@@ -99,4 +104,22 @@ public class ProblemController {
         List<FindSimilarProblemResponse> result = findSimilarProblemsUseCase.execute(member.getMemberId(), problemId);
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/vulnerable-subjects/{subject-id}")
+    public ResponseEntity<FindProblemsResponse> findVulnerableProblemsOfSubject(
+            @AuthenticatedMember AuthMember member,
+            @PathVariable(name = "subject-id") Long subjectId
+    ) {
+        FindProblemsResponse result = findVulnerableProblemsOfSubjectUseCase.execute(member.getMemberId(), subjectId);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/recommendations")
+    public ResponseEntity<FindProblemsResponse> findRecommendedProblems(
+            @AuthenticatedMember AuthMember member
+    ) {
+        FindProblemsResponse result = findRecommendedProblemsUseCase.execute(member.getMemberId());
+        return ResponseEntity.ok(result);
+    }
+
 }

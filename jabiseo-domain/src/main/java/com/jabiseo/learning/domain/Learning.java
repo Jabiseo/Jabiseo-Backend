@@ -11,11 +11,13 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Learning {
 
     @Id
@@ -33,22 +35,28 @@ public class Learning {
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "certificate-id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-    private Certificate certificate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member-id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Member member;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "certificate-id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    private Certificate certificate;
 
-    private Learning(LearningMode mode, Long learningTime, Certificate certificate, Member member) {
+    @OneToMany(mappedBy = "learning")
+    private List<ProblemSolving> problemSolvings = new ArrayList<>();
+
+    private Learning(LearningMode mode, Long learningTime, Member member, Certificate certificate) {
         this.mode = mode;
         this.learningTime = learningTime;
-        this.certificate = certificate;
         this.member = member;
+        this.certificate = certificate;
     }
 
-    public static Learning of(LearningMode mode, Long learningTime, Certificate certificate, Member member) {
-        return new Learning(mode, learningTime, certificate, member);
+    public static Learning of(LearningMode mode, Long learningTime, Member member, Certificate certificate) {
+        return new Learning(mode, learningTime, member, certificate);
+    }
+
+    public void addProblemSolving(ProblemSolving problemSolving) {
+        problemSolvings.add(problemSolving);
     }
 }

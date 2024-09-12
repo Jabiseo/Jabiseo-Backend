@@ -5,7 +5,6 @@ import com.jabiseo.problem.dto.CertificateResponse;
 import lombok.Builder;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder

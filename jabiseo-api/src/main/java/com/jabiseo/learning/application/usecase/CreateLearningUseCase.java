@@ -43,7 +43,7 @@ public class CreateLearningUseCase {
 
         validateDuplicatedSolving(request);
 
-        Learning learning = Learning.of(LearningMode.valueOf(request.learningMode()), request.learningTime(), certificate, member);
+        Learning learning = Learning.of(LearningMode.valueOf(request.learningMode()), request.learningTime(), member, certificate);
         learningRepository.save(learning);
 
         //문제들의 id 리스트를 뽑아내 한 번의 쿼리로 찾아옴
@@ -86,7 +86,7 @@ public class CreateLearningUseCase {
                         ProblemResultRequest::problemId,
                         ProblemResultRequest::choice
                 ));
-        List<ProblemSolving> problemSolvings = solvedProblems.stream()
+        return solvedProblems.stream()
                 .map(problem -> ProblemSolving.of(
                         member,
                         problem,
@@ -95,6 +95,5 @@ public class CreateLearningUseCase {
                         problem.checkAnswer(problemIdToChoice.get(problem.getId()))
                 ))
                 .toList();
-        return problemSolvings;
     }
 }
