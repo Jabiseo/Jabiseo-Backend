@@ -79,7 +79,7 @@ public class ProblemController {
     @GetMapping("/bookmarked")
     public ResponseEntity<FindBookmarkedProblemsResponse> findBookmarkedProblems(
             @AuthenticatedMember AuthMember member,
-            @RequestParam(name = "exam-id") Long examId,
+            @RequestParam(name = "exam-id", required = false) Long examId,
             @RequestParam(name = "subject-id") List<Long> subjectIds,
             int page
     ) {
