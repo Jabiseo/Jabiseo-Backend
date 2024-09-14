@@ -54,7 +54,11 @@ public class AnalysisService {
     private List<Float> findVulnerableVector(Member member, Certificate certificate) {
         LocalDateTime oneYearAgo = LocalDateTime.now().minusYears(YEARS_OF_ANALYSIS);
         // TODO: 어떤 쿼리가 더 효율적인지 테스트 필요
-        List<ProblemSolving> problemSolvings = problemSolvingRepository.findByMemberAndLearning_CertificateAndLearning_CreatedAtAfter(member, certificate, oneYearAgo);
+        List<ProblemSolving> problemSolvings = problemSolvingRepository.findByMemberAndCertificateAndCreatedAtAfterWithLearning(member, certificate, oneYearAgo);
+
+        if (problemSolvings.isEmpty()) {
+            throw new AnalysisBusinessException(AnalysisErrorCode.NOT_ENOUGH_SOLVED_PROBLEMS);
+        }
 
         List<Long> distinctProblemIds = problemSolvings.stream()
                 .map(problemSolving -> problemSolving.getProblem().getId())
@@ -76,7 +80,6 @@ public class AnalysisService {
                             .map(value -> (float) (value * weight))
                             .toList();
                 })
-                .parallel()
                 .reduce((vector1, vector2) ->
                         IntStream.range(0, vector1.size())
                                 .mapToObj(i -> vector1.get(i) + vector2.get(i))

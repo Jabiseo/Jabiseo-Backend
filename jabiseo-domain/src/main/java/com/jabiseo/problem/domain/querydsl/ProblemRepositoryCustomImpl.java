@@ -117,7 +117,7 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
                 .join(problem.exam, exam)
                 .join(problem.subject, subject)
                 .join(bookmark).on(bookmark.problem.id.eq(problem.id))
-                .where(examIdEq(examId), subjectIdsIn(subjectIds))
+                .where(memberIdEq(memberId), examIdEq(examId), subjectIdsIn(subjectIds))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -201,6 +201,10 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
 
     private BooleanExpression examIdEq(Long examId) {
         return examId != null ? exam.id.eq(examId) : null;
+    }
+
+    private BooleanExpression memberIdEq(Long memberId) {
+        return memberId != null ? bookmark.member.id.eq(memberId) : null;
     }
 
     private Predicate isBookmarkedByMember(Long memberId, NumberPath<Long> id) {

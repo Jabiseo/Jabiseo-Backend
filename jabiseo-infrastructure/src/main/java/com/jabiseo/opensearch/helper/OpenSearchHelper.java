@@ -39,7 +39,7 @@ public class OpenSearchHelper {
 
     private GetResponse<JsonData> fetchFromOpenSearch(Long id, String indexName, String vectorName) {
         try {
-            return openSearchClient.get(GetRequest.of(getReq -> getReq
+            return openSearchClient.get(GetRequest.of(request -> request
                     .index(indexName)
                     .id(String.valueOf(id))
                     .sourceIncludes(vectorName)
