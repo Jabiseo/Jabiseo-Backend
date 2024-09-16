@@ -2,10 +2,7 @@ package com.jabiseo.plan.controller;
 
 import com.jabiseo.config.auth.AuthMember;
 import com.jabiseo.config.auth.AuthenticatedMember;
-import com.jabiseo.plan.application.usecase.CreatePlanUseCase;
-import com.jabiseo.plan.application.usecase.FindActivePlanUseCase;
-import com.jabiseo.plan.application.usecase.ModifyPlanUseCase;
-import com.jabiseo.plan.application.usecase.SearchPlanCalenderUseCase;
+import com.jabiseo.plan.application.usecase.*;
 import com.jabiseo.plan.dto.ActivePlanResponse;
 import com.jabiseo.plan.dto.CreatePlanRequest;
 import com.jabiseo.plan.dto.ModifyPlanRequest;
@@ -27,6 +24,7 @@ public class PlanController {
     private final FindActivePlanUseCase findActivePlanUseCase;
     private final SearchPlanCalenderUseCase searchPlanCalenderUseCase;
     private final ModifyPlanUseCase modifyPlanUseCase;
+    private final DeletePlanUseCase deletePlanUseCase;
 
     @PostMapping
     public ResponseEntity<Void> create(@Valid @RequestBody CreatePlanRequest request, @AuthenticatedMember AuthMember member) {
@@ -59,9 +57,17 @@ public class PlanController {
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(@AuthenticatedMember AuthMember member,
                                        @PathVariable("id") Long planId,
-                                       @RequestBody ModifyPlanRequest request){
+                                       @RequestBody ModifyPlanRequest request) {
         modifyPlanUseCase.execute(planId, member.getMemberId(), request);
 
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@AuthenticatedMember AuthMember member,
+                                       @PathVariable("id") Long planId) {
+        deletePlanUseCase.execute(planId, member.getMemberId());
         return ResponseEntity.noContent().build();
     }
 }

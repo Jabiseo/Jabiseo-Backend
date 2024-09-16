@@ -15,6 +15,7 @@ public class PlanService {
 
     private final PlanRepository planRepository;
     private final PlanItemRepository planItemRepository;
+    private final PlanProgressRepository planProgressRepository;
 
     public Plan getPlanWithItems(Long planId) {
         return planRepository.findPlanWithItemsById(planId)
@@ -31,6 +32,11 @@ public class PlanService {
         if (planRepository.existsByCertificateAndMemberAndEndAtAfter(member.getCurrentCertificate(), member, now)) {
             throw new PlanBusinessException(PlanErrorCode.ALREADY_EXIST_PLAN);
         }
+    }
+
+    public void removePlan(Plan plan){
+        planRepository.delete(plan); // cascade 설정으로 다 삭제가 된다
+        planProgressRepository.deleteByPlanId(plan.getId()); // plan progress를 삭제한다.
     }
 
 }
