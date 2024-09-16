@@ -16,14 +16,19 @@ public class PlanService {
     private final PlanRepository planRepository;
     private final PlanItemRepository planItemRepository;
 
+    public Plan getPlanWithItems(Long planId) {
+        return planRepository.findPlanWithItemsById(planId)
+                .orElseThrow(() -> new PlanBusinessException(PlanErrorCode.NOT_FOUND_PLAN));
+    }
+
     public Plan savePlanAndItems(Plan plan, List<PlanItem> planItems) {
         planItemRepository.saveAll(planItems);
         return planRepository.save(plan);
     }
 
 
-    public void checkInProgressPlan(Member member, LocalDate now){
-        if(planRepository.existsByCertificateAndMemberAndEndAtAfter(member.getCurrentCertificate(),member, now)){
+    public void checkInProgressPlan(Member member, LocalDate now) {
+        if (planRepository.existsByCertificateAndMemberAndEndAtAfter(member.getCurrentCertificate(), member, now)) {
             throw new PlanBusinessException(PlanErrorCode.ALREADY_EXIST_PLAN);
         }
     }

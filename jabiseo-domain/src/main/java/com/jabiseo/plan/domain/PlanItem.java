@@ -55,4 +55,19 @@ public class PlanItem {
                 .completedValue(0L)
                 .build();
     }
+
+    public void updateTargetValue(Integer targetValue) {
+        this.targetValue = targetValue;
+    }
+
+
+    @Override
+    public String toString() {
+        return "PlanItem{" +
+                "targetValue=" + targetValue +
+                ", goalType=" + goalType +
+                ", activityType=" + activityType +
+                ", id=" + id +
+                '}';
+    }
 }

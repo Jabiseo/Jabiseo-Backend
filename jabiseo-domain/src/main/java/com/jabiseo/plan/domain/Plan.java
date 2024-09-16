@@ -15,8 +15,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -39,7 +39,7 @@ public class Plan {
 
     private LocalDate endAt;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "plan")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size = 100)
     private List<PlanItem> planItems = new ArrayList<>();
 
@@ -54,12 +54,116 @@ public class Plan {
         this.endAt = endAt;
     }
 
-    public static Plan create(Member member, LocalDate endAt){
+    public Plan(Certificate certificate, Member member, LocalDate endAt, List<PlanItem> planItems) {
+        this.certificate = certificate;
+        this.member = member;
+        this.endAt = endAt;
+        this.planItems = planItems;
+    }
+
+    public List<PlanItem> getNewItems(List<PlanItem> daily, List<PlanItem> weekly) {
+        Set<ActivityType> originDailyItemActivities = extractActivityTypes(this.planItems, GoalType.DAILY);
+        Set<ActivityType> originWeeklyItemActivities = extractActivityTypes(this.planItems, GoalType.WEEKLY);
+
+        List<PlanItem> newDailyItems = filterNewItems(daily, originDailyItemActivities);
+        List<PlanItem> newWeeklyItems = filterNewItems(weekly, originWeeklyItemActivities);
+
+        List<PlanItem> result = new ArrayList<>(newDailyItems);
+        result.addAll(newWeeklyItems);
+        return result;
+    }
+
+    public List<PlanItem> getExistItems(List<PlanItem> daily, List<PlanItem> weekly) {
+        Set<ActivityType> originDailyItemActivities = extractActivityTypes(this.planItems, GoalType.DAILY);
+        Set<ActivityType> originWeeklyItemActivities = extractActivityTypes(this.planItems, GoalType.WEEKLY);
+
+        List<PlanItem> result = new ArrayList<>(filterExistingItems(daily, originDailyItemActivities));
+        result.addAll(filterExistingItems(weekly, originWeeklyItemActivities));
+        return result;
+    }
+
+    public List<PlanItem> getDeletedItems(List<PlanItem> daily, List<PlanItem> weekly) {
+        List<PlanItem> result = new ArrayList<>(filterDeleteItems(this.planItems, daily, GoalType.DAILY));
+        result.addAll(filterDeleteItems(this.planItems, weekly, GoalType.WEEKLY));
+        return result;
+    }
+
+    public List<PlanItem> filterDeleteItems(List<PlanItem> original, List<PlanItem> newItem, GoalType goalType) {
+        Set<ActivityType> newItemsType = extractActivityTypes(newItem, goalType);
+        return original.stream()
+                .filter((item) -> item.getGoalType().equals(goalType))
+                .filter((item) -> !newItemsType.contains(item.getActivityType()))
+                .toList();
+    }
+
+    private List<PlanItem> filterExistingItems(List<PlanItem> items, Set<ActivityType> existingActivities) {
+        return items.stream()
+                .filter(item -> existingActivities.contains(item.getActivityType()))
+                .toList();
+    }
+
+    private List<PlanItem> filterNewItems(List<PlanItem> items, Set<ActivityType> existingActivities) {
+        return items.stream()
+                .filter(item -> !existingActivities.contains(item.getActivityType()))
+                .toList();
+    }
+
+    private Set<ActivityType> extractActivityTypes(List<PlanItem> source, GoalType goalType) {
+        return source.stream()
+                .filter(item -> item.getGoalType().equals(goalType))
+                .map(PlanItem::getActivityType)
+                .collect(Collectors.toSet());
+    }
+
+
+    public void modifyPlanItems(List<PlanItem> dailyItems, List<PlanItem> weeklyItems) {
+        List<PlanItem> existItems = this.getExistItems(dailyItems, weeklyItems);
+        List<PlanItem> newItems = this.getNewItems(dailyItems, weeklyItems);
+        List<PlanItem> deletedItems = this.getDeletedItems(dailyItems, weeklyItems);
+
+        Map<String, PlanItem> planItemMap = this.planItems.stream()
+                .collect(Collectors.toMap(
+                        item -> item.getActivityType().name() + "-" + item.getGoalType().name(),
+                        item -> item
+                ));
+
+
+        // 기존 플랜 값 수정
+        existItems.forEach(existItem -> {
+            int newTarget = existItem.getTargetValue();
+            String key = existItem.getActivityType().name() + "-" + existItem.getGoalType().name();
+            if (planItemMap.containsKey(key)) {
+                planItemMap.get(key).updateTargetValue(newTarget);
+            }
+        });
+
+        // 삭제될 플랜은 삭제
+        List<PlanItem> removeItems = new ArrayList<>();
+        deletedItems.forEach(deletedItem -> {
+            String key = deletedItem.getActivityType().name() + "-" + deletedItem.getGoalType().name();
+            if (planItemMap.containsKey(key)) {
+                removeItems.add(planItemMap.get(key));
+            }
+        });
+        this.planItems.removeAll(removeItems);
+
+        // 새 플랜은 추가
+        this.planItems.addAll(newItems);
+    }
+
+
+    public void modifyEndDay(LocalDate endAt) {
+        if (!endAt.equals(this.endAt)) {
+            this.endAt = endAt;
+        }
+    }
+
+    public static Plan create(Member member, LocalDate endAt) {
         return new Plan(member.getCurrentCertificate(), member, endAt);
     }
 
     public void checkOwner(Long memberId) {
-        if(!memberId.equals(this.member.getId())){
+        if (!memberId.equals(this.member.getId())) {
             throw new PlanBusinessException(PlanErrorCode.IS_NOT_OWNER);
         }
     }

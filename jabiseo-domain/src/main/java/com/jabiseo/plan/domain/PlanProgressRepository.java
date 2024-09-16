@@ -9,5 +9,5 @@ public interface PlanProgressRepository extends JpaRepository<PlanProgress, Long
 
     List<PlanProgress> findAllByPlanAndProgressDateBetweenOrderByProgressDate(Plan plan, LocalDate start, LocalDate end);
 
-    List<PlanProgress> findAllByProgressDateBetweenAndGoalType(LocalDate start, LocalDate end, GoalType goalType);
+    List<PlanProgress> findAllByPlanAndProgressDateBetweenAndGoalType(Plan plan, LocalDate start, LocalDate end, GoalType goalType);
 }
