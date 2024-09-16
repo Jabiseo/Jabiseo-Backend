@@ -56,4 +56,8 @@ public class PlanProgress {
     public void addCompletedValue(Long add) {
         this.completedValue += add;
     }
+
+    public void updateTargetValue(Integer value) {
+        this.targetValue = value;
+    }
 }

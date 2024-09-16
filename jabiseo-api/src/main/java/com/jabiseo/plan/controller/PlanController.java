@@ -2,11 +2,10 @@ package com.jabiseo.plan.controller;
 
 import com.jabiseo.config.auth.AuthMember;
 import com.jabiseo.config.auth.AuthenticatedMember;
-import com.jabiseo.plan.application.usecase.CreatePlanUseCase;
-import com.jabiseo.plan.application.usecase.FindActivePlanUseCase;
-import com.jabiseo.plan.application.usecase.SearchPlanCalenderUseCase;
+import com.jabiseo.plan.application.usecase.*;
 import com.jabiseo.plan.dto.ActivePlanResponse;
 import com.jabiseo.plan.dto.CreatePlanRequest;
+import com.jabiseo.plan.dto.ModifyPlanRequest;
 import com.jabiseo.plan.dto.calender.PlanCalenderSearchResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +23,8 @@ public class PlanController {
     private final CreatePlanUseCase createPlanUseCase;
     private final FindActivePlanUseCase findActivePlanUseCase;
     private final SearchPlanCalenderUseCase searchPlanCalenderUseCase;
+    private final ModifyPlanUseCase modifyPlanUseCase;
+    private final DeletePlanUseCase deletePlanUseCase;
 
     @PostMapping
     public ResponseEntity<Void> create(@Valid @RequestBody CreatePlanRequest request, @AuthenticatedMember AuthMember member) {
@@ -51,5 +52,22 @@ public class PlanController {
                                                                       @RequestParam(name = "month") int month) {
         PlanCalenderSearchResponse result = searchPlanCalenderUseCase.execute(member.getMemberId(), planId, year, month);
         return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@AuthenticatedMember AuthMember member,
+                                       @PathVariable("id") Long planId,
+                                       @RequestBody ModifyPlanRequest request) {
+        modifyPlanUseCase.execute(planId, member.getMemberId(), request);
+
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@AuthenticatedMember AuthMember member,
+                                       @PathVariable("id") Long planId) {
+        deletePlanUseCase.execute(planId, member.getMemberId());
+        return ResponseEntity.noContent().build();
     }
 }

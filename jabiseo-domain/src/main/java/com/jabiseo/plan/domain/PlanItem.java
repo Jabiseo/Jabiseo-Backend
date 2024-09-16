@@ -55,4 +55,9 @@ public class PlanItem {
                 .completedValue(0L)
                 .build();
     }
+
+    public void updateTargetValue(Integer targetValue) {
+        this.targetValue = targetValue;
+    }
+
 }

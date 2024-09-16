@@ -23,7 +23,7 @@ public class CreatePlanUseCase {
     public Long execute(Long memberId, CreatePlanRequest request) {
         Member member = memberRepository.getReferenceById(memberId);
         member.validateCurrentCertificate();
-        planService.checkInProgressPlan(member, LocalDate.now());
+        planService.checkInProgressPlan(member);
 
         Plan plan = Plan.create(member, request.endAt());
         List<PlanItem> planItems = request.toPlanItems(plan);

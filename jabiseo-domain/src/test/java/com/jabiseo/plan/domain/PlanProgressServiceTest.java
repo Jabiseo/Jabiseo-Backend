@@ -5,7 +5,9 @@ import com.jabiseo.learning.domain.LearningRepository;
 import com.jabiseo.learning.dto.LearningWithSolvingCountQueryDto;
 import com.jabiseo.member.domain.Member;
 import fixture.MemberFixture;
+import fixture.PlanFixture;
 import fixture.PlanItemFixture;
+import fixture.PlanProgressFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static fixture.PlanProgressFixture.createPlanProgress;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -133,10 +136,60 @@ class PlanProgressServiceTest {
                         .mapToLong(LearningWithSolvingCountQueryDto::getLearningTime).sum();
             }
 
-            Assertions.assertThat(planProgress.getCompletedValue()).isEqualTo(expectedValue);
+            assertThat(planProgress.getCompletedValue()).isEqualTo(expectedValue);
         }));
 
     }
+
+
+    @Test
+    @DisplayName("modifyCurrentPlanProgress 메소드 PlanProgress의 값을 변경한다.")
+    void modifyCurrentPlanProgressTest() {
+        //given
+        Plan plan = PlanFixture.createPlan(member, 1L);
+        List<PlanItem> modifiedPlanItems = Arrays.asList(
+                new PlanItem(plan, ActivityType.EXAM, GoalType.DAILY, 10),
+                new PlanItem(plan, ActivityType.STUDY, GoalType.DAILY, 5)
+        );
+        List<PlanProgress> dbSavedPlanProgress = Arrays.asList(
+                new PlanProgress(plan, LocalDate.now(), ActivityType.EXAM, GoalType.DAILY, 5, 0L), //수정될 대상 - 1
+                new PlanProgress(plan, LocalDate.now(), ActivityType.STUDY, GoalType.DAILY, 5, 0L), //수정될 대상 - 2
+                new PlanProgress(plan, LocalDate.now(), ActivityType.PROBLEM, GoalType.DAILY, 5, 0L) //수정이 되면 안됨 - 1
+        );
+        given(planProgressRepository.findAllByPlanAndProgressDateBetweenAndGoalType(plan, LocalDate.now(), LocalDate.now(), GoalType.DAILY)).willReturn(dbSavedPlanProgress);
+
+        //when
+        planProgressService.modifyCurrentPlanProgress(plan, modifiedPlanItems, List.of());
+
+        //then
+        assertThat(dbSavedPlanProgress.get(0).getTargetValue()).isEqualTo(modifiedPlanItems.get(0).getTargetValue());
+        assertThat(dbSavedPlanProgress.get(1).getTargetValue()).isEqualTo(modifiedPlanItems.get(1).getTargetValue());
+    }
+
+    @Test
+    @DisplayName("removeCurrentPlanProgress 메소드, 삭제되는 PlanProgress를 삭제한다.")
+    void removePlanProgressTest(){
+        //given
+        Plan plan = PlanFixture.createPlan(member, 1L);
+        List<PlanItem> removePlanItems = Arrays.asList(
+                new PlanItem(plan, ActivityType.EXAM, GoalType.DAILY, 10),
+                new PlanItem(plan, ActivityType.STUDY, GoalType.DAILY, 5)
+        );
+        List<PlanProgress> dbSavedPlanProgress = Arrays.asList(
+                new PlanProgress(plan, LocalDate.now(), ActivityType.EXAM, GoalType.DAILY, 5, 0L), //삭제될 대상 -1
+                new PlanProgress(plan, LocalDate.now(), ActivityType.STUDY, GoalType.DAILY, 5, 0L), //삭제될 대상 - 2
+                new PlanProgress(plan, LocalDate.now(), ActivityType.PROBLEM, GoalType.DAILY, 5, 0L)
+        );
+        given(planProgressRepository.findAllByPlanAndProgressDateBetweenAndGoalType(plan, LocalDate.now(), LocalDate.now(), GoalType.DAILY)).willReturn(dbSavedPlanProgress);
+
+
+        //when
+        planProgressService.removeCurrentPlanProgress(plan, removePlanItems, List.of());
+
+        //then
+        verify(planProgressRepository, times(2)).delete(any());
+    }
+
 
     private List<LearningWithSolvingCountQueryDto> dummyDatas() {
         List<LearningWithSolvingCountQueryDto> datas = new ArrayList<>();

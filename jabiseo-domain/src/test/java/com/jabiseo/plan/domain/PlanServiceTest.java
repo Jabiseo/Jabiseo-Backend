@@ -37,10 +37,10 @@ class PlanServiceTest {
         //given
         Member member = MemberFixture.createMember();
 
-        given(planRepository.existsByCertificateAndMemberAndEndAtAfter(member.getCurrentCertificate(), member, LocalDate.now()))
+        given(planRepository.existsByCertificateAndMember(member.getCurrentCertificate(), member))
                 .willReturn(true);
         //when then
-        Assertions.assertThatThrownBy(()->planService.checkInProgressPlan(member, LocalDate.now()))
+        Assertions.assertThatThrownBy(()->planService.checkInProgressPlan(member))
                 .isInstanceOf(PlanBusinessException.class);
 
 

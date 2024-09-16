@@ -49,7 +49,7 @@ public class SearchPlanCalenderUseCase {
                 .collect(Collectors.groupingBy(PlanProgress::getProgressDate, Collectors.toList()));
 
         return map.entrySet().stream()
-                .sorted()
+                .sorted(Map.Entry.comparingByKey())
                 .map(entry -> {
                     List<PlanProgressResponse> list = entry.getValue()
                             .stream()

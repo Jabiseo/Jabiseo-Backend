@@ -42,9 +42,54 @@ public class PlanProgressService {
             return;
         }
 
-        List<PlanItem> planItems = plans.get().getPlanItems();
-        List<PlanProgress> planProgress = getPlanProgress(planItems, LearningWithSolvingCountQueryDto.from(learning, count));
+        List<PlanProgress> planProgress = getPlanProgress(plans.get(), LearningWithSolvingCountQueryDto.from(learning, count));
         planProgressRepository.saveAll(planProgress);
+    }
+
+    // 현재 범위 내 planItems 의 PlanProgress를 수정함
+    public void modifyCurrentPlanProgress(Plan plan, List<PlanItem> dailyPlanItems, List<PlanItem> weeklyPlanItems) {
+        // daily 작업 수행
+        modifyPlanProgress(plan, dailyPlanItems, GoalType.DAILY);
+        // weekly 작업 수행
+        modifyPlanProgress(plan, weeklyPlanItems, GoalType.WEEKLY);
+    }
+
+    // 현재 범위 내 PlanItems 의 PlanProgress를 삭제함
+    public void removeCurrentPlanProgress(Plan plan, List<PlanItem> dailyPlanItems, List<PlanItem> weeklyPlanItems) {
+        removePlanProgress(plan, dailyPlanItems, GoalType.DAILY);
+        removePlanProgress(plan, weeklyPlanItems, GoalType.WEEKLY);
+    }
+
+    private void removePlanProgress(Plan plan, List<PlanItem> items, GoalType goalType) {
+        if (items.isEmpty()) {
+            return;
+        }
+        List<PlanProgress> progressList = getPlanProgressByPlanAndGoalType(plan, goalType);
+
+        progressList.forEach((progress) -> {
+            if (items.stream().anyMatch(planItem -> planItem.getActivityType().equals(progress.getActivityType()))) {
+                planProgressRepository.delete(progress);
+            }
+        });
+    }
+
+    private void modifyPlanProgress(Plan plan, List<PlanItem> items, GoalType goalType) {
+        if (items.isEmpty()) {
+            return;
+        }
+        List<PlanProgress> progressList = getPlanProgressByPlanAndGoalType(plan, goalType);
+        items.forEach((item) -> {
+            progressList.stream().filter((progress) -> progress.getActivityType().equals(item.getActivityType())).findAny().ifPresent(
+                    planProgress -> planProgress.updateTargetValue(item.getTargetValue())
+            );
+        });
+    }
+
+    private List<PlanProgress> getPlanProgressByPlanAndGoalType(Plan plan, GoalType goalType) {
+        WeekPeriod currentWeekPeriod = weeklyDefineStrategy.getWeekPeriod(LocalDate.now());
+        LocalDate start = goalType.equals(GoalType.DAILY) ? LocalDate.now() : currentWeekPeriod.getStart();
+        LocalDate end = goalType.equals(GoalType.DAILY) ? LocalDate.now() : currentWeekPeriod.getEnd();
+        return planProgressRepository.findAllByPlanAndProgressDateBetweenAndGoalType(plan, start, end, goalType);
     }
 
 
@@ -55,23 +100,23 @@ public class PlanProgressService {
 
         List<PlanProgress> daily = itemToDailyPlanProgress(planItems);
 
-        List<PlanProgress> weekly = itemToWeeklyPlanProgress(planItems, currentWeekPeriod.getEnd());
+        List<PlanProgress> weekly = itemToWeeklyPlanProgress(planItems);
 
         learningCalculateAndSave(member, daily, LocalDate.now(), LocalDate.now());
         learningCalculateAndSave(member, weekly, currentWeekPeriod.getStart(), currentWeekPeriod.getEnd());
     }
 
-    private List<PlanProgress> getPlanProgress(List<PlanItem> planItems, LearningWithSolvingCountQueryDto dto) {
-        WeekPeriod currentWeekPeriod = weeklyDefineStrategy.getWeekPeriod(LocalDate.now());
+    private List<PlanProgress> getPlanProgress(Plan plan, LearningWithSolvingCountQueryDto dto) {
+        List<PlanItem> planItems = plan.getPlanItems();
 
-        List<PlanProgress> dailyProgress = planProgressRepository.findAllByProgressDateBetweenAndGoalType(LocalDate.now(), LocalDate.now(), GoalType.DAILY);
+        List<PlanProgress> dailyProgress = getPlanProgressByPlanAndGoalType(plan, GoalType.DAILY);
         if (dailyProgress.isEmpty()) {
             dailyProgress = itemToDailyPlanProgress(planItems);
         }
 
-        List<PlanProgress> weeklyProgress = planProgressRepository.findAllByProgressDateBetweenAndGoalType(currentWeekPeriod.getStart(), currentWeekPeriod.getEnd(), GoalType.WEEKLY);
+        List<PlanProgress> weeklyProgress = getPlanProgressByPlanAndGoalType(plan, GoalType.WEEKLY);
         if (weeklyProgress.isEmpty()) {
-            weeklyProgress = itemToWeeklyPlanProgress(planItems, currentWeekPeriod.getEnd());
+            weeklyProgress = itemToWeeklyPlanProgress(planItems);
         }
 
         List<PlanProgress> result = new ArrayList<>();
@@ -88,10 +133,12 @@ public class PlanProgressService {
                 .toList();
     }
 
-    private List<PlanProgress> itemToWeeklyPlanProgress(List<PlanItem> planItems, LocalDate date) {
+    private List<PlanProgress> itemToWeeklyPlanProgress(List<PlanItem> planItems) {
+        WeekPeriod currentWeekPeriod = weeklyDefineStrategy.getWeekPeriod(LocalDate.now());
+
         return planItems.stream()
                 .filter(p -> p.getGoalType().equals(GoalType.WEEKLY))
-                .map(planItem -> planItem.toPlanProgress(date))
+                .map(planItem -> planItem.toPlanProgress(currentWeekPeriod.getEnd()))
                 .toList();
     }
 
