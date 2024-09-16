@@ -159,7 +159,7 @@ class PlanTest {
 
     @Test
     @DisplayName("플랜 수정시, 기존 플랜의 값이 추가되거나 삭제된다.")
-    void modifyPlanTest(){
+    void modifyPlanTest() {
         //given
         List<PlanItem> newDailyItemsRequest = List.of(
                 mockDailyItem(ActivityType.STUDY), // exist item
@@ -173,9 +173,12 @@ class PlanTest {
         );
         // Problem이 삭제될 예정. (setUp)
         int expectedSize = this.plan.getPlanItems().size() - 1 + 2;// -1(Problem), 2 => 위의 2개의 new items
+        List<PlanItem> existItems = plan.getExistItems(newDailyItemsRequest, newWeeklyItemsRequest);
+        List<PlanItem> newItems = plan.getNewItems(newDailyItemsRequest, newWeeklyItemsRequest);
+        List<PlanItem> deletedItems = plan.getDeletedItems(newDailyItemsRequest, newWeeklyItemsRequest);
 
         //when
-        plan.modifyPlanItems(newDailyItemsRequest, newWeeklyItemsRequest);
+        plan.modifyPlanItems(existItems, newItems, deletedItems);
         List<PlanItem> planItems = plan.getPlanItems();
 
         //then

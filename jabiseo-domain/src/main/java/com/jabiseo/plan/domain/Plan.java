@@ -70,7 +70,7 @@ public class Plan {
 
         List<PlanItem> result = new ArrayList<>(newDailyItems);
         result.addAll(newWeeklyItems);
-        return result;
+        return Collections.unmodifiableList(result);
     }
 
     public List<PlanItem> getExistItems(List<PlanItem> daily, List<PlanItem> weekly) {
@@ -79,13 +79,13 @@ public class Plan {
 
         List<PlanItem> result = new ArrayList<>(filterExistingItems(daily, originDailyItemActivities));
         result.addAll(filterExistingItems(weekly, originWeeklyItemActivities));
-        return result;
+        return Collections.unmodifiableList(result);
     }
 
     public List<PlanItem> getDeletedItems(List<PlanItem> daily, List<PlanItem> weekly) {
         List<PlanItem> result = new ArrayList<>(filterDeleteItems(this.planItems, daily, GoalType.DAILY));
         result.addAll(filterDeleteItems(this.planItems, weekly, GoalType.WEEKLY));
-        return result;
+        return Collections.unmodifiableList(result);
     }
 
     public List<PlanItem> filterDeleteItems(List<PlanItem> original, List<PlanItem> newItem, GoalType goalType) {
@@ -116,43 +116,40 @@ public class Plan {
     }
 
 
-    public void modifyPlanItems(List<PlanItem> dailyItems, List<PlanItem> weeklyItems) {
-        List<PlanItem> existItems = this.getExistItems(dailyItems, weeklyItems);
-        List<PlanItem> newItems = this.getNewItems(dailyItems, weeklyItems);
-        List<PlanItem> deletedItems = this.getDeletedItems(dailyItems, weeklyItems);
+    public void modifyPlanItems(List<PlanItem> existItems, List<PlanItem> newItems, List<PlanItem> deletedItems) {
 
         Map<String, PlanItem> planItemMap = this.planItems.stream()
                 .collect(Collectors.toMap(
-                        item -> item.getActivityType().name() + "-" + item.getGoalType().name(),
+                        item -> planItemTypeAndGoalKey(item.getActivityType(), item.getGoalType()),
                         item -> item
                 ));
 
 
         // 기존 플랜 값 수정
         existItems.forEach(existItem -> {
-            int newTarget = existItem.getTargetValue();
-            String key = existItem.getActivityType().name() + "-" + existItem.getGoalType().name();
+            String key = planItemTypeAndGoalKey(existItem.getActivityType(), existItem.getGoalType());
             if (planItemMap.containsKey(key)) {
-                planItemMap.get(key).updateTargetValue(newTarget);
+                planItemMap.get(key).updateTargetValue(existItem.getTargetValue());
             }
         });
 
         // 삭제될 플랜은 삭제
-        List<PlanItem> removeItems = new ArrayList<>();
-        deletedItems.forEach(deletedItem -> {
-            String key = deletedItem.getActivityType().name() + "-" + deletedItem.getGoalType().name();
-            if (planItemMap.containsKey(key)) {
-                removeItems.add(planItemMap.get(key));
-            }
-        });
+        List<PlanItem> removeItems = deletedItems.stream()
+                .map(deletedItem -> planItemMap.get(planItemTypeAndGoalKey(deletedItem.getActivityType(), deletedItem.getGoalType())))
+                .filter(Objects::nonNull)
+                .toList();
         this.planItems.removeAll(removeItems);
 
         // 새 플랜은 추가
         this.planItems.addAll(newItems);
     }
 
+    private String planItemTypeAndGoalKey(ActivityType activityType, GoalType goalType) {
+        return activityType.name() + "-" + goalType.name();
+    }
 
-    public void modifyEndDay(LocalDate endAt) {
+
+    public void modifyEndAt(LocalDate endAt) {
         if (!endAt.equals(this.endAt)) {
             this.endAt = endAt;
         }

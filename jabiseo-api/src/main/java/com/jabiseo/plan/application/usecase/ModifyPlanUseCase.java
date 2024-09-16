@@ -24,26 +24,29 @@ public class ModifyPlanUseCase {
         Member member = memberRepository.getReferenceById(memberId);
         plan.checkOwner(memberId);
 
-        plan.modifyEndDay(request.endAt());
+        plan.modifyEndAt(request.endAt());
 
-        // 새로운 아이템은 추가한다.
+
         List<PlanItem> requestDailyPlanItems = request.getDailyPlanItems(plan);
         List<PlanItem> requestWeeklyPlanItems = request.getWeeklyPlanItems(plan);
 
+        // 새로운 아이템은 플랜에 추가
         List<PlanItem> newItems = plan.getNewItems(requestDailyPlanItems, requestWeeklyPlanItems);
         planProgressService.createCurrentPlanProgress(member, newItems);
 
+        // 기존 아이템은 수정
         List<PlanItem> existItems = plan.getExistItems(requestDailyPlanItems, requestWeeklyPlanItems);
-        planProgressService.modifyCurrentPlanProgress(plan, filteringGoalType(existItems, GoalType.DAILY), filteringGoalType(existItems, GoalType.WEEKLY));
+        planProgressService.modifyCurrentPlanProgress(plan, filterGoalType(existItems, GoalType.DAILY), filterGoalType(existItems, GoalType.WEEKLY));
 
+        // 없어지는 아이템은 삭제
         List<PlanItem> deletedItems = plan.getDeletedItems(requestDailyPlanItems, requestWeeklyPlanItems);
-        planProgressService.removeCurrentPlanProgress(plan, filteringGoalType(deletedItems, GoalType.DAILY), filteringGoalType(deletedItems, GoalType.WEEKLY));
+        planProgressService.removeCurrentPlanProgress(plan, filterGoalType(deletedItems, GoalType.DAILY), filterGoalType(deletedItems, GoalType.WEEKLY));
 
         // Plan 객체의 정합성을 유지(DB 저장)
-        plan.modifyPlanItems(requestDailyPlanItems, requestWeeklyPlanItems);
+        plan.modifyPlanItems(existItems, newItems, deletedItems);
     }
 
-    private List<PlanItem> filteringGoalType(List<PlanItem> planItems, GoalType goalType) {
+    private List<PlanItem> filterGoalType(List<PlanItem> planItems, GoalType goalType) {
         return planItems.stream()
                 .filter((planItem) -> planItem.getGoalType().equals(goalType))
                 .toList();

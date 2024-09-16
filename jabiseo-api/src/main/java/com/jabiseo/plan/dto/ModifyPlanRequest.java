@@ -24,14 +24,10 @@ public record ModifyPlanRequest(
 ) {
 
     public List<PlanItem> getDailyPlanItems(Plan plan) {
-        List<PlanItem> planItems = new ArrayList<>();
-        this.dailyPlan.forEach((p) -> planItems.add(new PlanItem(plan, ActivityType.valueOf(p.activityType()), GoalType.DAILY, p.targetValue())));
-        return planItems;
+        return dailyPlan.stream().map((item) -> new PlanItem(plan, ActivityType.valueOf(item.activityType()), GoalType.DAILY, item.targetValue())).toList();
     }
 
     public List<PlanItem> getWeeklyPlanItems(Plan plan) {
-        List<PlanItem> planItems = new ArrayList<>();
-        this.weeklyPlan.forEach((p) -> planItems.add(new PlanItem(plan, ActivityType.valueOf(p.activityType()), GoalType.WEEKLY, p.targetValue())));
-        return planItems;
+        return weeklyPlan.stream().map((item) -> new PlanItem(plan, ActivityType.valueOf(item.activityType()), GoalType.WEEKLY, item.targetValue())).toList();
     }
 }

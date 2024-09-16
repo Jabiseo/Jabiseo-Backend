@@ -34,7 +34,7 @@ public class PlanService {
     }
 
     public void removePlan(Plan plan){
-        planRepository.delete(plan); // cascade 설정으로 다 삭제가 된다
+        planRepository.delete(plan); // cascade 설정으로 가지고 있는 planItem 들도 모두 삭제 된다
         planProgressRepository.deleteByPlanId(plan.getId()); // plan progress를 삭제한다.
     }
 

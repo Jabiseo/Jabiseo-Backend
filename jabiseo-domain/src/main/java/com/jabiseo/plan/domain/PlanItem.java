@@ -60,14 +60,4 @@ public class PlanItem {
         this.targetValue = targetValue;
     }
 
-
-    @Override
-    public String toString() {
-        return "PlanItem{" +
-                "targetValue=" + targetValue +
-                ", goalType=" + goalType +
-                ", activityType=" + activityType +
-                ", id=" + id +
-                '}';
-    }
 }
