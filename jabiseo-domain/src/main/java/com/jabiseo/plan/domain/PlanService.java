@@ -6,7 +6,6 @@ import com.jabiseo.plan.exception.PlanErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -28,8 +27,8 @@ public class PlanService {
     }
 
 
-    public void checkInProgressPlan(Member member, LocalDate now) {
-        if (planRepository.existsByCertificateAndMemberAndEndAtAfter(member.getCurrentCertificate(), member, now)) {
+    public void checkInProgressPlan(Member member) {
+        if (planRepository.existsByCertificateAndMember(member.getCurrentCertificate(), member)) {
             throw new PlanBusinessException(PlanErrorCode.ALREADY_EXIST_PLAN);
         }
     }
