@@ -1,5 +1,6 @@
 package com.jabiseo.analysis.service;
 
+import com.jabiseo.analysis.domain.ProblemSolvingAnalysisType;
 import com.jabiseo.analysis.dto.VulnerableSubjectDto;
 import com.jabiseo.analysis.dto.VulnerableTagDto;
 import com.jabiseo.analysis.exception.AnalysisBusinessException;
@@ -9,14 +10,17 @@ import com.jabiseo.learning.domain.ProblemSolving;
 import com.jabiseo.learning.domain.ProblemSolvingRepository;
 import com.jabiseo.member.domain.Member;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static java.time.temporal.ChronoUnit.DAYS;
+import static java.time.LocalDateTime.now;
 
 @Service
 @RequiredArgsConstructor
@@ -51,52 +55,58 @@ public class AnalysisService {
         return vulnerabilityProvider.findVulnerableProblems(vulnerableVector, certificate.getId(), DEFAULT_VULNERABLE_PROBLEM_COUNT);
     }
 
-    private List<Float> findVulnerableVector(Member member, Certificate certificate) {
-        LocalDateTime oneYearAgo = LocalDateTime.now().minusYears(YEARS_OF_ANALYSIS);
-        // TODO: 어떤 쿼리가 더 효율적인지 테스트 필요
-        List<ProblemSolving> problemSolvings = problemSolvingRepository.findByMemberAndCertificateAndCreatedAtAfterWithLearning(member, certificate, oneYearAgo);
+    List<Float> findVulnerableVector(Member member, Certificate certificate) {
 
-        if (problemSolvings.isEmpty()) {
+        ProblemSolvingAnalysisType longestAnalysisType = ProblemSolvingAnalysisType.getLongestAnalysisType();
+        LocalDateTime fromDate = now().minusDays(longestAnalysisType.getMaxPeriod());
+        Pageable pageable = Pageable.ofSize(longestAnalysisType.getMaxCount());
+
+        List<ProblemSolving> longestTermProblemSolvings = problemSolvingRepository.findWithLearningByCreatedAtAfterOrderByCreatedAtDesc(member, certificate, fromDate, pageable);
+
+        if (longestTermProblemSolvings.isEmpty()) {
             throw new AnalysisBusinessException(AnalysisErrorCode.NOT_ENOUGH_SOLVED_PROBLEMS);
         }
 
-        List<Long> distinctProblemIds = problemSolvings.stream()
+        List<Long> distinctProblemIds = longestTermProblemSolvings.stream()
                 .map(problemSolving -> problemSolving.getProblem().getId())
                 .distinct()
                 .toList();
 
         Map<Long, List<Float>> problemIdToVector = vulnerabilityProvider.findVectorsOfProblems(distinctProblemIds, certificate.getId());
-        return calculateVulnerableVector(problemSolvings, problemIdToVector);
+        Map<Long, Double> problemIdToWeight = calculateWeightsOfProblems(longestTermProblemSolvings);
+        return calculateVulnerableVector(distinctProblemIds, problemIdToVector, problemIdToWeight);
     }
 
-    // 테스트를 위해 package-private로 변경
-    List<Float> calculateVulnerableVector(List<ProblemSolving> problemSolvings, Map<Long, List<Float>> problemIdToVector) {
-        // 풀었던 문제들의 벡터를 가중치를 곱하여 더한 후 반환
-        return problemSolvings.stream()
-                .map(problemSolving -> {
-                    List<Float> problemVector = problemIdToVector.get(problemSolving.getProblem().getId());
-                    double weight = calculateWeight(problemSolving.getLearning().getCreatedAt(), problemSolving.isCorrect());
-                    return problemVector.stream()
+    Map<Long, Double> calculateWeightsOfProblems(List<ProblemSolving> problemSolvings) {
+        return IntStream.range(0, problemSolvings.size())
+                .boxed()
+                .collect(Collectors.toMap(
+                        i -> problemSolvings.get(i).getProblem().getId(),
+                        i -> calculateWeight(problemSolvings.get(i), i),
+                        Double::sum
+                ));
+    }
+
+    List<Float> calculateVulnerableVector(List<Long> distinctProblemIds, Map<Long, List<Float>> problemIdToVector, Map<Long, Double> problemIdToWeight) {
+        return distinctProblemIds.stream()
+                .map(problemId -> {
+                    List<Float> vector = problemIdToVector.get(problemId);
+                    double weight = problemIdToWeight.get(problemId);
+                    return vector.stream()
                             .map(value -> (float) (value * weight))
                             .toList();
                 })
-                .reduce((vector1, vector2) ->
-                        IntStream.range(0, vector1.size())
-                                .mapToObj(i -> vector1.get(i) + vector2.get(i))
-                                .toList()
-                )
-                .orElseThrow(() -> new AnalysisBusinessException(AnalysisErrorCode.CANNOT_CALCULATE_VULNERABILITY));
+                .reduce((vector1, vector2) -> IntStream.range(0, vector1.size())
+                        .mapToObj(i -> vector1.get(i) + vector2.get(i))
+                        .collect(Collectors.toList()))
+                .orElseThrow(() -> new AnalysisBusinessException(AnalysisErrorCode.NOT_ENOUGH_SOLVED_PROBLEMS));
     }
 
-    private double calculateWeight(LocalDateTime createdAt, boolean isCorrect) {
-        long daysBetween = createdAt.until(LocalDateTime.now(), DAYS);
-        // 시간 차이에 반비례한 가중치 계산. N일 차이가 날 경우 1/(N+1)의 가중치를 부여한다.
-        // 맞은 문제는 가중치에 -1을 곱한다.
-        if (isCorrect) {
-            return -1.0 / (daysBetween + 1);
-        } else {
-            return 1.0 / (daysBetween + 1);
-        }
+    // problemSolving과 그 문제를 최근에 접한 순서를 주면 가중치를 반환한다. sequence는 최근 푼 문제 순서
+    double calculateWeight(ProblemSolving problemSolving, int sequence) {
+        int daysAgo = (int) ChronoUnit.DAYS.between(problemSolving.getLearning().getCreatedAt(), now());
+        ProblemSolvingAnalysisType analysisType = ProblemSolvingAnalysisType.fromPeriodAndCount(daysAgo, sequence);
+        return problemSolving.isCorrect() ? -analysisType.getWeight() : analysisType.getWeight();
     }
 
 }
