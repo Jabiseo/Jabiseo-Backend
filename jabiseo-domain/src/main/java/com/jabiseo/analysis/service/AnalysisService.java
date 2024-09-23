@@ -57,9 +57,9 @@ public class AnalysisService {
 
     List<Float> findVulnerableVector(Member member, Certificate certificate) {
 
-        ProblemSolvingAnalysisType longestAnalysisType = ProblemSolvingAnalysisType.getLongestAnalysisType();
-        LocalDateTime fromDate = now().minusDays(longestAnalysisType.getMaxPeriod());
-        Pageable pageable = Pageable.ofSize(longestAnalysisType.getMaxCount());
+        ProblemSolvingAnalysisType longestPeriodAnalysisType = ProblemSolvingAnalysisType.getLongestPeriodAnalysisType();
+        LocalDateTime fromDate = now().minusDays(longestPeriodAnalysisType.getMaxPeriodDay());
+        Pageable pageable = Pageable.ofSize(longestPeriodAnalysisType.getMaxCount());
 
         List<ProblemSolving> longestTermProblemSolvings = problemSolvingRepository.findWithLearningByCreatedAtAfterOrderByCreatedAtDesc(member, certificate, fromDate, pageable);
 

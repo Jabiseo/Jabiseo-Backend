@@ -3,7 +3,6 @@ package com.jabiseo.analysis.domain;
 import com.jabiseo.analysis.exception.AnalysisBusinessException;
 import com.jabiseo.analysis.exception.AnalysisErrorCode;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -15,19 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisplayName("ProblemSolvingAnalysisType 테스트")
 @ExtendWith(MockitoExtension.class)
 class ProblemSolvingAnalysisTypeTest {
-
-    @DisplayName("가장 긴 분석 타입을 반환한다.")
-    @Test
-    void getLongestAnalysisType() {
-        // given
-        ProblemSolvingAnalysisType expected = ProblemSolvingAnalysisType.LONG_TERM;
-
-        // when
-        ProblemSolvingAnalysisType actual = ProblemSolvingAnalysisType.getLongestAnalysisType();
-
-        // then
-        assertEquals(expected, actual);
-    }
 
     @DisplayName("기간과 문제 수에 따른 분석 타입을 반환한다.")
     @ParameterizedTest

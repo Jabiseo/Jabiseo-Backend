@@ -10,32 +10,33 @@ import java.util.Comparator;
 @Getter
 public enum ProblemSolvingAnalysisType {
 
-    SHORT_TERM(1, 0.5, 14, 200),
-    MID_TERM(2, 0.3, 30, 300),
-    LONG_TERM(3, 0.2, 90, 500);
+    // maxPeriodDay가 커지면 maxCount도 증가해야 함
+    // 단기 분석 타입: 최근 14일 이내에 최대 200개의 문제 풀이에 가중치 0.5 적용
+    SHORT_TERM( 0.5, 14, 200),
+    // 중기 분석 타입: 최근 30일 이내에 최대 300개의 문제 풀이에 가중치 0.3 적용
+    MID_TERM( 0.3, 30, 300),
+    // 단기 분석 타입: 최근 90일 이내에 최대 500개의 문제 풀이에 가중치 0.2 적용
+    LONG_TERM( 0.2, 90, 500);
 
-    final int priority;
     final double weight;
-    final int maxPeriod;
+    final int maxPeriodDay;
     final int maxCount;
 
-    ProblemSolvingAnalysisType(int priority, double weight, int maxPeriod, int maxCount) {
-        this.priority = priority;
+    ProblemSolvingAnalysisType(double weight, int maxPeriodDay, int maxCount) {
         this.weight = weight;
-        this.maxPeriod = maxPeriod;
+        this.maxPeriodDay = maxPeriodDay;
         this.maxCount = maxCount;
     }
 
-    public static ProblemSolvingAnalysisType getLongestAnalysisType() {
-        return Arrays.stream(ProblemSolvingAnalysisType.values())
-                .max(Comparator.comparingInt(ProblemSolvingAnalysisType::getPriority))
-                .orElseThrow(() -> new IllegalStateException("No ProblemSolvingAnalysisType found"));
+    public static ProblemSolvingAnalysisType getLongestPeriodAnalysisType() {
+        return LONG_TERM;
     }
 
-    public static ProblemSolvingAnalysisType fromPeriodAndCount(int period, int count) {
+    // 푼 기간과 최근 푼 순서가 주어지면 그에 맞는 ProblemSolvingAnalysisType을 반환한다.
+    public static ProblemSolvingAnalysisType fromPeriodAndCount(int period, int sequence) {
         return Arrays.stream(ProblemSolvingAnalysisType.values())
-                .sorted(Comparator.comparingInt(ProblemSolvingAnalysisType::getPriority))
-                .filter(type -> period <= type.getMaxPeriod() && count <= type.getMaxCount())
+                .sorted(Comparator.comparingInt(ProblemSolvingAnalysisType::getMaxPeriodDay))
+                .filter(type -> period <= type.getMaxPeriodDay() && sequence <= type.getMaxCount())
                 .findFirst()
                 .orElseThrow(() -> new AnalysisBusinessException(AnalysisErrorCode.CANNOT_ANALYSE_PROBLEM_SOLVING));
     }
