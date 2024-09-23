@@ -89,6 +89,7 @@ public class AnalysisService {
 
     List<Float> calculateVulnerableVector(List<Long> distinctProblemIds, Map<Long, List<Float>> problemIdToVector, Map<Long, Double> problemIdToWeight) {
         return distinctProblemIds.stream()
+                // 문제 ID별로 벡터의 각 요소에 가중치를 곱한다.
                 .map(problemId -> {
                     List<Float> vector = problemIdToVector.get(problemId);
                     double weight = problemIdToWeight.get(problemId);
@@ -96,6 +97,7 @@ public class AnalysisService {
                             .map(value -> (float) (value * weight))
                             .toList();
                 })
+                // 문제 ID별로 계산된 벡터를 최종 합연산한다.
                 .reduce((vector1, vector2) -> IntStream.range(0, vector1.size())
                         .mapToObj(i -> vector1.get(i) + vector2.get(i))
                         .collect(Collectors.toList()))
@@ -106,6 +108,7 @@ public class AnalysisService {
     double calculateWeight(ProblemSolving problemSolving, int sequence) {
         int daysAgo = (int) ChronoUnit.DAYS.between(problemSolving.getLearning().getCreatedAt(), now());
         ProblemSolvingAnalysisType analysisType = ProblemSolvingAnalysisType.fromPeriodAndCount(daysAgo, sequence);
+        // 문제를 맞혔을 경우 -1을 곱해 가중치를 계산한다.
         return problemSolving.isCorrect() ? -analysisType.getWeight() : analysisType.getWeight();
     }
 
