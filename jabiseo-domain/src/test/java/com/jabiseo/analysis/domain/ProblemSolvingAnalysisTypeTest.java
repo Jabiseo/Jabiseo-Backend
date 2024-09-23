@@ -36,8 +36,8 @@ class ProblemSolvingAnalysisTypeTest {
     @ParameterizedTest
     @CsvSource({
             "91, 100",
-            "89, 600",
-            "91, 600"
+            "89, 501",
+            "91, 501"
     })
     void fromPeriodAndCountWithDefault(int period, int count) {
         // when & then
