@@ -12,7 +12,7 @@
 
 ## 시스템 구성도
 
-
+<img src="./images/devserver.png" width="900">
 
 
 ### 도커 Service Name / Port(default) 현황
@@ -41,7 +41,7 @@
     </tr>
     <tr>
         <td>
-            메인 MySQL DB 
+            MySQL DB 
         </td>
         <td>
             jabiseo-mysql
@@ -72,31 +72,78 @@
             80
         </td>
     </tr>
+    <tr>
+        <td>
+            프로메테우스
+        </td>
+        <td>
+            jabiseo-prometheus
+        </td>
+        <td>
+            9090
+        </td>
+    </tr>
+    <tr>
+        <td>
+            그라파나
+        </td>
+        <td>
+            jabiseo-grafana
+        </td>
+        <td>
+            4000
+        </td>
+    </tr>
 </table>
 
 ---
 
 ## 실행
+- 주의 : nginx의 경우 로컬을 고려하지 않음 사용 x
+
 1. 사전 준비(1) - docker network 생성
 ```shell
-$ docker network create jabiseo-dev
+docker network create jabiseo-dev
 ```
 
-2. 사전 준비(2) - 환경변수 파일 주입
+2. 사전 준비(2) - .env 환경변수 파일 생성
+  - .env.example 파일 카피 후 .env파일을 /developcompose/.env 위치에 생성
+  - 적절한 값 셋팅
 
 3. 각 파일 별로 실행
 
 ```shell
-$ docker-compose -f docker-compose-{종류별} up -d
+docker compose -f ./{종류별}/docker-compose.yml up -d
+
+# or
+ 
+cd ./{종류별} # 디렉토리 이동
+docker compose up -d
 ```
 
 4. 종료
 ```shell
-$ docker-compose -f docker-compose-{종류별} down
+docker compose -f ./{종류별}/docker-compose.yml down
+
+# or
+ 
+cd ./{종류별} # 디렉토리 이동
+docker compose down
 ```
 
-## 서비스 별 환경 변수 설명
+## 폴더별 설명
 
 ### 데이터베이스
+- MySQL, Redis 간단 셋팅
+
+### Nginx
+- default.conf : 환결 설정 파일
+- init-letsencrpyt.sh  ssh 키 파일 생성 스크립트 파일(nginx 공식 깃헙 제공, 서비스 명 수정됨)
+
+### 모니터링
+- 프로메테우스, 그라파나 설정
+- 현재 Local(인텔리제이) WAS를 host.docker.internal:9292 경로로 직접 가져옴.(수정 예정)
+
+
 
 
