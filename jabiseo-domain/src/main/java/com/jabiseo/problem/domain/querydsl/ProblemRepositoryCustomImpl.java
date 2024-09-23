@@ -128,7 +128,7 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
                 .join(problem.exam, exam)
                 .join(problem.subject, subject)
                 .join(bookmark).on(bookmark.problem.id.eq(problem.id))
-                .where(examIdEq(examId), subjectIdsIn(subjectIds));
+                .where(memberIdEq(memberId), examIdEq(examId), subjectIdsIn(subjectIds));
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
