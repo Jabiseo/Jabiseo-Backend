@@ -1,0 +1,20 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+
+rule_files:
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: [ "localhost:9090" ]
+
+  - job_name: "spring-actuator"
+    metrics_path: '/manage/prometheus' # 프로메테우스에서 동적 주입 방식 미지원 추후 변수 처리
+    scrape_interval: 1s
+    static_configs:
+      - targets: [ "host.docker.internal:9292" ] # 프로메테우스에서 동적 주입 방식 미지원 추후 변수 처리

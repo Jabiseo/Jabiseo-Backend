@@ -19,6 +19,8 @@ jabiseo:
   default-image-url: ${DEFAULT_IMAGE_URL}
 
 management:
+  server:
+    port: 9292
   endpoints:
     web:
       base-path: "/manage"

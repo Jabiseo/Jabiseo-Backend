@@ -53,7 +53,8 @@ public class SecurityConfig {
                                         .map(RegexRequestMatcher::regexMatcher)
                                         .toArray(RegexRequestMatcher[]::new)
                         ).permitAll()
-                        .requestMatchers("/**").authenticated()
+                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers("/**").permitAll()
                 );
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

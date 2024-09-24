@@ -5,12 +5,15 @@ import com.jabiseo.common.exception.CommonErrorCode;
 import com.jabiseo.common.exception.ErrorCode;
 import com.jabiseo.database.exception.PersistenceException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.servlet.NoHandlerFoundException;
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -80,6 +83,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(ErrorCode.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse(errorMessage, CommonErrorCode.INTERNAL_SERVER_ERROR.getErrorCode()));
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<?> handleNotFound(NoHandlerFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("URL에 해당하는 요청을 찾을 수 없습니다", CommonErrorCode.NOT_FOUND.getErrorCode()));
     }
 
 }
