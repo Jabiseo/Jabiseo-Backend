@@ -20,7 +20,7 @@
 - port 같은 경우 컨테이너 내부 포트는 기본 시스템 포트(ex, MySQL -> 3306, Spring Boot-> 8080) 사용 
 - 컨테이너 외부 포트의 경우 env 값으로 명시 없으면 default 값을 compose에 static 명시, **아래 표에 표시함**
   -  외부 포트를 받거나 명시하는 이유는 로컬에 실행시 기존의 시스템과 충돌을 방지하기 위함 
-- 해당 부분은 추 후 서비스명:포트가 아닌 다른 표현 방식이 사용될 경우 없어질 예정
+- 해당 부분은 추후 서비스명:포트가 아닌 다른 표현 방식이 사용될 경우 없어질 예정
 
 <table>
     <tr>
@@ -137,13 +137,9 @@ docker compose down
 - MySQL, Redis 간단 셋팅
 
 ### Nginx
-- default.conf : 환결 설정 파일
+- default.conf : 환경 설정 파일
 - init-letsencrpyt.sh  ssh 키 파일 생성 스크립트 파일(nginx 공식 깃헙 제공, 서비스 명 수정됨)
 
 ### 모니터링
 - 프로메테우스, 그라파나 설정
 - 현재 Local(인텔리제이) WAS를 host.docker.internal:9292 경로로 직접 가져옴.(수정 예정)
-
-
-
-
