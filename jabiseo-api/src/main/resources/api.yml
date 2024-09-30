@@ -48,9 +48,6 @@ management:
       exposure:
         include: "*"
 
-jwt:
-  access-expired-min: 60
-
 ---
 spring:
   config:

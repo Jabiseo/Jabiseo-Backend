@@ -15,7 +15,7 @@ public enum ProblemSolvingAnalysisType {
     SHORT_TERM( 0.5, 14, 200),
     // 중기 분석 타입: 최근 30일 이내에 최대 300개의 문제 풀이에 가중치 0.3 적용
     MID_TERM( 0.3, 30, 300),
-    // 단기 분석 타입: 최근 90일 이내에 최대 500개의 문제 풀이에 가중치 0.2 적용
+    // 장기 분석 타입: 최근 90일 이내에 최대 500개의 문제 풀이에 가중치 0.2 적용
     LONG_TERM( 0.2, 90, 500);
 
     final double weight;
