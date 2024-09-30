@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- 로컬 환경에서는 Spring Boot 기본 콘솔 로그 설정 사용 -->
+    <springProfile name="local">
+        <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    </springProfile>
+
+    <!-- dev 환경에서는 logback-dev.xml 설정 사용 -->
+    <springProfile name="dev">
+        <include resource="logback-dev.xml"/>
+    </springProfile>
+
+</configuration>
