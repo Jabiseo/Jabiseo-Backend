@@ -143,3 +143,8 @@ docker compose down
 ### 모니터링
 - 프로메테우스, 그라파나 설정
 - 현재 Local(인텔리제이) WAS를 host.docker.internal:9292 경로로 직접 가져옴.(수정 예정)
+
+### elk
+- Filebeat, Logstash 설정
+- filebeat.yml: filebeat 설정 파일
+- logstash.conf: logstash 설정 파일, OpenSearch 관련된 변수는 노션 참고

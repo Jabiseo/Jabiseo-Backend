@@ -48,13 +48,12 @@ management:
       exposure:
         include: "*"
 
-jwt:
-  access-expired-min: 60
-
 ---
 spring:
   config:
     activate:
       on-profile: api-dev
 
-
+log:
+  file:
+    path: ${LOG_PATH}
