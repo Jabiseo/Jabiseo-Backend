@@ -54,4 +54,6 @@ spring:
     activate:
       on-profile: api-dev
 
-
+log:
+  file:
+    path: ${LOG_PATH}

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
+    <!-- Spring Boot의 log.file.path 설정 읽기 -->
+    <springProperty name="LOG_PATH" source="log.file.path"/>
+
     <!-- 일반 로그 파일 설정 -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/Users/morenow/Desktop/jabiseo/logs/jabiseo.log</file>
+        <file>${LOG_PATH}/jabiseo.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/Users/morenow/Desktop/jabiseo/logs/jabiseo.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_PATH}/jabiseo.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -15,9 +18,9 @@
 
     <!-- SQL 로그 전용 파일 설정 -->
     <appender name="SQL_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/Users/morenow/Desktop/jabiseo/logs/jabiseo_sql.log</file>
+        <file>${LOG_PATH}/jabiseo_sql.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/Users/morenow/Desktop/jabiseo/logs/jabiseo_sql.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_PATH}/jabiseo_sql.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
