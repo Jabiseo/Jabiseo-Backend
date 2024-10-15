@@ -11,6 +11,7 @@ import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
 import com.jabiseo.problem.dto.FindProblemsResponse;
 import com.jabiseo.problem.dto.ProblemWithBookmarkDetailQueryDto;
+import com.jabiseo.problem.dto.ProblemsDetailResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,20 +73,21 @@ class FindProblemsUseCaseTest {
                 .map(problem -> createProblemWithBookmarkDetailQueryDto(problem, false))
                 .toList();
 
+        int problemsToFetchCount = 20;
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
-        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(memberId, examId, subjectIds.get(0), count))
-                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2)));
-        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(memberId, examId, subjectIds.get(1), count))
-                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(1)));
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(memberId, examId, subjectIds.get(0), problemsToFetchCount))
+                .willReturn(new ArrayList<>(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2))));
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(memberId, examId, subjectIds.get(1), problemsToFetchCount))
+                .willReturn(new ArrayList<>(List.of(problemWithBookmarkDetailQueryDtos.get(1))));
 
         //when
         FindProblemsResponse result = sut.execute(member.getId(), certificateId, examId, subjectIds, count);
 
         //then
         assertThat(result.certificateInfo().certificateId()).isEqualTo(certificateId);
-        assertThat(result.problems().get(0).problemId()).isEqualTo(problemIds.get(0));
-        assertThat(result.problems().get(1).problemId()).isEqualTo(problemIds.get(2));
-        assertThat(result.problems().get(2).problemId()).isEqualTo(problemIds.get(1));
+        assertThat(result.problems().stream()
+                .map(ProblemsDetailResponse::problemId))
+                .containsExactlyInAnyOrder(problemIds.get(0), problemIds.get(1), problemIds.get(2));
     }
 
     @Test
@@ -114,20 +117,21 @@ class FindProblemsUseCaseTest {
                 .map(problem -> createProblemWithBookmarkDetailQueryDto(problem, false))
                 .toList();
 
+        int problemsToFetchCount = 20;
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
-        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(memberId, null, subjectIds.get(0), count))
-                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2)));
-        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(memberId, null, subjectIds.get(1), count))
-                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(1)));
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(memberId, null, subjectIds.get(0), problemsToFetchCount))
+                .willReturn(new ArrayList<>(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2))));
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(memberId, null, subjectIds.get(1), problemsToFetchCount))
+                .willReturn(new ArrayList<>(List.of(problemWithBookmarkDetailQueryDtos.get(1))));
 
         //when
         FindProblemsResponse result = sut.execute(memberId, certificateId, null, subjectIds, count);
 
         //then
         assertThat(result.certificateInfo().certificateId()).isEqualTo(certificateId);
-        assertThat(result.problems().get(0).problemId()).isEqualTo(problemIds.get(0));
-        assertThat(result.problems().get(1).problemId()).isEqualTo(problemIds.get(2));
-        assertThat(result.problems().get(2).problemId()).isEqualTo(problemIds.get(1));
+        assertThat(result.problems().stream()
+                .map(ProblemsDetailResponse::problemId))
+                .containsExactlyInAnyOrder(problemIds.get(0), problemIds.get(1), problemIds.get(2));
     }
 
     @Test
@@ -154,20 +158,21 @@ class FindProblemsUseCaseTest {
                 .map(problem -> createProblemWithBookmarkDetailQueryDto(problem, false))
                 .toList();
 
+        int problemsToFetchCount = 20;
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
-        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(0), count))
-                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2)));
-        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(1), count))
-                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(1)));
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(0), problemsToFetchCount))
+                .willReturn(new ArrayList<>(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2))));
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(1), problemsToFetchCount))
+                .willReturn(new ArrayList<>(List.of(problemWithBookmarkDetailQueryDtos.get(1))));
 
         //when
         FindProblemsResponse result = sut.execute(null, certificateId, examId, subjectIds, count);
 
         //then
         assertThat(result.certificateInfo().certificateId()).isEqualTo(certificateId);
-        assertThat(result.problems().get(0).problemId()).isEqualTo(problemIds.get(0));
-        assertThat(result.problems().get(1).problemId()).isEqualTo(problemIds.get(2));
-        assertThat(result.problems().get(2).problemId()).isEqualTo(problemIds.get(1));
+        assertThat(result.problems().stream()
+                .map(ProblemsDetailResponse::problemId))
+                .containsExactlyInAnyOrder(problemIds.get(0), problemIds.get(1), problemIds.get(2));
     }
 
     @Test
@@ -196,20 +201,21 @@ class FindProblemsUseCaseTest {
                 .map(problem -> createProblemWithBookmarkDetailQueryDto(problem, false))
                 .toList();
 
+        int problemsToFetchCount = 20;
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
-        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(null, null, subjectIds.get(0), count))
-                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2)));
-        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(null, null, subjectIds.get(1), count))
-                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(1)));
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(null, null, subjectIds.get(0), problemsToFetchCount))
+                .willReturn(new ArrayList<>(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2))));
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(null, null, subjectIds.get(1), problemsToFetchCount))
+                .willReturn(new ArrayList<>(List.of(problemWithBookmarkDetailQueryDtos.get(1))));
 
         //when
         FindProblemsResponse result = sut.execute(null, certificateId, null, subjectIds, count);
 
         //then
         assertThat(result.certificateInfo().certificateId()).isEqualTo(certificateId);
-        assertThat(result.problems().get(0).problemId()).isEqualTo(problemIds.get(0));
-        assertThat(result.problems().get(1).problemId()).isEqualTo(problemIds.get(2));
-        assertThat(result.problems().get(2).problemId()).isEqualTo(problemIds.get(1));
+        assertThat(result.problems().stream()
+                .map(ProblemsDetailResponse::problemId))
+                .containsExactlyInAnyOrder(problemIds.get(0), problemIds.get(1), problemIds.get(2));
     }
 
     @Test
@@ -255,19 +261,20 @@ class FindProblemsUseCaseTest {
                 .map(problem -> createProblemWithBookmarkDetailQueryDto(problem, false))
                 .toList();
 
+        int problemsToFetchCount = 20;
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
-        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(0), count))
-                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2)));
-        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(1), count))
-                .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(1)));
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(0), problemsToFetchCount))
+                .willReturn(new ArrayList<>(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2))));
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(1), problemsToFetchCount))
+                .willReturn(new ArrayList<>(List.of(problemWithBookmarkDetailQueryDtos.get(1))));
 
         //when
         FindProblemsResponse result = sut.execute(null, certificateId, examId, requestSubjectIds, count);
 
         //then
         assertThat(result.certificateInfo().certificateId()).isEqualTo(certificateId);
-        assertThat(result.problems().get(0).problemId()).isEqualTo(problemIds.get(0));
-        assertThat(result.problems().get(1).problemId()).isEqualTo(problemIds.get(2));
-        assertThat(result.problems().get(2).problemId()).isEqualTo(problemIds.get(1));
+        assertThat(result.problems().stream()
+                .map(ProblemsDetailResponse::problemId))
+                .containsExactlyInAnyOrder(problemIds.get(0), problemIds.get(1), problemIds.get(2));
     }
 }

@@ -20,12 +20,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static fixture.CertificateFixture.createCertificate;
 import static fixture.ExamFixture.createExam;
 import static fixture.MemberFixture.createMember;
 import static fixture.ProblemFixture.createProblem;
+import static fixture.ProblemInfoFixture.createProblemInfo;
 import static fixture.SubjectFixture.createSubject;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,6 +50,7 @@ class ProblemRepositoryTest {
     private Certificate certificate;
     private List<Exam> exams;
     private List<Subject> subjects;
+    private List<ProblemInfo> problemInfos;
     private int count;
 
     @BeforeEach
@@ -60,27 +63,39 @@ class ProblemRepositoryTest {
         IntStream.range(0, 2).forEach(i -> exams.add(createExam(certificate)));
         subjects = new ArrayList<>();
         IntStream.range(0, 3).forEach(i -> subjects.add(createSubject(certificate)));
-        List<Problem> requestProblems = List.of(
-                createProblem(certificate, exams.get(0), subjects.get(0)),
-                createProblem(certificate, exams.get(0), subjects.get(0)),
-                createProblem(certificate, exams.get(0), subjects.get(2)),
-                createProblem(certificate, exams.get(1), subjects.get(0))
-        );
-        List<Bookmark> bookmarks = List.of(
-                Bookmark.of(member, requestProblems.get(0)),
-                Bookmark.of(member, requestProblems.get(3))
-        );
 
         entityManager.persist(member);
         entityManager.persist(certificate);
         exams.forEach(entityManager::persist);
         subjects.forEach(entityManager::persist);
-        requestProblems.forEach(entityManager::persist);
-        bookmarks.forEach(entityManager::persist);
 
         examIds = exams.stream().map(Exam::getId).toList();
         subjectIds = subjects.stream().map(Subject::getId).toList();
         memberId = member.getId();
+
+        problemInfos = IntStream.range(0, examIds.size())
+                .boxed()
+                .flatMap(examIndex -> IntStream.range(0, subjectIds.size())
+                        .mapToObj(subjectIndex -> createProblemInfo(
+                                (long) examIndex * subjectIds.size() + subjectIndex + 1,  // ID를 고유하게 생성
+                                certificate.getId(),
+                                examIds.get(examIndex),
+                                subjectIds.get(subjectIndex))))
+                .collect(Collectors.toCollection(ArrayList::new));
+        problemInfos.forEach(entityManager::persist);
+
+        List<Problem> requestProblems = List.of(
+                createProblem(certificate, exams.get(0), subjects.get(0), getProblemInfo(examIds.get(0), subjectIds.get(0))),
+                createProblem(certificate, exams.get(0), subjects.get(0), getProblemInfo(examIds.get(0), subjectIds.get(0))),
+                createProblem(certificate, exams.get(0), subjects.get(2), getProblemInfo(examIds.get(0), subjectIds.get(2))),
+                createProblem(certificate, exams.get(1), subjects.get(0), getProblemInfo(examIds.get(1), subjectIds.get(0)))
+        );
+        List<Bookmark> bookmarks = List.of(
+                Bookmark.of(member, requestProblems.get(0)),
+                Bookmark.of(member, requestProblems.get(3))
+        );
+        requestProblems.forEach(entityManager::persist);
+        bookmarks.forEach(entityManager::persist);
         problemIds = requestProblems.stream().map(Problem::getId).toList();
 
         count = 10;
@@ -186,6 +201,13 @@ class ProblemRepositoryTest {
         assertThat(dtos).hasSize(4);
         long trueCount = dtos.stream().filter(ProblemWithBookmarkDetailQueryDto::isBookmark).count();
         assertThat(trueCount).isEqualTo(0);
+    }
+
+    private ProblemInfo getProblemInfo(Long examId, Long subjectId) {
+        return problemInfos.stream()
+                .filter(problemInfo -> problemInfo.getExamId().equals(examId) && problemInfo.getSubjectId().equals(subjectId))
+                .findFirst()
+                .orElseThrow();
     }
 
 }

@@ -33,4 +33,22 @@ public class ProblemInfo {
 
     private int subjectSequence;
 
+    private ProblemInfo(Long certificateId, String certificateName, Long examId, String examDescription,
+                       int examYear, int examYearRound, Long subjectId, String subjectName, int subjectSequence) {
+        this.certificateId = certificateId;
+        this.certificateName = certificateName;
+        this.examId = examId;
+        this.examDescription = examDescription;
+        this.examYear = examYear;
+        this.examYearRound = examYearRound;
+        this.subjectId = subjectId;
+        this.subjectName = subjectName;
+        this.subjectSequence = subjectSequence;
+    }
+
+    public static ProblemInfo of(Long certificateId, String certificateName, Long examId, String examDescription,
+                                 int examYear, int examYearRound, Long subjectId, String subjectName, int subjectSequence) {
+        return new ProblemInfo(certificateId, certificateName, examId, examDescription, examYear, examYearRound, subjectId, subjectName, subjectSequence);
+    }
+
 }

@@ -5,6 +5,7 @@ import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryQueryDto;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +15,6 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
-import static com.jabiseo.certificate.domain.QExam.exam;
-import static com.jabiseo.certificate.domain.QSubject.subject;
 import static com.jabiseo.problem.domain.QBookmark.bookmark;
 import static com.jabiseo.problem.domain.QProblem.problem;
 import static com.jabiseo.problem.domain.QProblemInfo.problemInfo;
@@ -49,7 +48,7 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
                 )
                 .from(problem)
                 .join(problem.problemInfo, problemInfo)
-                .leftJoin(bookmark).on(bookmark.problem.id.eq(problem.id).and(bookmark.member.id.eq(memberId)))
+                .leftJoin(bookmark).on(bookmark.problem.id.eq(problem.id).and(memberIdExistsOrFalse(memberId)))
                 .where(examIdEq(examId), subjectIdEq(subjectId))
                 .limit(count)
                 .fetch();
@@ -79,7 +78,7 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
                 )
                 .from(problem)
                 .join(problem.problemInfo, problemInfo)
-                .leftJoin(bookmark).on(bookmark.problem.id.eq(problem.id).and(bookmark.member.id.eq(memberId)))
+                .leftJoin(bookmark).on(bookmark.problem.id.eq(problem.id).and(memberIdExistsOrFalse(memberId)))
                 .where(problem.id.in(problemIds))
                 .fetch();
     }
@@ -93,16 +92,16 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
                                 problem.id.as("problemId"),
                                 problem.description,
                                 bookmark.id.isNotNull().as("isBookmark"),
-                                exam.id.as("examId"),
-                                exam.description.as("examDescription"),
-                                subject.id.as("subjectId"),
-                                subject.name.as("subjectName"),
-                                subject.sequence.as("subjectSequence")
+                                problemInfo.examId.as("examId"),
+                                problemInfo.examDescription.as("examDescription"),
+                                problemInfo.subjectId.as("subjectId"),
+                                problemInfo.subjectName.as("subjectName"),
+                                problemInfo.subjectSequence.as("subjectSequence")
                         )
                 )
                 .from(problem)
                 .join(problem.problemInfo, problemInfo)
-                .leftJoin(bookmark).on(bookmark.problem.id.eq(problem.id).and(bookmark.member.id.eq(memberId)))
+                .leftJoin(bookmark).on(bookmark.problem.id.eq(problem.id).and(memberIdExistsOrFalse(memberId)))
                 .where(memberIdEq(memberId), examIdEq(examId), subjectIdsIn(subjectIds))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -142,7 +141,7 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
                 )
                 .from(problem)
                 .join(problem.problemInfo, problemInfo)
-                .leftJoin(bookmark).on(bookmark.problem.id.eq(problem.id).and(bookmark.member.id.eq(memberId)))
+                .leftJoin(bookmark).on(bookmark.problem.id.eq(problem.id).and(memberIdExistsOrFalse(memberId)))
                 .where(problem.id.eq(problemId))
                 .fetchOne();
     }
@@ -156,16 +155,16 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
                                 problem.id.as("problemId"),
                                 problem.description,
                                 bookmark.id.isNotNull().as("isBookmark"),
-                                exam.id.as("examId"),
-                                exam.description.as("examDescription"),
-                                subject.id.as("subjectId"),
-                                subject.name.as("subjectName"),
-                                subject.sequence.as("subjectSequence")
+                                problemInfo.examId.as("examId"),
+                                problemInfo.examDescription.as("examDescription"),
+                                problemInfo.subjectId.as("subjectId"),
+                                problemInfo.subjectName.as("subjectName"),
+                                problemInfo.subjectSequence.as("subjectSequence")
                         )
                 )
                 .from(problem)
                 .join(problem.problemInfo, problemInfo)
-                .leftJoin(bookmark).on(bookmark.problem.id.eq(problem.id).and(bookmark.member.id.eq(memberId)))
+                .leftJoin(bookmark).on(bookmark.problem.id.eq(problem.id).and(memberIdExistsOrFalse(memberId)))
                 .where(problem.id.in(problemIds))
                 .fetch();
     }
@@ -184,5 +183,9 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
 
     private BooleanExpression memberIdEq(Long memberId) {
         return memberId != null ? bookmark.member.id.eq(memberId) : null;
+    }
+
+    private BooleanExpression memberIdExistsOrFalse(Long memberId) {
+        return memberId != null ? bookmark.member.id.eq(memberId) : Expressions.FALSE;
     }
 }
