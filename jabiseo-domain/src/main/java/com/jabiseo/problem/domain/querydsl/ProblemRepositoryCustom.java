@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ProblemRepositoryCustom {
 
-    List<ProblemWithBookmarkDetailQueryDto> findDetailRandomByExamIdAndSubjectIdWithBookmark(Long memberId, Long examId, Long subjectId, int count);
+    List<ProblemWithBookmarkDetailQueryDto> findDetailByExamIdAndSubjectIdWithBookmark(Long memberId, Long examId, Long subjectId, int count);
 
     List<ProblemWithBookmarkDetailQueryDto> findDetailByIdsInWithBookmark(Long memberId, List<Long> problemIds);
 

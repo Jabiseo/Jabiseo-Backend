@@ -14,12 +14,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class FindProblemsUseCase {
+
+    private static final int MAX_PROBLEM_COUNT = 20;
 
     private final CertificateRepository certificateRepository;
     private final ProblemRepository problemRepository;
@@ -33,11 +36,13 @@ public class FindProblemsUseCase {
                 .orElseThrow(() -> new CertificateBusinessException(CertificateErrorCode.CERTIFICATE_NOT_FOUND));
         certificate.validateExamIdAndSubjectIds(examId, subjectIds);
 
-        // TODO: 과목별로 문제를 가져와서 쿼리를 5번 날리는 로직에서 1번의 쿼리로 변경해야 함. 하지만 최종적으로 과목 순서가 유지되어야 함
         List<ProblemWithBookmarkDetailQueryDto> problemWithBookmarkDetailQueryDtos = subjectIds.stream()
                 .distinct()
-                .map(subjectId -> problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(memberId, examId, subjectId, count))
-                .flatMap(List::stream)
+                .flatMap(subjectId -> {
+                    List<ProblemWithBookmarkDetailQueryDto> problems = problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(memberId, examId, subjectId, MAX_PROBLEM_COUNT);
+                    Collections.shuffle(problems); // 문제 리스트를 랜덤으로 섞음
+                    return problems.stream().limit(count);
+                })
                 .toList();
 
         List<ProblemsDetailResponse> problemsDetailResponses = problemWithBookmarkDetailQueryDtos.stream()

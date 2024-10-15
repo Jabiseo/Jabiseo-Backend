@@ -49,6 +49,10 @@ public class Problem {
     @JoinColumn(name = "subject_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Subject subject;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "problem_info_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    private ProblemInfo problemInfo;
+
     public List<String> getChoices() {
         return List.of(choice1, choice2, choice3, choice4);
     }

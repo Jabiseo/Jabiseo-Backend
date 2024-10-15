@@ -72,9 +72,9 @@ class FindProblemsUseCaseTest {
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
-        given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(memberId, examId, subjectIds.get(0), count))
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(memberId, examId, subjectIds.get(0), count))
                 .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2)));
-        given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(memberId, examId, subjectIds.get(1), count))
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(memberId, examId, subjectIds.get(1), count))
                 .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(1)));
 
         //when
@@ -115,9 +115,9 @@ class FindProblemsUseCaseTest {
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
-        given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(memberId, null, subjectIds.get(0), count))
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(memberId, null, subjectIds.get(0), count))
                 .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2)));
-        given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(memberId, null, subjectIds.get(1), count))
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(memberId, null, subjectIds.get(1), count))
                 .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(1)));
 
         //when
@@ -155,9 +155,9 @@ class FindProblemsUseCaseTest {
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
-        given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(0), count))
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(0), count))
                 .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2)));
-        given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(1), count))
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(1), count))
                 .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(1)));
 
         //when
@@ -197,9 +197,9 @@ class FindProblemsUseCaseTest {
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
-        given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(null, null, subjectIds.get(0), count))
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(null, null, subjectIds.get(0), count))
                 .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2)));
-        given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(null, null, subjectIds.get(1), count))
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(null, null, subjectIds.get(1), count))
                 .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(1)));
 
         //when
@@ -256,9 +256,9 @@ class FindProblemsUseCaseTest {
                 .toList();
 
         given(certificateRepository.findById(certificateId)).willReturn(Optional.of(certificate));
-        given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(0), count))
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(0), count))
                 .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(0), problemWithBookmarkDetailQueryDtos.get(2)));
-        given(problemRepository.findDetailRandomByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(1), count))
+        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(null, examId, subjectIds.get(1), count))
                 .willReturn(List.of(problemWithBookmarkDetailQueryDtos.get(1)));
 
         //when
