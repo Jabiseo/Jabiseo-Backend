@@ -2,6 +2,10 @@ package com.jabiseo.problem.application.usecase;
 
 import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.certificate.service.CertificateService;
+import com.jabiseo.problem.domain.Problem;
+import com.jabiseo.problem.dto.FindProblemsResponse;
+import com.jabiseo.problem.dto.ProblemWithBookmarkDetailQueryDto;
+import com.jabiseo.problem.dto.ProblemsDetailResponse;
 import com.jabiseo.problem.service.ProblemService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,9 +18,11 @@ import java.util.List;
 
 import static fixture.CertificateFixture.createCertificate;
 import static fixture.ExamFixture.createExam;
+import static fixture.ProblemFixture.createProblem;
+import static fixture.ProblemWithBookmarkDetailQueryDtoFixture.createProblemWithBookmarkDetailQueryDto;
 import static fixture.SubjectFixture.createSubject;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 
 @DisplayName("문제 세트 조회 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -32,48 +38,30 @@ class FindProblemsUseCaseTest {
     ProblemService problemService;
 
     @Test
-    @DisplayName("시험 조건이 없는 경우 findProblemsBySubjectId 메소드를 호출한다.")
+    @DisplayName("findProblemsBySubjectId 메소드를 호출한다.")
     void findProblemsBySubjectId() {
         // given
         List<Long> subjectIds = List.of(1L, 2L);
-        Long memberId = 1L;
-        Long certificateId = 1L;
-        List<Long> examIds = List.of(3L, 4L);
+        Long memberId = 3L;
+        Long certificateId = 4L;
+        Long examId = 5L;
         int count = 10;
+        List<Long> problemIds = List.of(6L, 7L, 8L, 9L, 10L);
 
         Certificate certificate = createCertificate(certificateId);
-        examIds.forEach(e -> createExam(e, certificate));
+        createExam(examId, certificate);
         subjectIds.forEach(s -> createSubject(s, certificate));
+        List<Problem> problems = problemIds.stream().map(p -> createProblem(p, certificate)).toList();
+        List<ProblemWithBookmarkDetailQueryDto> dtos = problems.stream().map(p -> createProblemWithBookmarkDetailQueryDto(p, true)).toList();
+
         given(certificateService.getById(certificateId)).willReturn(certificate);
+        given(problemService.findProblemsByExamIdAndSubjectIds(memberId, examId, subjectIds, count)).willReturn(dtos);
 
         // when
-        sut.execute(memberId, certificateId, null, subjectIds, count);
+        FindProblemsResponse result = sut.execute(memberId, certificateId, examId, subjectIds, count);
 
         // then
-        verify(problemService).findProblemsBySubjectId(memberId, examIds, subjectIds, count);
-    }
-
-    @Test
-    @DisplayName("시험 조건이 있는 경우 findProblemsByExamIdAndSubjectIds 메소드를 호출한다.")
-    void findProblemsByExamIdAndSubjectId() {
-        // given
-        List<Long> subjectIds = List.of(1L, 2L);
-        Long memberId = 1L;
-        Long certificateId = 1L;
-        List<Long> examIds = List.of(3L, 4L);
-        Long examId = 3L;
-        int count = 10;
-
-        Certificate certificate = createCertificate(certificateId);
-        examIds.forEach(e -> createExam(e, certificate));
-        subjectIds.forEach(s -> createSubject(s, certificate));
-        given(certificateService.getById(certificateId)).willReturn(certificate);
-
-        // when
-        sut.execute(memberId, certificateId, examId, subjectIds, count);
-
-        // then
-        verify(problemService).findProblemsByExamIdAndSubjectIds(memberId, examId, subjectIds, count);
+        assertThat(result.problems().stream().map(ProblemsDetailResponse::problemId)).containsExactlyElementsOf(problemIds);
     }
 
 }

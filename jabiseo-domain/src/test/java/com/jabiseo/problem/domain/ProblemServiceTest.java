@@ -86,17 +86,13 @@ public class ProblemServiceTest {
         //given
         int count = 5;
 
-        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(memberId, examIds.get(0), subjectIds.get(0), 20))
+        given(problemRepository.findDetailBySubjectIdWithBookmark(memberId, subjectIds.get(0)))
                 .willReturn(problems1.stream().map(p -> createProblemWithBookmarkDetailQueryDto(p, true)).collect(Collectors.toList()));
-        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(memberId, examIds.get(0), subjectIds.get(1), 20))
+        given(problemRepository.findDetailBySubjectIdWithBookmark(memberId, subjectIds.get(1)))
                 .willReturn(problems2.stream().map(p -> createProblemWithBookmarkDetailQueryDto(p, true)).collect(Collectors.toList()));
-        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(memberId, examIds.get(1), subjectIds.get(0), 20))
-                .willReturn(problems3.stream().map(p -> createProblemWithBookmarkDetailQueryDto(p, true)).collect(Collectors.toList()));
-        given(problemRepository.findDetailByExamIdAndSubjectIdWithBookmark(memberId, examIds.get(1), subjectIds.get(1), 20))
-                .willReturn(problems4.stream().map(p -> createProblemWithBookmarkDetailQueryDto(p, true)).collect(Collectors.toList()));
 
         //when
-        List<ProblemWithBookmarkDetailQueryDto> result = sut.findProblemsBySubjectId(memberId, examIds, subjectIds, count);
+        List<ProblemWithBookmarkDetailQueryDto> result = sut.findProblemsBySubjectId(memberId, subjectIds, count);
 
         //then
         result.subList(0, count)
