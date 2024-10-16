@@ -3,7 +3,7 @@ package com.jabiseo.analysis.dto;
 public record FindVulnerableSubjectResponse(
     Long subjectId,
     String subjectName,
-    int vulnerabilityScore
+    int vulnerableRate
 ) {
     public static FindVulnerableSubjectResponse from(VulnerableSubjectDto vulnerableSubjectDto) {
         return new FindVulnerableSubjectResponse(

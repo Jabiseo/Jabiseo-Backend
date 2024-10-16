@@ -27,10 +27,10 @@ import static java.time.LocalDateTime.now;
 public class AnalysisService {
 
     private static final int DEFAULT_TAG_COUNT = 5;
-    // 최근 1년간의 학습 데이터만 사용
-    private static final int YEARS_OF_ANALYSIS = 1;
-    // 추천 모의고사, 취약 문제 조회는 50문제 제공
-    private static final int DEFAULT_VULNERABLE_PROBLEM_COUNT = 50;
+    // 과목의 취약 문제 조회는 50문제 제공
+    private static final int DEFAULT_VULNERABLE_PROBLEM_OF_SUBJECT_COUNT = 50;
+    // 추천 모의고사 문제는 100문제 제공
+    private static final int DEFAULT_RECOMMENDATION_PROBLEM_COUNT = 100;
 
     private final ProblemSolvingRepository problemSolvingRepository;
     private final VulnerabilityProvider vulnerabilityProvider;
@@ -47,12 +47,12 @@ public class AnalysisService {
 
     public List<Long> findVulnerableProblemIdsOfSubject(Member member, Certificate certificate, Long subjectId) {
         List<Float> vulnerableVector = findVulnerableVector(member, certificate);
-        return vulnerabilityProvider.findVulnerableProblemIdsOfSubject(vulnerableVector, certificate.getId(), subjectId, DEFAULT_VULNERABLE_PROBLEM_COUNT);
+        return vulnerabilityProvider.findVulnerableProblemIdsOfSubject(vulnerableVector, certificate.getId(), subjectId, DEFAULT_VULNERABLE_PROBLEM_OF_SUBJECT_COUNT);
     }
 
     public List<Long> findVulnerableProblems(Member member, Certificate certificate) {
         List<Float> vulnerableVector = findVulnerableVector(member, certificate);
-        return vulnerabilityProvider.findVulnerableProblems(vulnerableVector, certificate.getId(), DEFAULT_VULNERABLE_PROBLEM_COUNT);
+        return vulnerabilityProvider.findVulnerableProblems(vulnerableVector, certificate.getId(), DEFAULT_RECOMMENDATION_PROBLEM_COUNT);
     }
 
     List<Float> findVulnerableVector(Member member, Certificate certificate) {

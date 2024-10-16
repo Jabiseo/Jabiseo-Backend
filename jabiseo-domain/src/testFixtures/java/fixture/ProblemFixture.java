@@ -4,9 +4,11 @@ import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.certificate.domain.Exam;
 import com.jabiseo.certificate.domain.Subject;
 import com.jabiseo.problem.domain.Problem;
+import com.jabiseo.problem.domain.ProblemInfo;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static fixture.CertificateFixture.createCertificate;
+import static fixture.ProblemInfoFixture.createProblemInfo;
 import static fixture.SubjectFixture.createSubject;
 
 public class ProblemFixture {
@@ -22,7 +24,8 @@ public class ProblemFixture {
                 1,
                 certificate,
                 exam,
-                subject
+                subject,
+                createProblemInfo(certificate.getId(), exam.getId(), subject.getId())
         );
         ReflectionTestUtils.setField(problem, "id", id);
         return problem;
@@ -49,7 +52,8 @@ public class ProblemFixture {
                 1,
                 certificate,
                 ExamFixture.createExam(5432L, certificate),
-                createSubject(9876L, certificate)
+                createSubject(9876L, certificate),
+                createProblemInfo(certificate.getId(), 5432L, 9876L)
         );
         ReflectionTestUtils.setField(problem, "id", id);
         return problem;
@@ -67,7 +71,25 @@ public class ProblemFixture {
                 1,
                 certificate,
                 exam,
-                subject
+                subject,
+                createProblemInfo(certificate.getId(), exam.getId(), subject.getId())
+        );
+    }
+
+    public static Problem createProblem(Certificate certificate, Exam exam, Subject subject, ProblemInfo problemInfo) {
+        return Problem.of(
+                "problem description",
+                "choice1",
+                "choice2",
+                "choice3",
+                "choice4",
+                1,
+                "problem theory",
+                1,
+                certificate,
+                exam,
+                subject,
+                problemInfo
         );
     }
 }

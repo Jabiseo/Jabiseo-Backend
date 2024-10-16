@@ -49,12 +49,16 @@ public class Problem {
     @JoinColumn(name = "subject_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Subject subject;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "problem_info_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    private ProblemInfo problemInfo;
+
     public List<String> getChoices() {
         return List.of(choice1, choice2, choice3, choice4);
     }
 
-    private Problem(String description, String choice1, String choice2, String choice3, String choice4,
-                    int answerNumber, String solution, int sequence, Certificate certificate, Exam exam, Subject subject) {
+    private Problem(String description, String choice1, String choice2, String choice3, String choice4, int answerNumber,
+                    String solution, int sequence, Certificate certificate, Exam exam, Subject subject, ProblemInfo problemInfo) {
         this.description = description;
         this.choice1 = choice1;
         this.choice2 = choice2;
@@ -66,12 +70,13 @@ public class Problem {
         this.certificate = certificate;
         this.exam = exam;
         this.subject = subject;
+        this.problemInfo = problemInfo;
     }
 
-    public static Problem of(String description, String choice1, String choice2, String choice3, String choice4,
-                             int answerNumber, String solution, int sequence, Certificate certificate, Exam exam, Subject subject) {
+    public static Problem of(String description, String choice1, String choice2, String choice3, String choice4, int answerNumber,
+                             String solution, int sequence, Certificate certificate, Exam exam, Subject subject, ProblemInfo problemInfo) {
         return new Problem(description, choice1, choice2, choice3, choice4,
-                answerNumber, solution, sequence, certificate, exam, subject);
+                answerNumber, solution, sequence, certificate, exam, subject, problemInfo);
     }
 
     public void validateProblemInCertificate(Certificate certificate) {

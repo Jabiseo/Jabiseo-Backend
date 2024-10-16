@@ -6,8 +6,6 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberPath;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +15,9 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
-import static com.jabiseo.certificate.domain.QExam.exam;
-import static com.jabiseo.certificate.domain.QSubject.subject;
 import static com.jabiseo.problem.domain.QBookmark.bookmark;
 import static com.jabiseo.problem.domain.QProblem.problem;
+import static com.jabiseo.problem.domain.QProblemInfo.problemInfo;
 
 @RequiredArgsConstructor
 public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
@@ -28,95 +25,30 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<ProblemWithBookmarkDetailQueryDto> findDetailRandomByExamIdAndSubjectIdWithBookmark(Long memberId, Long examId, Long subjectId, int count) {
-        return queryFactory
-                .select(
-                        Projections.constructor(
-                                ProblemWithBookmarkDetailQueryDto.class,
-                                problem.id.as("problemId"),
-                                problem.description,
-                                problem.choice1,
-                                problem.choice2,
-                                problem.choice3,
-                                problem.choice4,
-                                problem.answerNumber,
-                                problem.solution,
-                                Expressions.cases()
-                                        .when(isBookmarkedByMember(memberId, problem.id))
-                                        .then(true)
-                                        .otherwise(false)
-                                        .as("isBookmark"),
-                                exam.id.as("examId"),
-                                exam.description.as("examDescription"),
-                                subject.id.as("subjectId"),
-                                subject.name.as("subjectName"),
-                                subject.sequence.as("subjectSequence")
-                        )
-                )
-                .from(problem)
-                .join(problem.exam, exam)
-                .join(problem.subject, subject)
+    public List<ProblemWithBookmarkDetailQueryDto> findDetailByExamIdAndSubjectIdWithBookmark(Long memberId, Long examId, Long subjectId, int count) {
+        return makeProblemWithBookmarkDetailQuery(memberId)
                 .where(examIdEq(examId), subjectIdEq(subjectId))
-                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(count)
                 .fetch();
     }
 
     @Override
+    public List<ProblemWithBookmarkDetailQueryDto> findDetailBySubjectIdWithBookmark(Long memberId, Long subjectId) {
+        return makeProblemWithBookmarkDetailQuery(memberId)
+                .where(subjectIdEq(subjectId))
+                .fetch();
+    }
+
+    @Override
     public List<ProblemWithBookmarkDetailQueryDto> findDetailByIdsInWithBookmark(Long memberId, List<Long> problemIds) {
-        return queryFactory
-                .select(
-                        Projections.constructor(
-                                ProblemWithBookmarkDetailQueryDto.class,
-                                problem.id.as("problemId"),
-                                problem.description,
-                                problem.choice1,
-                                problem.choice2,
-                                problem.choice3,
-                                problem.choice4,
-                                problem.answerNumber,
-                                problem.solution,
-                                Expressions.cases()
-                                        .when(isBookmarkedByMember(memberId, problem.id))
-                                        .then(true)
-                                        .otherwise(false)
-                                        .as("isBookmark"),
-                                exam.id.as("examId"),
-                                exam.description.as("examDescription"),
-                                subject.id.as("subjectId"),
-                                subject.name.as("subjectName"),
-                                subject.sequence.as("subjectSequence")
-                        )
-                )
-                .from(problem)
+        return makeProblemWithBookmarkDetailQuery(memberId)
                 .where(problem.id.in(problemIds))
                 .fetch();
     }
 
     @Override
     public Page<ProblemWithBookmarkSummaryQueryDto> findBookmarkedSummaryByExamIdAndSubjectIdsInWithBookmark(Long memberId, Long examId, List<Long> subjectIds, Pageable pageable) {
-        List<ProblemWithBookmarkSummaryQueryDto> content = queryFactory
-                .select(
-                        Projections.constructor(
-                                ProblemWithBookmarkSummaryQueryDto.class,
-                                problem.id.as("problemId"),
-                                problem.description,
-                                Expressions.cases()
-                                        .when(isBookmarkedByMember(memberId, problem.id))
-                                        .then(true)
-                                        .otherwise(false)
-                                        .as("isBookmark"),
-                                exam.id.as("examId"),
-                                exam.description.as("examDescription"),
-                                subject.id.as("subjectId"),
-                                subject.name.as("subjectName"),
-                                subject.sequence.as("subjectSequence")
-                        )
-                )
-                .from(problem)
-                .join(problem.exam, exam)
-                .join(problem.subject, subject)
-                .join(bookmark).on(bookmark.problem.id.eq(problem.id))
+        List<ProblemWithBookmarkSummaryQueryDto> content = makeProblemWithBookmarkSummaryQuery(memberId)
                 .where(memberIdEq(memberId), examIdEq(examId), subjectIdsIn(subjectIds))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -125,9 +57,8 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
         JPAQuery<Long> countQuery = queryFactory
                 .select(problem.count())
                 .from(problem)
-                .join(problem.exam, exam)
-                .join(problem.subject, subject)
-                .join(bookmark).on(bookmark.problem.id.eq(problem.id))
+                .join(problem.problemInfo, problemInfo)
+                .leftJoin(bookmark).on(bookmark.problem.id.eq(problem.id).and(bookmark.member.id.eq(memberId)))
                 .where(memberIdEq(memberId), examIdEq(examId), subjectIdsIn(subjectIds));
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
@@ -135,7 +66,20 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
 
     @Override
     public ProblemWithBookmarkDetailQueryDto findDetailByIdWithBookmark(Long memberId, Long problemId) {
-        return queryFactory
+        return makeProblemWithBookmarkDetailQuery(memberId)
+                .where(problem.id.eq(problemId))
+                .fetchOne();
+    }
+
+    @Override
+    public List<ProblemWithBookmarkSummaryQueryDto> findSummaryByIdsInWithBookmark(Long memberId, List<Long> problemIds) {
+        return makeProblemWithBookmarkSummaryQuery(memberId)
+                .where(problem.id.in(problemIds))
+                .fetch();
+    }
+
+    private JPAQuery<ProblemWithBookmarkDetailQueryDto> makeProblemWithBookmarkDetailQuery(Long memberId) {
+        JPAQuery<ProblemWithBookmarkDetailQueryDto> query = queryFactory
                 .select(
                         Projections.constructor(
                                 ProblemWithBookmarkDetailQueryDto.class,
@@ -147,73 +91,62 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
                                 problem.choice4,
                                 problem.answerNumber,
                                 problem.solution,
-                                Expressions.cases()
-                                        .when(isBookmarkedByMember(memberId, problem.id))
-                                        .then(true)
-                                        .otherwise(false)
-                                        .as("isBookmark"),
-                                exam.id.as("examId"),
-                                exam.description.as("examDescription"),
-                                subject.id.as("subjectId"),
-                                subject.name.as("subjectName"),
-                                subject.sequence.as("subjectSequence")
+                                getIsBookmark(memberId),
+                                problemInfo.examId.as("examId"),
+                                problemInfo.examDescription.as("examDescription"),
+                                problemInfo.subjectId.as("subjectId"),
+                                problemInfo.subjectName.as("subjectName"),
+                                problemInfo.subjectSequence.as("subjectSequence")
                         )
                 )
                 .from(problem)
-                .where(problem.id.eq(problemId))
-                .fetchOne();
+                .join(problem.problemInfo, problemInfo);
+        if (memberId != null) {
+            return query.leftJoin(bookmark).on(bookmark.problem.id.eq(problem.id).and(bookmark.member.id.eq(memberId)));
+        }
+        return query;
     }
 
-    @Override
-    public List<ProblemWithBookmarkSummaryQueryDto> findSummaryByIdsInWithBookmark(Long memberId, List<Long> problemIds) {
-        return queryFactory
+    private JPAQuery<ProblemWithBookmarkSummaryQueryDto> makeProblemWithBookmarkSummaryQuery(Long memberId) {
+        JPAQuery<ProblemWithBookmarkSummaryQueryDto> query = queryFactory
                 .select(
                         Projections.constructor(
                                 ProblemWithBookmarkSummaryQueryDto.class,
                                 problem.id.as("problemId"),
                                 problem.description,
-                                Expressions.cases()
-                                        .when(isBookmarkedByMember(memberId, problem.id))
-                                        .then(true)
-                                        .otherwise(false)
-                                        .as("isBookmark"),
-                                exam.id.as("examId"),
-                                exam.description.as("examDescription"),
-                                subject.id.as("subjectId"),
-                                subject.name.as("subjectName"),
-                                subject.sequence.as("subjectSequence")
+                                getIsBookmark(memberId),
+                                problemInfo.examId.as("examId"),
+                                problemInfo.examDescription.as("examDescription"),
+                                problemInfo.subjectId.as("subjectId"),
+                                problemInfo.subjectName.as("subjectName"),
+                                problemInfo.subjectSequence.as("subjectSequence")
                         )
                 )
                 .from(problem)
-                .join(problem.exam, exam)
-                .join(problem.subject, subject)
-                .where(problem.id.in(problemIds))
-                .fetch();
+                .join(problem.problemInfo, problemInfo);
+        if (memberId != null) {
+            return query.leftJoin(bookmark).on(bookmark.problem.id.eq(problem.id).and(bookmark.member.id.eq(memberId)));
+        }
+        return query;
+    }
+
+    private static BooleanExpression getIsBookmark(Long memberId) {
+        return memberId == null ? Expressions.FALSE : bookmark.id.isNotNull().as("isBookmark");
     }
 
     private Predicate subjectIdsIn(List<Long> subjectIds) {
-        return subjectIds != null ? subject.id.in(subjectIds) : null;
+        return subjectIds != null ? problemInfo.subjectId.in(subjectIds) : null;
     }
 
     private static BooleanExpression subjectIdEq(Long subjectId) {
-        return subjectId != null ? subject.id.eq(subjectId) : null;
+        return subjectId != null ? problemInfo.subjectId.eq(subjectId) : null;
     }
 
     private BooleanExpression examIdEq(Long examId) {
-        return examId != null ? exam.id.eq(examId) : null;
+        return examId != null ? problemInfo.examId.eq(examId) : null;
     }
 
     private BooleanExpression memberIdEq(Long memberId) {
         return memberId != null ? bookmark.member.id.eq(memberId) : null;
-    }
-
-    private Predicate isBookmarkedByMember(Long memberId, NumberPath<Long> id) {
-        if (memberId == null) {
-            return Expressions.FALSE;
-        }
-        return JPAExpressions.selectOne()
-                .from(bookmark)
-                .where(bookmark.member.id.eq(memberId), bookmark.problem.id.eq(id))
-                .exists();
     }
 }
