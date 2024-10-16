@@ -33,6 +33,13 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
     }
 
     @Override
+    public List<ProblemWithBookmarkDetailQueryDto> findDetailBySubjectIdWithBookmark(Long memberId, Long subjectId) {
+        return makeProblemWithBookmarkDetailQuery(memberId)
+                .where(subjectIdEq(subjectId))
+                .fetch();
+    }
+
+    @Override
     public List<ProblemWithBookmarkDetailQueryDto> findDetailByIdsInWithBookmark(Long memberId, List<Long> problemIds) {
         return makeProblemWithBookmarkDetailQuery(memberId)
                 .where(problem.id.in(problemIds))

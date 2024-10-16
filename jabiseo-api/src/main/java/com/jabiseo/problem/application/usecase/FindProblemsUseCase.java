@@ -1,7 +1,6 @@
 package com.jabiseo.problem.application.usecase;
 
 import com.jabiseo.certificate.domain.Certificate;
-import com.jabiseo.certificate.domain.Exam;
 import com.jabiseo.certificate.service.CertificateService;
 import com.jabiseo.problem.dto.CertificateResponse;
 import com.jabiseo.problem.dto.FindProblemsResponse;
@@ -31,23 +30,15 @@ public class FindProblemsUseCase {
         Certificate certificate = certificateService.getById(certificateId);
         certificateService.validateExamIdAndSubjectIds(certificate, examId, subjectIds);
 
-        List<ProblemWithBookmarkDetailQueryDto> problemWithBookmarkDetailQueryDtos = getProblemWithBookmarkDetailQueryDtos(memberId, examId, subjectIds, count, certificate);
+        List<ProblemWithBookmarkDetailQueryDto> dtos =
+                problemService.findProblemsByExamIdAndSubjectIds(memberId, examId, subjectIds, count);
 
-        List<ProblemsDetailResponse> problemsDetailResponses = problemWithBookmarkDetailQueryDtos.stream()
+        List<ProblemsDetailResponse> problemsDetailResponses = dtos.stream()
                 .map(ProblemsDetailResponse::from)
                 .toList();
 
         CertificateResponse certificateResponse = CertificateResponse.from(certificate);
 
         return FindProblemsResponse.of(certificateResponse, problemsDetailResponses);
-    }
-
-    private List<ProblemWithBookmarkDetailQueryDto> getProblemWithBookmarkDetailQueryDtos(Long memberId, Long examId, List<Long> subjectIds, int count, Certificate certificate) {
-        if (examId == null) {
-            List<Long> examIds = certificate.getExams().stream().map(Exam::getId).toList();
-            return problemService.findProblemsBySubjectId(memberId, examIds, subjectIds, count);
-        } else {
-            return problemService.findProblemsByExamIdAndSubjectIds(memberId, examId, subjectIds, count);
-        }
     }
 }
