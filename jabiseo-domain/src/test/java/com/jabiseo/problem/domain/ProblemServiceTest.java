@@ -4,6 +4,8 @@ import com.jabiseo.certificate.domain.Certificate;
 import com.jabiseo.certificate.domain.Exam;
 import com.jabiseo.certificate.domain.Subject;
 import com.jabiseo.problem.dto.ProblemWithBookmarkDetailQueryDto;
+import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryScoreQueryDto;
+import com.jabiseo.problem.service.ProblemSearchProvider;
 import com.jabiseo.problem.service.ProblemService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,6 +37,9 @@ public class ProblemServiceTest {
     @Mock
     ProblemRepository problemRepository;
 
+    @Mock
+    ProblemSearchProvider problemSearchProvider;
+
     Long memberId;
     Long certificateId;
     List<Long> examIds;
@@ -45,6 +50,7 @@ public class ProblemServiceTest {
     List<Problem> problems2;
     List<Problem> problems3;
     List<Problem> problems4;
+    List<Long> problemIds1;
 
     @BeforeEach
     void setUp() {
@@ -59,6 +65,7 @@ public class ProblemServiceTest {
         problems2 = LongStream.range(21, 41).mapToObj(i -> createProblem(i, certificate, exams.get(0), subjects.get(1))).toList();
         problems3 = LongStream.range(41, 61).mapToObj(i -> createProblem(i, certificate, exams.get(1), subjects.get(0))).toList();
         problems4 = LongStream.range(61, 81).mapToObj(i -> createProblem(i, certificate, exams.get(1), subjects.get(1))).toList();
+        problemIds1 = problems1.stream().map(Problem::getId).collect(Collectors.toList());
     }
 
     @Test
@@ -100,4 +107,25 @@ public class ProblemServiceTest {
         result.subList(count, count * 2)
                 .forEach(dto -> assertThat(dto.subjectId()).isEqualTo(subjectIds.get(1)));
     }
+
+    @Test
+    @DisplayName("문제 검색 시 검색된 문제가 없으면 빈 리스트를 반환한다.")
+    void givenNoSearchResult_whenSearchProblem_thenReturnEmptyList() {
+        //given
+        String query = "검색어";
+        Double lastScore = 1.0;
+        Long lastId = 1L;
+
+        given(problemSearchProvider.searchProblem(query, lastScore, lastId, certificateId, 10))
+                .willReturn(List.of());
+        given(problemRepository.findSummaryByIdsInWithBookmark(memberId, List.of()))
+                .willReturn(List.of());
+
+        //when
+        List<ProblemWithBookmarkSummaryScoreQueryDto> result = sut.searchProblem(memberId, certificateId, query, lastScore, lastId);
+
+        //then
+        assertThat(result).isEmpty();
+    }
+
 }
