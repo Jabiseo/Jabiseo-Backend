@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.opensearch.client.json.JsonData;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.FieldValue;
+import org.opensearch.client.opensearch._types.SortOrder;
 import org.opensearch.client.opensearch._types.query_dsl.TermQuery;
 import org.opensearch.client.opensearch.core.*;
 import org.opensearch.client.opensearch.core.search.Hit;
@@ -116,6 +117,43 @@ public class OpenSearchHelper {
         return extractIds(searchResponse, targetSize);
     }
 
+    public List<OpenSearchResultDto> searchProblemInMultiField(String query, String indexName, List<String> fields, int targetSize) {
+        SearchRequest searchRequest = SearchRequest.of(s ->
+                s.index(indexName)
+                        .size(targetSize)
+                        .source(source -> source
+                                .filter(filter -> filter.includes("")))
+                        .query(q -> q
+                                .multiMatch(multiMatch -> multiMatch
+                                        .query(query)
+                                        .fields(fields)
+                                )
+                        )
+        );
+        SearchResponse<JsonData> searchResponse = executeSearch(searchRequest);
+        return extractResult(searchResponse);
+    }
+
+    public List<OpenSearchResultDto> searchProblemInMultiFieldAfter(String query, String indexName, List<String> fields, Float lastScore, Long lastId, int targetSize) {
+        SearchRequest searchRequest = SearchRequest.of(s ->
+                        s.index(indexName)
+                                .size(targetSize)
+                                .searchAfter(String.valueOf(lastScore), String.valueOf(lastId))
+                                .sort(sort -> sort.score(scoreSort -> scoreSort.order(SortOrder.Desc)))
+                                .sort(sort -> sort.field(fieldSort -> fieldSort.field("_id").order(SortOrder.Asc)))
+                                .source(source -> source
+                                        .filter(filter -> filter.includes("")))
+                                .query(q -> q
+                                        .multiMatch(multiMatch -> multiMatch
+                                                .query(query)
+                                                .fields(fields)
+                                        )
+                                )
+        );
+        SearchResponse<JsonData> searchResponse = executeSearch(searchRequest);
+        return extractResult(searchResponse);
+    }
+
     private SearchRequest createKnnSearchRequestForIds(List<Float> vector, String indexName, String vectorName, int size) {
         // id만 필요한 경우, source 필드는 제외
         return SearchRequest.of(searchRequest ->
@@ -189,7 +227,7 @@ public class OpenSearchHelper {
     }
 
     private List<Long> extractIds(SearchResponse<JsonData> searchResponse, int size) {
-        // 검색 결과에서 유사 문제 ID 추출
+        // 검색 결과에서 ID 추출
         try {
             return searchResponse.hits().hits().stream()
                     .map(Hit::id)

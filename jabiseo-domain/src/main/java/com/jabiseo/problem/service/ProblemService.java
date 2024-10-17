@@ -2,8 +2,10 @@ package com.jabiseo.problem.service;
 
 import com.jabiseo.problem.domain.Problem;
 import com.jabiseo.problem.domain.ProblemRepository;
+import com.jabiseo.problem.dto.ProblemSearchDto;
 import com.jabiseo.problem.dto.ProblemWithBookmarkDetailQueryDto;
 import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryQueryDto;
+import com.jabiseo.problem.dto.ProblemWithBookmarkSummaryScoreQueryDto;
 import com.jabiseo.problem.exception.ProblemBusinessException;
 import com.jabiseo.problem.exception.ProblemErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,9 +22,11 @@ public class ProblemService {
 
     private static final int MAX_PROBLEM_COUNT = 20;
     private static final int SIMILAR_PROBLEM_COUNT = 3;
+    private static final int SEARCH_PROBLEM_COUNT = 10;
 
     private final ProblemRepository problemRepository;
     private final SimilarProblemsProvider similarProblemsProvider;
+    private final ProblemSearchProvider problemSearchProvider;
 
     public Problem getById(Long problemId) {
         return problemRepository.findById(problemId)
@@ -61,6 +67,22 @@ public class ProblemService {
                     Collections.shuffle(problems); // 문제 리스트를 랜덤으로 섞음
                     return problems.stream().limit(count);
                 })
+                .toList();
+    }
+
+    public List<ProblemWithBookmarkSummaryScoreQueryDto> searchProblem(Long memberId, Long certificateId, String query, Double lastScore, Long lastId) {
+        List<ProblemSearchDto> problemSearchDtos = problemSearchProvider.searchProblem(query, lastScore, lastId, certificateId, SEARCH_PROBLEM_COUNT);
+        List<Long> problemIds = problemSearchDtos.stream()
+                .map(ProblemSearchDto::problemId)
+                .toList();
+        List<ProblemWithBookmarkSummaryQueryDto> dtos = problemRepository.findSummaryByIdsInWithBookmark(memberId, problemIds);
+
+        // problemId에 대응되는 ProblemWithBookmarkSummaryQueryDto를 O(1)에 찾기 위해 Map으로 변환
+        Map<Long, ProblemWithBookmarkSummaryQueryDto> dtoMap = dtos.stream()
+                .collect(Collectors.toMap(ProblemWithBookmarkSummaryQueryDto::problemId, dto -> dto));
+
+        return problemSearchDtos.stream()
+                .map(dto -> ProblemWithBookmarkSummaryScoreQueryDto.of(dtoMap.get(dto.problemId()), dto.score()))
                 .toList();
     }
 

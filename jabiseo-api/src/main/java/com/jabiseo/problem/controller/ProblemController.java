@@ -36,6 +36,8 @@ public class ProblemController {
 
     private final FindRecommendedProblemsUseCase findRecommendedProblemsUseCase;
 
+    private final SearchProblemUseCase searchProblemUseCase;
+
     @GetMapping("/set")
     public ResponseEntity<FindProblemsResponse> findProblems(
             @AuthenticatedMember AuthMember member,
@@ -119,6 +121,18 @@ public class ProblemController {
             @AuthenticatedMember AuthMember member
     ) {
         FindProblemsResponse result = findRecommendedProblemsUseCase.execute(member.getMemberId());
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<SearchProblemResponse>> searchProblem(
+            @AuthenticatedMember AuthMember member,
+            @RequestParam(name = "certificate-id") Long certificateId,
+            @RequestParam String query,
+            @RequestParam(required = false, name = "last-score") Double lastScore,
+            @RequestParam(required = false, name = "last-id") Long lastId
+    ) {
+        List<SearchProblemResponse> result = searchProblemUseCase.execute(member.getMemberId(), certificateId, query, lastScore, lastId);
         return ResponseEntity.ok(result);
     }
 
