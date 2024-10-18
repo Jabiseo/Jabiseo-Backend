@@ -10,7 +10,8 @@ spring:
       port: ${REDIS_PORT}
       host: ${REDIS_HOST}
       password: ${REDIS_PASSWORD}
-
+  kafka:
+    bootstrap-servers: ["localhost:29092"] # @TODO Secret 배포 전
 
 cloud:
   aws:
@@ -30,6 +31,12 @@ opensearch:
     username: ${OPENSEARCH_USERNAME}
     password: ${OPENSEARCH_PASSWORD}
 
+
+notification:
+  group-id: "notification-group"
+  topic: "test"
+#  topic: "dev.jabiseo.plan-noti.json" # @TODO Secret
+
 ---
 spring:
   config:
@@ -42,3 +49,5 @@ spring:
     activate:
       on-profile: "infra-dev"
 
+  kafka:
+    bootstrap-servers: [ "kafka:9092" ] # @TODO docker network 연결 후 커넥트
