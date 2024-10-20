@@ -1,6 +1,6 @@
-package com.jabiseo.controller;
+package com.jabiseo.notification.controller;
 
-import com.jabiseo.fcm.FcmSender;
+import com.jabiseo.notification.fcm.FcmSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.GetMapping;

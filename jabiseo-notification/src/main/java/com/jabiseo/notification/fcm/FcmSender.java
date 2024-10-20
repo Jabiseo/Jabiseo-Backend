@@ -1,4 +1,4 @@
-package com.jabiseo.fcm;
+package com.jabiseo.notification.fcm;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
