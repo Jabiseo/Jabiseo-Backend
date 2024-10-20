@@ -1,9 +1,9 @@
 package fixture;
 
-import com.jabiseo.certificate.domain.Certificate;
-import com.jabiseo.certificate.domain.Exam;
-import com.jabiseo.certificate.domain.Subject;
-import com.jabiseo.problem.domain.Problem;
+import com.jabiseo.domain.certificate.domain.Certificate;
+import com.jabiseo.domain.certificate.domain.Exam;
+import com.jabiseo.domain.certificate.domain.Subject;
+import com.jabiseo.domain.problem.domain.Problem;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static fixture.CertificateFixture.createCertificate;

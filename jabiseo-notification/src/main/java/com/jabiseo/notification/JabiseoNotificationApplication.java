@@ -3,7 +3,12 @@ package com.jabiseo.notification;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+
+@SpringBootApplication(
+		scanBasePackages = {
+				"com.jabiseo.infra.notification",
+		}
+)
 public class JabiseoNotificationApplication {
 
 	public static void main(String[] args) {
