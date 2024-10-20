@@ -16,6 +16,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 @SQLRestriction("deleted = false")
 @SQLDelete(sql = "UPDATE member SET deleted = true WHERE member_id = ?")
-public class Member {
+public class Member implements Serializable {
 
     @Id
     @Tsid

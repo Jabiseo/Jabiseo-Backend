@@ -21,6 +21,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
                 "com.jabiseo.infra.client",
                 "com.jabiseo.infra.opensearch",
                 "com.jabiseo.infra.s3",
+                "com.jabiseo.infra.kafka"
         }
 )
 public class JabiseoApiApplication {

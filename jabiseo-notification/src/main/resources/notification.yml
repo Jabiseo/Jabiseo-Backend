@@ -3,7 +3,7 @@
 
 management:
   server:
-    port: 9292
+    port: 9291
   endpoints:
     web:
       base-path: "/manage"
@@ -18,8 +18,7 @@ firebase:
 
 notification:
   group-id: "notification-group"
-  topic: "test"
-#  topic: "dev.jabiseo.plan-noti.json" # @TODO Secret
+  topic: "test" # @TODO secret + 원래 값 삽입 (다음 PR)
 
 ---
 spring:

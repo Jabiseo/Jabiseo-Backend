@@ -1,7 +1,6 @@
 package com.jabiseo.notification.fcm;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
@@ -10,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -19,23 +16,17 @@ import java.util.Map;
 public class FcmSender {
 
 
-    public void sendMessage(String token) throws FirebaseMessagingException, JsonProcessingException {
-        String title = "titles...";
-        String body = "bodys...";
-        Notification notification = Notification
+    public void sendMessage(com.jabiseo.domain.notification.domain.Notification notification) throws FirebaseMessagingException, JsonProcessingException {
+        Notification fcmNotification = Notification
                 .builder()
-                .setTitle(title)
-                .setBody(body)
+                .setTitle(notification.getPushType().getTitle())
+                .setBody(notification.getPushType().getMessage())
                 .build();
-        Map<String, String> data = new HashMap<>();
-        data.put("id", "12345");
-        data.put("type", "PLAN");
-        data.put("certificateId", "2");
 
         Message message = Message.builder()
-                .setToken(token)
-                .putAllData(data)
-                .setNotification(notification)
+                .setToken(notification.getToken())
+                .putData("certificateId", notification.getRedirectId().toString())
+                .setNotification(fcmNotification)
                 .build();
 
         String response = FirebaseMessaging.getInstance().send(message);
