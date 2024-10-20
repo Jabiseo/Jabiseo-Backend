@@ -11,7 +11,7 @@ spring:
       host: ${REDIS_HOST}
       password: ${REDIS_PASSWORD}
   kafka:
-    bootstrap-servers: ["localhost:29092"] # @TODO Secret 배포 전
+    bootstrap-servers: "localhost:29092"
 
 cloud:
   aws:
@@ -32,10 +32,6 @@ opensearch:
     password: ${OPENSEARCH_PASSWORD}
 
 
-notification:
-  group-id: "notification-group"
-  topic: "test"
-#  topic: "dev.jabiseo.plan-noti.json" # @TODO Secret
 
 ---
 spring:

@@ -16,6 +16,11 @@ management:
 firebase:
   key-path: "jabiseo-firebase-key.json"
 
+notification:
+  group-id: "notification-group"
+  topic: "test"
+#  topic: "dev.jabiseo.plan-noti.json" # @TODO Secret
+
 ---
 spring:
   config:

@@ -6,7 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication(
 		scanBasePackages = {
-				"com.jabiseo.infra.notification",
+				"com.jabiseo.infra.kafka",
+				"com.jabiseo.notification"
 		}
 )
 public class JabiseoNotificationApplication {

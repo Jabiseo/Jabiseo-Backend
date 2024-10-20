@@ -14,6 +14,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-registry-prometheus'
 
+
+    implementation 'org.springframework.kafka:spring-kafka:3.2.4'
+
     // FCM 설정 추가
     implementation 'com.google.firebase:firebase-admin:9.3.0'
 
