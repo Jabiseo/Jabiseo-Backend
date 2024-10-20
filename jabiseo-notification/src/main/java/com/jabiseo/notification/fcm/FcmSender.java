@@ -28,6 +28,7 @@ public class FcmSender {
         Message message = Message.builder()
                 .setToken(notification.getToken())
                 .putData("certificateId", notification.getRedirectId().toString())
+                .putData("type", notification.getPushType().getType())
                 .setNotification(fcmNotification)
                 .build();
 
