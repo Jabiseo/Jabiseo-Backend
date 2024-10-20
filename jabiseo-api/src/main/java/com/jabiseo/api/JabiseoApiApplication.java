@@ -6,10 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 
 
-@EnableRedisRepositories(basePackages = {"com.jabiseo.infra"})
 @EntityScan(basePackages = {"com.jabiseo.domain"})
 @EnableJpaRepositories(basePackages = {"com.jabiseo.domain"})
 @ConfigurationPropertiesScan
