@@ -2,16 +2,15 @@ package com.jabiseo.api.auth.controller;
 
 import com.jabiseo.api.auth.application.DevLoginHelper;
 import com.jabiseo.api.auth.dto.LoginResponse;
-import com.jabiseo.domain.common.exception.CommonErrorCode;
-import com.jabiseo.api.exception.ErrorResponse;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 
+@Profile({"local", "dev"})
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -25,17 +24,10 @@ public class DevAuthController {
     public ResponseEntity<?> devAuth(
             @RequestParam(value = "member-id") @NotBlank String memberId
     ) {
-        if (!isLocalProfiles(environment.getActiveProfiles())) {
-            return ResponseEntity.status(CommonErrorCode.FORBIDDEN.getStatusCode()).body(ErrorResponse.of(CommonErrorCode.FORBIDDEN));
-        }
 
         LoginResponse result = loginHelper.login(Long.parseLong(memberId));
         return ResponseEntity.ok(result);
     }
 
-
-    private boolean isLocalProfiles(String[] profiles) {
-        return Arrays.asList(profiles).contains(LIMIT_PROFILE);
-    }
 
 }
