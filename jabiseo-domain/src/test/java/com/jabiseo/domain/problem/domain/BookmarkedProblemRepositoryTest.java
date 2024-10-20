@@ -28,12 +28,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static fixture.CertificateFixture.createCertificate;
 import static fixture.ExamFixture.createExam;
 import static fixture.MemberFixture.createMember;
 import static fixture.ProblemFixture.createProblem;
+import static fixture.ProblemInfoFixture.createProblemInfo;
 import static fixture.SubjectFixture.createSubject;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,6 +58,7 @@ class BookmarkedProblemRepositoryTest {
     private Certificate certificate;
     private List<Exam> exams;
     private List<Subject> subjects;
+    private List<ProblemInfo> problemInfos;
 
     @BeforeEach
     void setUp() {
@@ -76,6 +79,17 @@ class BookmarkedProblemRepositoryTest {
         examIds = exams.stream().map(Exam::getId).toList();
         subjectIds = subjects.stream().map(Subject::getId).toList();
         memberId = member.getId();
+
+        problemInfos = IntStream.range(0, examIds.size())
+                .boxed()
+                .flatMap(examIndex -> IntStream.range(0, subjectIds.size())
+                        .mapToObj(subjectIndex -> createProblemInfo(
+                                (long) examIndex * subjectIds.size() + subjectIndex + 1,  // ID를 고유하게 생성
+                                certificate.getId(),
+                                examIds.get(examIndex),
+                                subjectIds.get(subjectIndex))))
+                .collect(Collectors.toCollection(ArrayList::new));
+        problemInfos.forEach(entityManager::persist);
     }
 
     @Test
@@ -83,10 +97,10 @@ class BookmarkedProblemRepositoryTest {
     void givenExamAndSubjectConditions_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
         //given
         List<Problem> requestProblems = List.of(
-                createProblem(certificate, exams.get(0), subjects.get(0)),
-                createProblem(certificate, exams.get(0), subjects.get(1)),
-                createProblem(certificate, exams.get(0), subjects.get(2)),
-                createProblem(certificate, exams.get(1), subjects.get(0))
+                createProblem(certificate, exams.get(0), subjects.get(0), getProblemInfo(examIds.get(0), subjectIds.get(0))),
+                createProblem(certificate, exams.get(0), subjects.get(1), getProblemInfo(examIds.get(0), subjectIds.get(1))),
+                createProblem(certificate, exams.get(0), subjects.get(2), getProblemInfo(examIds.get(0), subjectIds.get(2))),
+                createProblem(certificate, exams.get(1), subjects.get(0), getProblemInfo(examIds.get(1), subjectIds.get(0)))
         );
         List<Bookmark> bookmarks = requestProblems.stream()
                 .map(problem -> Bookmark.of(member, problem))
@@ -110,10 +124,10 @@ class BookmarkedProblemRepositoryTest {
     void givenSubjectConditions_whenFindingBookmarkedProblems_thenFindBookmarkedProblems() {
         //given
         List<Problem> requestProblems = List.of(
-                createProblem(certificate, exams.get(0), subjects.get(0)),
-                createProblem(certificate, exams.get(0), subjects.get(1)),
-                createProblem(certificate, exams.get(0), subjects.get(2)),
-                createProblem(certificate, exams.get(1), subjects.get(0))
+                createProblem(certificate, exams.get(0), subjects.get(0), getProblemInfo(examIds.get(0), subjectIds.get(0))),
+                createProblem(certificate, exams.get(0), subjects.get(1), getProblemInfo(examIds.get(0), subjectIds.get(1))),
+                createProblem(certificate, exams.get(0), subjects.get(2), getProblemInfo(examIds.get(0), subjectIds.get(2))),
+                createProblem(certificate, exams.get(1), subjects.get(0), getProblemInfo(examIds.get(1), subjectIds.get(0)))
         );
         List<Bookmark> bookmarks = requestProblems.stream()
                 .map(problem -> Bookmark.of(member, problem))
@@ -138,7 +152,7 @@ class BookmarkedProblemRepositoryTest {
     void givenExamAndSubjectConditionsWithMultiplePage_whenFindingBookmarkedProblems_thenFindBookmarkedProblems(int page, int pageSize) {
         //given
         List<Problem> requestProblems = IntStream.range(0, 15)
-                .mapToObj(id -> createProblem(certificate, exams.get(0), subjects.get(0)))
+                .mapToObj(id -> createProblem(certificate, exams.get(0), subjects.get(0), getProblemInfo(examIds.get(0), subjectIds.get(0))))
                 .toList();
         List<Bookmark> bookmarks = requestProblems.stream()
                 .map(problem -> Bookmark.of(member, problem))
@@ -155,6 +169,13 @@ class BookmarkedProblemRepositoryTest {
         //then
         assertThat(dtos).hasSize(pageSize);
         dtos.forEach(dto -> assertThat(dto.isBookmark()).isTrue());
+    }
+
+    private ProblemInfo getProblemInfo(Long examId, Long subjectId) {
+        return problemInfos.stream()
+                .filter(problemInfo -> problemInfo.getExamId().equals(examId) && problemInfo.getSubjectId().equals(subjectId))
+                .findFirst()
+                .orElseThrow();
     }
 
 }

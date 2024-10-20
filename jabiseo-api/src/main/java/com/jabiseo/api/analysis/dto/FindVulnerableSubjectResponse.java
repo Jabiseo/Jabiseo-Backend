@@ -5,7 +5,7 @@ import com.jabiseo.domain.analysis.dto.VulnerableSubjectDto;
 public record FindVulnerableSubjectResponse(
     Long subjectId,
     String subjectName,
-    int vulnerabilityScore
+    int vulnerableRate
 ) {
     public static FindVulnerableSubjectResponse from(VulnerableSubjectDto vulnerableSubjectDto) {
         return new FindVulnerableSubjectResponse(
