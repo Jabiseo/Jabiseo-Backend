@@ -1,9 +1,9 @@
-package com.jabiseo.infra.fcm;
+package com.jabiseo.infra.fcm.config;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import lombok.RequiredArgsConstructor;
+import com.jabiseo.infra.fcm.CustomThreadManger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -39,16 +39,5 @@ public class FCMConfig {
         } catch (IOException e) {
             log.error("FirebaseOptions IOException {}" , e.getMessage());
         }
-    }
-
-
-    @Bean(name = "callBackTaskExecutor")
-    public Executor callBackTaskExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
-        executor.setWaitForTasksToCompleteOnShutdown(true);
-        executor.setThreadNamePrefix("Jabiseo-FCM-Call-Back-Thread: ");
-        executor.initialize();
-        return executor;
     }
 }

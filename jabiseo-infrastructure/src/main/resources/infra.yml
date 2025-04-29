@@ -2,9 +2,11 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+    hikari:
+      initialization-fail-timeout: 8000
   data:
     redis:
       port: ${REDIS_PORT}
@@ -31,7 +33,8 @@ opensearch:
     username: ${OPENSEARCH_USERNAME}
     password: ${OPENSEARCH_PASSWORD}
 
-
+firebase:
+  key-path: "jabiseo-firebase-key.json"
 
 ---
 spring:
