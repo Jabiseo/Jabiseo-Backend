@@ -23,4 +23,6 @@ dependencies {
 
     testImplementation 'com.h2database:h2'
     testFixturesImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testFixturesImplementation "org.projectlombok:lombok"
+    testFixturesAnnotationProcessor "org.projectlombok:lombok"
 }

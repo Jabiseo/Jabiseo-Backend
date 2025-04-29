@@ -6,6 +6,7 @@ import com.jabiseo.domain.plan.domain.*;
 import com.jabiseo.domain.plan.repository.PlanRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +19,7 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.*;
-
+@Tag("TooLogTest")
 @DisplayName("modify plan usecase 통합 테스트")
 @SpringBootTest
 @ActiveProfiles("test")

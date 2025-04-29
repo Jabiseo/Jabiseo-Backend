@@ -1,8 +1,8 @@
 package com.jabiseo.notification.consumer;
 
 
-import com.jabiseo.domain.notification.domain.Notification;
-import com.jabiseo.notification.fcm.FcmSender;
+import com.jabiseo.domain.notification.domain.NotificationSend;
+import com.jabiseo.domain.notification.domain.NotificationSender;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -14,11 +14,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class NotificationConsumer {
 
-    private final FcmSender fcmSender;
+    private final NotificationSender sender;
 
     @KafkaListener(topics = "${notification.topic}", groupId = "${notification.group-id}", containerFactory = "notificationContainerFactory")
-    public void listen(ConsumerRecord<String, Notification> record, Acknowledgment ask) throws Exception {
-        fcmSender.sendMessage(record.value());
+    public void listen(ConsumerRecord<String, NotificationSend> record, Acknowledgment ask) throws Exception {
+//        sender.send(record.value());
         ask.acknowledge();
     }
 }

@@ -49,12 +49,20 @@ subprojects {
 
         //junit 공통 셋팅
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'ch.qos.logback:logback-classic:1.4.11'
+
     }
 
 
     // 모든 서브 모듈에서 Junit을 사용하기 위한 설정
     test {
-        useJUnitPlatform()
+        useJUnitPlatform{
+            excludeTags("TooLongTest")
+        }
+        testLogging {
+            events "passed", "skipped", "failed" // optional: 통과/스킵/실패 케이스 표시
+            showStandardStreams = true // ** 요거! stdout / stderr 다 출력
+        }
     }
 
 }

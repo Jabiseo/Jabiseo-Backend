@@ -34,7 +34,7 @@ public class DeviceToken {
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    private LocalDateTime modifiedAt;
+    private LocalDateTime updatedAt;
 
     public DeviceToken(String deviceId, String token, Member member) {
         this.deviceId = deviceId;

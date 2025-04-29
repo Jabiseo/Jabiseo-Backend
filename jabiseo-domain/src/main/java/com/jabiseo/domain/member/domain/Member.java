@@ -65,6 +65,9 @@ public class Member implements Serializable {
     @BatchSize(size = 100)
     private List<Bookmark> bookmarks = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member")
+    private List<DeviceToken> deviceTokens = new ArrayList<>();
+
     private Member(String email, String nickname, String oauthId, OauthServer oauthServer, String profileImage) {
         this.email = email;
         this.nickname = nickname;
@@ -101,4 +104,7 @@ public class Member implements Serializable {
         this.profileImage = profileImage;
     }
 
+    public void updateDeviceTokens(List<DeviceToken> deviceTokens) {
+        this.deviceTokens = deviceTokens;
+    }
 }

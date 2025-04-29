@@ -13,8 +13,6 @@ management:
     health:
       show-components: always
 
-firebase:
-  key-path: "jabiseo-firebase-key.json"
 
 notification:
   group-id: "notification-group"

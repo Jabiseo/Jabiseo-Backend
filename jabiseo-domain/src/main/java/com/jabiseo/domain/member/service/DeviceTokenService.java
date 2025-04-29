@@ -5,7 +5,11 @@ import com.jabiseo.domain.member.repository.DeviceTokenRepository;
 import com.jabiseo.domain.member.domain.Member;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,4 +35,5 @@ public class DeviceTokenService {
     public void deleteToken(Member member, String deviceId) {
         deviceTokenRepository.deleteByMemberAndDeviceId(member, deviceId);
     }
+
 }

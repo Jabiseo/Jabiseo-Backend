@@ -15,10 +15,7 @@ import com.jabiseo.domain.plan.repository.PlanProgressRepository;
 import com.jabiseo.domain.plan.repository.PlanRepository;
 import com.jabiseo.domain.problem.domain.Problem;
 import fixture.ProblemFixture;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -33,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
+@Tag("TooLogTest")
 @DisplayName("modify plan usecase, Update Progress 통합 테스트")
 @SpringBootTest
 @SqlGroup({

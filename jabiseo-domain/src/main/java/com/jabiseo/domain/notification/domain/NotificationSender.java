@@ -1,6 +1,10 @@
 package com.jabiseo.domain.notification.domain;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface NotificationSender {
 
-    void send(String topic, Notification notification);
+
+    CompletableFuture<String> sendAsync(SendNotificationCommand command);
+
 }

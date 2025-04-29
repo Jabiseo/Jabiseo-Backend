@@ -18,7 +18,12 @@ dependencies {
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.1'
     implementation 'org.apache.httpcomponents.core5:httpcore5:5.1'
 
+    // FCM 설정 추가
+    implementation 'com.google.firebase:firebase-admin:9.4.0'
+
+
     runtimeOnly 'com.mysql:mysql-connector-j'
 
     implementation project(":jabiseo-domain")
+    testImplementation(testFixtures(project(":jabiseo-domain")))
 }

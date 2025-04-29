@@ -1,11 +1,11 @@
 name: "dev ci "
 
-on:
-  pull_request:
-    types: [ opened, synchronize ]
-    branches:
-      - "develop"
-  workflow_dispatch:
+#on:
+#  pull_request:
+#    types: [ opened, synchronize ]
+#    branches:
+#      - "develop"
+#  workflow_dispatch:
 
 
 

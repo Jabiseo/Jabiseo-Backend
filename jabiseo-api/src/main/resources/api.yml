@@ -29,12 +29,20 @@ management:
   endpoint:
     health:
       show-components: always
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 spring:
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+  datasource:
+    hikari:
+      maximum-pool-size: 30
+      connection-timeout: 3000
 
 ---
 spring:
@@ -47,7 +55,10 @@ management:
     web:
       exposure:
         include: "*"
-
+logging:
+#  level:
+#    org.springframework.jdbc: DEBUG
+#    org.springframework.transaction: DEBUG
 ---
 spring:
   config:

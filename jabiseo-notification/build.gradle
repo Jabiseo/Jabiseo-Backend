@@ -17,8 +17,6 @@ dependencies {
 
     implementation 'org.springframework.kafka:spring-kafka:3.2.4'
 
-    // FCM 설정 추가
-    implementation 'com.google.firebase:firebase-admin:9.3.0'
 
     implementation project(":jabiseo-domain")
     implementation project(":jabiseo-infrastructure")

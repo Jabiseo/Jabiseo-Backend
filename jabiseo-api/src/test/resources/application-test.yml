@@ -15,7 +15,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        globally_quoted_identifiers: true
+        globally_quoted_identifiers: false
+        dialect: org.hibernate.dialect.H2Dialect
     show-sql: true
     generate-ddl: true
     database-platform: org.hibernate.dialect.MySQL8Dialect
@@ -24,3 +25,9 @@ spring:
   h2:
     console:
       enabled: true
+
+logging:
+  level:
+    root: info
+    com.jabiseo: DEBUG
+    org.springframework: INFO
