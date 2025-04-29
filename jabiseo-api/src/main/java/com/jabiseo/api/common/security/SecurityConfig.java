@@ -27,6 +27,8 @@ public class SecurityConfig {
             "/api/problems/set",
             "/api/problems/search/**",
             "/api/dev/auth",
+            "/api/notifications/test",
+            "/api/notifications/batch"
     };
 
     private static final String[] REGEX_WHITE_LIST = {
