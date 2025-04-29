@@ -22,17 +22,13 @@ public class PlanProgressGroup {
     }
 
     public PlanProgressGroup findNew(List<PlanItem> requestItems) {
-        List<PlanItem> result = requestItems.stream()
-                .filter((requestItem) -> this.progresses.stream().noneMatch((progress -> progress.equalsItems(requestItem))))
-                .toList();
+        List<PlanItem> result = requestItems.stream().filter((requestItem) -> this.progresses.stream().noneMatch((progress -> progress.equalsItems(requestItem)))).toList();
 
         return new PlanProgressGroup(result.stream().map(this::toProgress).toList(), weeklyDefineStrategy);
     }
 
     public PlanProgressGroup findRemoved(List<PlanItem> requestItems) {
-        List<PlanProgress> found = progresses.stream()
-                .filter((progress -> requestItems.stream().noneMatch(progress::equalsItems)))
-                .toList();
+        List<PlanProgress> found = progresses.stream().filter((progress -> requestItems.stream().noneMatch(progress::equalsItems))).toList();
         return new PlanProgressGroup(found, weeklyDefineStrategy);
     }
 
@@ -54,18 +50,11 @@ public class PlanProgressGroup {
     }
 
     private PlanItem findMatchedItem(PlanProgress progress, List<PlanItem> items) {
-        return items.stream()
-                .filter(progress::equalsItems)
-                .findFirst()
-                .orElse(null);
+        return items.stream().filter(progress::equalsItems).findFirst().orElse(null);
     }
 
     public PlanProgressGroup calculate(List<LearningResult> learningResults) {
-        Map<ActivityType, PlanProgress> map = this.progresses.stream()
-                .collect(Collectors.toMap(
-                        PlanProgress::getActivityType,
-                        Function.identity()
-                ));
+        Map<ActivityType, PlanProgress> map = this.progresses.stream().collect(Collectors.toMap(PlanProgress::getActivityType, Function.identity()));
 
         // O(n)으로 처리
         learningResults.forEach(learning -> {
@@ -79,8 +68,7 @@ public class PlanProgressGroup {
         return new PlanProgressGroup(list, weeklyDefineStrategy);
     }
 
-    private void updateIfMatchesMode(Map<ActivityType, PlanProgress> map, ActivityType activityType,
-                                     LearningResult learning, LearningMode targetMode, long value) {
+    private void updateIfMatchesMode(Map<ActivityType, PlanProgress> map, ActivityType activityType, LearningResult learning, LearningMode targetMode, long value) {
         if (map.containsKey(activityType) && learning.getMode() == targetMode) {
             map.get(activityType).addCompletedValue(value);
         }
@@ -103,9 +91,15 @@ public class PlanProgressGroup {
         return item.toPlanProgress(date);
     }
 
-    public WeekPeriod getWeekPeriod(LocalDate date){
+    public WeekPeriod getWeekPeriod(LocalDate date) {
         return this.weeklyDefineStrategy.getWeekPeriod(date);
     }
 
+    public boolean isEmpty(){
+        return progresses.isEmpty();
+    }
 
+    public boolean isAllCompleted() {
+        return !progresses.stream().filter((it) -> it.getCompletedValue() < it.getTargetValue()).findAny().isPresent();
+    }
 }

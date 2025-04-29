@@ -5,6 +5,10 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: validate
+      jdbc:
+        batch_size: 1000
+        order_inserts: true
+        order_updates: true
     properties:
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
 

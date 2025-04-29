@@ -1,8 +1,9 @@
 package com.jabiseo.domain.notification.domain;
 
-import com.jabiseo.domain.member.domain.Member;
+import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,20 +20,22 @@ public class Notification implements Serializable {
 
     private Long memberId;
 
-    @Enumerated(EnumType.STRING)
-    private PushType pushType;
+    @Column(name = "push_type")
+    private String pushType;
 
-    private Long redirectId;
+    private String title;
 
-    private String token;
+    private String message;
 
-    public Notification(Long id, Long memberId, PushType pushType, Long redirectId, String token) {
+    private Long certificateId;
+
+    @Builder
+    public Notification(Long id, Long memberId, String pushType, String title, String message, Long certificateId) {
         this.id = id;
         this.memberId = memberId;
         this.pushType = pushType;
-        this.redirectId = redirectId;
-        this.token = token;
+        this.title = title;
+        this.message = message;
+        this.certificateId = certificateId;
     }
-
-
 }

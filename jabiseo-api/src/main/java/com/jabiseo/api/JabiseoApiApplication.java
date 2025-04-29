@@ -17,7 +17,8 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
                 "com.jabiseo.infra.client",
                 "com.jabiseo.infra.opensearch",
                 "com.jabiseo.infra.s3",
-                "com.jabiseo.infra.kafka"
+                "com.jabiseo.infra.kafka",
+                "com.jabiseo.infra.fcm",
         }
 )
 public class JabiseoApiApplication {

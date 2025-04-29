@@ -42,4 +42,8 @@ public class PlanProgressGroupFactory {
     }
 
 
+    public PlanProgressGroup createDailyGroupByDate(Plan plan,  LocalDate date) {
+        List<PlanProgress> progresses = planProgressRepository.findAllByPlanAndProgressDateBetweenOrderByProgressDate(plan, date, date);
+        return new PlanProgressGroup(progresses, weeklyDefineStrategy);
+    }
 }

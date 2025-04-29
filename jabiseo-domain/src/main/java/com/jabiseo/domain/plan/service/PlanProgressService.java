@@ -3,6 +3,7 @@ package com.jabiseo.domain.plan.service;
 
 import com.jabiseo.domain.plan.domain.*;
 import com.jabiseo.domain.plan.dto.LearningResult;
+import com.jabiseo.domain.plan.dto.PlanCompletedResult;
 import com.jabiseo.domain.plan.repository.PlanProgressRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class PlanProgressService {
         PlanProgressGroup progressGroup = planProgressGroupFactory.createWithInitialData(plan);
 
         List<PlanProgress> progresses = progressGroup.calculate(List.of(learningResult))
-                                                    .getProgresses();
+                .getProgresses();
         planProgressRepository.saveAll(progresses);
     }
 
@@ -56,6 +57,16 @@ public class PlanProgressService {
         // create other proxy transaction call
         PlanProgressGroup newProgresses = progressGroup.findNew(requestItems);
         planProgressCreateService.create(newProgresses, plan);
+    }
+
+    public PlanCompletedResult checkPlanProgressIsCompleted(Plan plan, LocalDate date) {
+        PlanProgressGroup group = planProgressGroupFactory.createDailyGroupByDate(plan, date);
+
+        if(group.isEmpty()){
+            return PlanCompletedResult.empty(plan.getId());
+        }
+
+        return PlanCompletedResult.completed(plan.getId(), group.isAllCompleted());
     }
 
 
